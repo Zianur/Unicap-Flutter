@@ -73,13 +73,13 @@ class CaptionListScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         final category = captionController.categories[index];
         return ListTile(
-          title: Text(category.name),
+          title: Text(category.name ?? ''),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    CaptionScreen(categoryId: category.name),
+                    CaptionScreen(categoryId: category.name ?? ''),
               ),
             );
           },
