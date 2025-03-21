@@ -20,7 +20,7 @@ class CaptionController extends ChangeNotifier {
     print('-------inside load categories----------------------');
     // Load from local database first
     // _categories = await _localDBService.getCategories();
-    notifyListeners();
+    // notifyListeners();
 
     // Fetch from Firebase and update the local database
     final onlineCategories = await _firebaseService.fetchCategories();

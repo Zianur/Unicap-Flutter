@@ -54,6 +54,13 @@
             {
               "client_id": "897423988557-a3b5j9ts6tg6o5f5b0h7giv5pc91954a.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "897423988557-n2jvedidd7efq1bqm19l1d39q61k8mbq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.unicapCg"
+              }
             }
           ]
         }
