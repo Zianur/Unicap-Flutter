@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/caption_category.dart';
-import '../models/caption.dart';
 import '../services/firebase_service.dart';
 import '../services/local_db_service.dart';
 

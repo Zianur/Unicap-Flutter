@@ -1,41 +1,90 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import '../models/diary_entry.dart';
-import '../services/firebase_service.dart';
-import '../services/local_db_service.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:unicap_cg/data/local/databse_helper.dart';
 
-class DiaryController extends ChangeNotifier {
-  final FirebaseService _firebaseService;
-  final LocalDBService _localDBService;
-  List<DiaryEntry> _entries = [];
-  List<DiaryEntry> get entries => _entries;
+class DiaryController with ChangeNotifier {
+  final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final Connectivity _connectivity = Connectivity();
 
-  DiaryController(this._firebaseService, this._localDBService);
+  // List of notes
+  List<Map<String, dynamic>> _notes = [];
+  List<Map<String, dynamic>> get notes => _notes;
 
-  Future<void> loadEntries(String userId) async {
-    _entries = await _localDBService.getDiaryEntries();
-    notifyListeners();
+  // Fetch notes from Firebase and save/update them locally
+  Future<void> fetchAndSaveNotes(String userId) async {
+    try {
+      DatabaseEvent event = await _databaseRef.child('User/$userId/Note').once();
+      DataSnapshot snapshot = event.snapshot;
 
-    if (userId.isNotEmpty) {
-      final onlineEntries = await _firebaseService.fetchDiaryEntries(userId);
-      if (onlineEntries.isNotEmpty) {
-        _entries = onlineEntries;
-        await _localDBService.insertDiaryEntries(_entries);
+      if (snapshot.value != null) {
+        Map<dynamic, dynamic> notesMap = snapshot.value as Map<dynamic, dynamic>;
+
+        for (var noteId in notesMap.keys) {
+          String noteContent = notesMap[noteId]['note'];
+          print('--------note----------${noteContent}');
+
+          // Check if the note already exists in the local database
+          bool noteExists = await _dbHelper.noteExists(userId, noteId);
+
+          if (noteExists) {
+            // Update the existing note
+            await _dbHelper.updateNote(userId, noteId, noteContent, true);
+          } else {
+            // Insert the note into the local database if it doesn't exist
+            await _dbHelper.insertNote(userId, noteId, noteContent, true);
+          }
+        }
+
+        // Update the local notes list
+        _notes = await _dbHelper.getNotes(userId);
+        print('=========NOTES===========${_notes.length}');
+        print('=========NOTES===========$_notes');
         notifyListeners();
       }
+    } catch (e) {
+      print('Error fetching notes: $e');
     }
   }
 
-  Future<void> addEntry(String userId, DiaryEntry entry) async {
-    _entries.add(entry);
-    await _localDBService.insertDiaryEntry(entry);
-    notifyListeners();
+  // Save a note locally and sync with Firebase
+  Future<void> saveNote(String userId, String note) async {
+    String noteId = DateTime.now().millisecondsSinceEpoch.toString();
 
-    if (userId.isNotEmpty) {
-      Timer.periodic(Duration(seconds: 10), (timer) async {
-        await _firebaseService.uploadDiaryEntry(userId, entry);
-        timer.cancel();
-      });
+    // Save the note locally
+    await _dbHelper.insertNote(userId, noteId, note, false);
+
+    // Check internet connection
+    var connectivityResult = await _connectivity.checkConnectivity();
+    bool isOnline = connectivityResult != ConnectivityResult.none;
+
+    if (isOnline) {
+      // Save the note to Firebase
+      await _databaseRef.child('User/$userId/Note/$noteId').set({'note': note});
+      await _dbHelper.updateSyncStatus(noteId, true); // Mark as synced
     }
+
+    // Update the local notes list
+    _notes = await _dbHelper.getNotes(userId);
+
+    notifyListeners();
+  }
+
+  // Sync unsynced notes with Firebase
+  Future<void> syncUnsyncedNotes(String userId) async {
+    List<Map<String, dynamic>> unsyncedNotes = await _dbHelper.getUnsyncedNotes();
+
+    for (var note in unsyncedNotes) {
+      String noteId = note['noteId'];
+      String noteContent = note['note'];
+
+      await _databaseRef.child('User/$userId/Note/$noteId').set({'note': noteContent});
+      await _dbHelper.updateSyncStatus(noteId, true); // Mark as synced
+    }
+
+    // Update the local notes list
+    _notes = await _dbHelper.getNotes(userId);
+    notifyListeners();
   }
 }

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:unicap_cg/controllers/auth_controller.dart';
+import 'package:unicap_cg/controllers/diary_controller.dart';
+import 'package:unicap_cg/services/auth_service.dart';
+import 'package:unicap_cg/views/caption_category.dart';
 import '../controllers/caption_controller.dart';
 import 'caption_screen.dart';
 import 'diary_screen.dart';
@@ -16,21 +20,27 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    print('-------inside initState----------------------');
     Provider.of<CaptionController>(context, listen: false).loadCategories();
+
+    /// Get Notes
+    final AuthController authController = Provider.of<AuthController>(context, listen: false);
+    if(authController.isLoggedIn){
+      String? userId = authController.user?.uid;
+      Provider.of<DiaryController>(context, listen: false).fetchAndSaveNotes(userId ?? '');
+    }
+
   }
 
   // List of screens for navigation
   final List<Widget> _screens = [
+    CaptionCategory(),
     DiaryScreen(),
-    CaptionListScreen(),
     LoginScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Caption App")),
       body: _screens[_selectedIndex], // Display selected screen
 
       // ✅ Bottom Navigation Bar
@@ -43,12 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Diary',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.category),
             label: 'Captions',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Diary',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.login),
@@ -56,35 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-    );
-  }
-}
-
-// ✅ Caption List Screen (Updated to be used inside navigation)
-class CaptionListScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final captionController = Provider.of<CaptionController>(context);
-
-    return captionController.categories.isEmpty
-        ? Center(child: CircularProgressIndicator())
-        : ListView.builder(
-      itemCount: captionController.categories.length,
-      itemBuilder: (context, index) {
-        final category = captionController.categories[index];
-        return ListTile(
-          title: Text(category.name ?? ''),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    CaptionScreen(categoryId: category.name ?? ''),
-              ),
-            );
-          },
-        );
-      },
     );
   }
 }

@@ -9,6 +9,6 @@ import '../services/local_db_service.dart';
 
 List<SingleChildWidget> appProviders = [
   ChangeNotifierProvider(create: (context) => AuthController(AuthService())),
-  ChangeNotifierProvider(create: (context) => DiaryController(FirebaseService(), LocalDBService())),
+  ChangeNotifierProvider(create: (context) => DiaryController()),
   ChangeNotifierProvider(create: (context) => CaptionController(FirebaseService(), LocalDBService())),
 ];

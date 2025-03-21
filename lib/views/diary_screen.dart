@@ -1,68 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../controllers/diary_controller.dart';
-import '../models/diary_entry.dart';
-import 'package:uuid/uuid.dart';
+import 'package:unicap_cg/controllers/auth_controller.dart';
+import 'package:unicap_cg/controllers/diary_controller.dart';
 
-class DiaryScreen extends StatefulWidget {
-  @override
-  _DiaryScreenState createState() => _DiaryScreenState();
-}
+class DiaryScreen extends StatelessWidget {
 
-class _DiaryScreenState extends State<DiaryScreen> {
-  final _titleController = TextEditingController();
-  final _contentController = TextEditingController();
+  const DiaryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final diaryController = Provider.of<DiaryController>(context);
+   String? userId = Provider.of<AuthController>(context, listen: false).user?.uid;
 
-    return Scaffold(
-      appBar: AppBar(title: Text("Diary")),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: TextField(
-              controller: _titleController,
-              decoration: InputDecoration(labelText: "Title"),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: TextField(
-              controller: _contentController,
-              decoration: InputDecoration(labelText: "Write your diary..."),
-              maxLines: 5,
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final entry = DiaryEntry(
-                id: Uuid().v4(),
-                title: _titleController.text,
-                content: _contentController.text,
-                date: DateTime.now(),
+    return ChangeNotifierProvider(
+      create: (_) => DiaryController()..fetchAndSaveNotes(userId ?? ''),
+      child: Scaffold(
+        appBar: AppBar(title: Text('Diary')),
+        body: Consumer<DiaryController>(
+          builder: (context, diaryController, child) {
+            if (diaryController.notes.isEmpty) {
+              return Center(child: Text('No notes found.'));
+            } else {
+              return ListView.builder(
+                itemCount: diaryController.notes.length,
+                itemBuilder: (context, index) {
+                  final note = diaryController.notes[index];
+                  return ListTile(
+                    title: Text(note['note']),
+                    subtitle: Text(note['isSynced'] == 1 ? 'Synced' : 'Not Synced'),
+                  );
+                },
               );
-              diaryController.addEntry("", entry); // "" since we aren't checking login yet
-              _titleController.clear();
-              _contentController.clear();
-            },
-            child: Text("Save"),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: diaryController.entries.length,
-              itemBuilder: (context, index) {
-                final entry = diaryController.entries[index];
-                return ListTile(
-                  title: Text(entry.title),
-                  subtitle: Text(entry.content),
-                );
-              },
-            ),
-          ),
-        ],
+            }
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            String note = 'Sample note content';
+            await Provider.of<DiaryController>(context, listen: false).saveNote(userId ?? '', note);
+          },
+          child: Icon(Icons.add),
+        ),
       ),
     );
   }

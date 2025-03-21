@@ -4,6 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthController extends ChangeNotifier {
   final AuthService _authService;
+
+  AuthController(this._authService) {
+    _user = _authService.currentUser;
+    _checkLoginStatus();
+  }
+
   User? _user;
   bool _isLoggedIn = false;
   String? _errorMessage;
@@ -13,10 +19,6 @@ class AuthController extends ChangeNotifier {
   bool get isVerified => _user?.emailVerified ?? false;
   String? get errorMessage => _errorMessage;
 
-  AuthController(this._authService) {
-    _user = _authService.currentUser;
-    _checkLoginStatus();
-  }
 
   Future<void> _checkLoginStatus() async {
     _isLoggedIn = await _authService.checkLoginStatus();
