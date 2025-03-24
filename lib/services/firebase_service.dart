@@ -1,27 +1,20 @@
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:unicap_cg/data/local/databse_helper.dart';
 import '../models/diary_entry.dart';
 import '../models/caption_category.dart';
 import '../models/caption.dart';
 
 class FirebaseService {
-  final DatabaseReference _db = FirebaseDatabase.instance.ref();
+  final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final Connectivity _connectivity = Connectivity();
 
-  Future<void> uploadDiaryEntry(String userId, DiaryEntry entry) async {
-    await _db.child('users/$userId/diary/${entry.id}').set(entry.toMap());
-  }
-
-  Future<List<DiaryEntry>> fetchDiaryEntries(String userId) async {
-    final snapshot = await _db.child('users/$userId/diary').get();
-    if (!snapshot.exists) return [];
-    return (snapshot.value as Map).values.map((e) =>
-        DiaryEntry.fromMap(Map<String, dynamic>.from(e))).toList();
-  }
-
-
+  /// Caption
   Future<List<CaptionCategory>> fetchCategories() async {
-    final DatabaseReference databaseRef = _db.child("Omnia").child("AllCaptions");
+    final DatabaseReference databaseRef = _databaseRef.child("Omnia").child("AllCaptions");
     //for caching data
     databaseRef.keepSynced(true);
 
@@ -51,10 +44,54 @@ class FirebaseService {
     return categories;
   }
 
-  //
-  // Future<List<Caption>> fetchCaptions(String categoryId) async {
-  //   final snapshot = await _db.child('captions/$categoryId').get();
-  //   if (!snapshot.exists) return [];
-  //   return (snapshot.value as Map).values.map((e) => Caption.fromMap(Map<String, dynamic>.from(e))).toList();
-  // }
+
+  /// Diary
+  // Fetch notes from Firebase and save/update them locally
+  Future<Map<dynamic, dynamic>?> fetchAndSaveNotes(String userId) async {
+    try {
+      DatabaseEvent event = await _databaseRef.child('User/$userId/Note').once();
+      DataSnapshot snapshot = event.snapshot;
+
+      if (snapshot.value != null) {
+        final Map<dynamic, dynamic> notesMap = snapshot.value as Map<dynamic, dynamic>;
+        return notesMap;
+      }
+
+      return null;
+    } catch (e) {
+      print('Error fetching notes: $e');
+      return null;
+    }
+  }
+
+  // Save a note locally and sync with Firebase
+  Future<void> saveNote(String userId, String note) async {
+    String noteId = DateTime.now().millisecondsSinceEpoch.toString();
+
+    // Save the note locally
+    await _dbHelper.insertNote(userId, noteId, note, false);
+
+    // Check internet connection
+    var connectivityResult = await _connectivity.checkConnectivity();
+    bool isOnline = connectivityResult != ConnectivityResult.none;
+
+    if (isOnline) {
+      // Save the note to Firebase
+      await _databaseRef.child('User/$userId/Note/$noteId').set({'note': note});
+      await _dbHelper.updateSyncStatus(noteId, true); // Mark as synced
+    }
+  }
+
+  // Sync unsynced notes with Firebase
+  Future<void> syncUnsyncedNotes(String userId) async {
+    List<Map<String, dynamic>> unsyncedNotes = await _dbHelper.getUnsyncedNotes();
+
+    for (var note in unsyncedNotes) {
+      String noteId = note['noteId'];
+      String noteContent = note['note'];
+
+      await _databaseRef.child('User/$userId/Note/$noteId').set({'note': noteContent});
+      await _dbHelper.updateSyncStatus(noteId, true); // Mark as synced
+    }
+  }
 }
