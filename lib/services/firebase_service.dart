@@ -65,11 +65,11 @@ class FirebaseService {
   }
 
   // Save a note locally and sync with Firebase
-  Future<void> saveNote(String userId, String note) async {
+  Future<void> saveNote(String userId,String noteName, String note) async {
     String noteId = DateTime.now().millisecondsSinceEpoch.toString();
 
     // Save the note locally
-    await _dbHelper.insertNote(userId, noteId, note, false);
+    await _dbHelper.insertNote(userId, noteId, noteName, note, false);
 
     // Check internet connection
     var connectivityResult = await _connectivity.checkConnectivity();
@@ -77,7 +77,7 @@ class FirebaseService {
 
     if (isOnline) {
       // Save the note to Firebase
-      await _databaseRef.child('User/$userId/Note/$noteId').set({'note': note});
+      await _databaseRef.child('User/$userId/Note/$noteId').set({'name': noteName, 'note': note});
       await _dbHelper.updateSyncStatus(noteId, true); // Mark as synced
     }
   }

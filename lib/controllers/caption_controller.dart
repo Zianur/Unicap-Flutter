@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/caption_category.dart';
 import '../services/firebase_service.dart';
-import '../services/local_db_service.dart';
 
 class CaptionCategoryController extends ChangeNotifier {
   final FirebaseService _firebaseService;
-  final LocalDBService _localDBService;
 
   List<CaptionCategory> _categories = [];
   List<CaptionCategory> get categories => _categories;
@@ -13,7 +11,7 @@ class CaptionCategoryController extends ChangeNotifier {
   List<Caption> _captions = [];
   List<Caption> get captions => _captions;
 
-  CaptionCategoryController(this._firebaseService, this._localDBService);
+  CaptionCategoryController(this._firebaseService);
 
   Future<void> loadCategories() async {
 

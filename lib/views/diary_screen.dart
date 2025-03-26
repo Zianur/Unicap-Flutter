@@ -25,8 +25,18 @@ class DiaryScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final note = diaryController.notes[index];
                   return ListTile(
-                    title: Text(note['note']),
-                    subtitle: Text(note['isSynced'] == 1 ? 'Synced' : 'Not Synced'),
+                    title: Column(
+                      children: [
+                        Text(note.noteId),
+                        SizedBox(height: 5),
+
+                        Text(note.noteName),
+                        SizedBox(height: 5),
+
+                        Text(note.note)
+                      ],
+                    ),
+                    subtitle: Text(note.isSynced ? 'Synced' : 'Not Synced'),
                   );
                 },
               );
@@ -35,8 +45,9 @@ class DiaryScreen extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
+            String noteName = 'note name';
             String note = 'Sample note content';
-            await Provider.of<DiaryController>(context, listen: false).saveNote(userId ?? '', note);
+            await Provider.of<DiaryController>(context, listen: false).saveNote(userId ?? '', noteName, note);
           },
           child: Icon(Icons.add),
         ),
