@@ -65,8 +65,8 @@ class FirebaseService {
   }
 
   // Save a note locally and sync with Firebase
-  Future<void> saveNote(String userId,String noteName, String note) async {
-    String noteId = DateTime.now().millisecondsSinceEpoch.toString();
+  Future<void> saveNote(String userId, String noteId, String noteName, String note) async {
+
 
     // Save the note locally
     await _dbHelper.insertNote(userId, noteId, noteName, note, false);
