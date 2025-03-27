@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/diary_controller.dart';
@@ -99,75 +100,151 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       )),
                 )
               else
-                SliverGrid(
-                  delegate: SliverChildBuilderDelegate(
-                    childCount: diaryController.notes.length,
-                        (BuildContext context, int index) {
-                      var diary = diaryController.notes[index];
+                SliverMasonryGrid.count(
+                  crossAxisCount: 2, // Number of columns
+                  mainAxisSpacing: 10, // Vertical spacing
+                  crossAxisSpacing: 5, // Horizontal spacing
+                  childCount: diaryController.notes.length,
+                  itemBuilder: (context, index){
+                    var diary = diaryController.notes[index];
 
-                      return Card(
-                        elevation: 10,
-                        shadowColor: Colors.blue,
-                        margin: const EdgeInsets.all(8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
+                    return Card(
+                      elevation: 10,
+                      shadowColor: Colors.blue.withValues(alpha: 0.1),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                IconButton(
-                                  onPressed: () {
-                                    ///todo - need to delete note here
-                                    // diaryController
-                                    //     .delete(task.id);
-                                  },
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
+                                Text(
+                                  diary.noteName,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
                                   ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+
+                                Text(
+                                  diary.note,
+                                  maxLines: 5,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 5),
+                                  child: Divider(height: 5,thickness: 1,color: Theme.of(context).primaryColor),
+                                ),
+
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text(diary.isSynced ? 'Synced' : 'Unsynced'),
+
+                                    IconButton(
+                                      onPressed: () {
+                                        ///todo - need to delete note here
+                                        // diaryController
+                                        //     .delete(task.id);
+                                      },
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 10),
-
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10, right: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    diary.noteName,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Divider(height: 5,thickness: 1,color: Theme.of(context).primaryColor),
-                                  const SizedBox(height: 10),
-
-                                  Text(
-                                    diary.note,
-                                    maxLines: 3,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                  ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
+
+                // SliverGrid(
+                //   delegate: SliverChildBuilderDelegate(
+                //     childCount: diaryController.notes.length,
+                //         (BuildContext context, int index) {
+                //       var diary = diaryController.notes[index];
+                //
+                //       return Card(
+                //         elevation: 10,
+                //         shadowColor: Colors.blue.withValues(alpha: 0.1),
+                //         child: Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //
+                //             Padding(
+                //               padding: const EdgeInsets.symmetric(vertical: 10),
+                //               child: Column(
+                //                 crossAxisAlignment: CrossAxisAlignment.start,
+                //                 children: [
+                //                   Text(
+                //                     diary.noteName,
+                //                     maxLines: 2,
+                //                     style: TextStyle(
+                //                       fontSize: 14,
+                //                       fontWeight: FontWeight.bold,
+                //                     ),
+                //                     overflow: TextOverflow.ellipsis,
+                //                   ),
+                //
+                //                   Text(
+                //                     diary.note,
+                //                     maxLines: 5,
+                //                     style: TextStyle(
+                //                       fontSize: 12,
+                //                     ),
+                //                     overflow: TextOverflow.ellipsis,
+                //                   ),
+                //
+                //                   Padding(
+                //                     padding: const EdgeInsets.symmetric(vertical: 5),
+                //                     child: Divider(height: 5,thickness: 1,color: Theme.of(context).primaryColor),
+                //                   ),
+                //
+                //                   Row(
+                //                     mainAxisAlignment:
+                //                     MainAxisAlignment.spaceAround,
+                //                     children: [
+                //                       Text(diary.isSynced ? 'Synced' : 'Unsynced'),
+                //
+                //                       IconButton(
+                //                         onPressed: () {
+                //                           ///todo - need to delete note here
+                //                           // diaryController
+                //                           //     .delete(task.id);
+                //                         },
+                //                         icon: const Icon(
+                //                           Icons.delete,
+                //                           color: Colors.red,
+                //                         ),
+                //                       ),
+                //                     ],
+                //                   ),
+                //                 ],
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       );
+                //     },
+                //   ),
+                //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                //     crossAxisCount: 2,
+                //   ),
+                // ),
             ]);
           },
       ),
@@ -175,7 +252,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
         onPressed: () async {
           String noteName = 'note name';
           String note = 'Sample note content';
-          await Provider.of<DiaryController>(context, listen: false).saveNote(userId ?? '', noteName, note);
+          await Provider.of<DiaryController>(context, listen: false).saveNote(userId ?? 'guest', noteName, note);
         },
         child: Icon(Icons.add),
       ),
