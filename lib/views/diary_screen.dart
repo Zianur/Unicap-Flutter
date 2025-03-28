@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/diary_controller.dart';
 import 'package:unicap_cg/models/diary_entry.dart';
@@ -86,35 +87,33 @@ class _DiaryScreenState extends State<DiaryScreen> {
                   ),
                 ),
               ),
-              if (diaryController.notes.isEmpty)
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                      height: 400,
-                      child: Center(
-                        child: Text(
-                          'No Diary Available',
-                          style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      )),
-                )
-              else
-                SliverPadding(
+              diaryController.notes != null ? (diaryController.notes?.isNotEmpty ?? false)
+                  ? SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   sliver: SliverMasonryGrid.count(
                     crossAxisCount: 2, // Number of columns
                     mainAxisSpacing: 8, // Vertical spacing
                     crossAxisSpacing: 8, // Horizontal spacing
-                    childCount: diaryController.notes.length,
+                    childCount: diaryController.notes?.length,
                     itemBuilder: (context, index){
-                      var diary = diaryController.notes[index];
+                      var diary = diaryController.notes?[index];
 
-                      return _DiaryWidget(diary: diary, index: index);
+                      return _DiaryWidget(diary: diary!, index: index);
                     },
                   ),
-                ),
+                ) : SliverToBoxAdapter(
+                child: SizedBox(
+                    height: 400,
+                    child: Center(
+                      child: Text(
+                        'No Diary Available',
+                        style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )),
+              ) : _DiaryShimmer(),
             ]);
           },
       ),
@@ -204,6 +203,35 @@ class _DiaryWidget extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+
+class _DiaryShimmer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      sliver: SliverMasonryGrid.count(
+        crossAxisCount: 2, // Number of columns
+        mainAxisSpacing: 8, // Vertical spacing
+        crossAxisSpacing: 8, // Horizontal spacing
+        itemBuilder: (context, index) {
+          return Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(
+              height: index.isEven ? 120 : 160, // Varying height for masonry effect
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        },
+        childCount: 10,
       ),
     );
   }

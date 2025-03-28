@@ -11,13 +11,15 @@ class DiaryController with ChangeNotifier {
   FirebaseService firebaseService = FirebaseService();
 
   // List of notes
-  List<DiaryEntry> _notes = [];
-  List<DiaryEntry> get notes => _notes;
+  List<DiaryEntry>? _notes;
+  List<DiaryEntry>? get notes => _notes;
 
   // Fetch notes from Firebase and save/update them locally
   Future<void> fetchAndSaveNotes(String userId) async {
     try {
+      _notes = null;
       Map<dynamic, dynamic>? notesMap = await firebaseService.fetchAndSaveNotes(userId);
+
       for (var noteId in notesMap?.keys ?? {}) {
         String noteName = notesMap?[noteId]['name'] ?? 'noteName';
         String noteContent = notesMap?[noteId]['note'];
@@ -25,7 +27,6 @@ class DiaryController with ChangeNotifier {
 
         // Check if the note already exists in the local database
         bool noteExists = await _dbHelper.noteExists(userId, noteId);
-
         if (noteExists) {
           // Update the existing note
           await _dbHelper.updateNote(userId, noteId, noteName, noteContent, true);
@@ -34,11 +35,13 @@ class DiaryController with ChangeNotifier {
           await _dbHelper.insertNote(userId, noteId, noteName, noteContent, true);
         }
       }
+
       // Update the local notes list
       List<Map<String, dynamic>> mapList = await _dbHelper.getNotes(userId);
       _notes = mapList.map((element)=> DiaryEntry.fromMap(element)).toList();
-      debugPrint('=========NOTES===========${_notes.length}');
+      debugPrint('=========NOTES===========${_notes?.length}');
       debugPrint('=========NOTES===========$_notes');
+
       notifyListeners();
     } catch (e) {
       debugPrint('=========Error fetching notes=======: $e');
@@ -60,7 +63,6 @@ class DiaryController with ChangeNotifier {
       // Insert the note into the local database if it doesn't exist
       await _dbHelper.insertNote(userId, noteId, noteName, note, isOnline ? true : false);
     }
-
     if(isOnline){
       await firebaseService.saveNote(userId, noteId, noteName, note);
     }
@@ -80,7 +82,7 @@ class DiaryController with ChangeNotifier {
      await getAllNotesFromLocal(userId);
     }
     else{
-      _notes = _notes.where((note) {
+      _notes = _notes?.where((note) {
         final titleMatches = note.noteName.toLowerCase().contains(queryText.toLowerCase());
         final contentMatches = note.note.toLowerCase().contains(queryText.toLowerCase());
         return titleMatches || contentMatches;
