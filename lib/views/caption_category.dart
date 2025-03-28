@@ -1,42 +1,225 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
-import 'package:unicap_cg/controllers/caption_controller.dart';
-import 'package:unicap_cg/views/caption_screen.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:unicap_cg/controllers/caption_category_controller.dart';
+import 'package:unicap_cg/models/caption_category.dart';
 
-class CaptionCategory extends StatefulWidget {
-  const CaptionCategory({super.key});
+class CaptionCategoryView extends StatefulWidget {
+  const CaptionCategoryView({super.key});
 
   @override
-  State<CaptionCategory> createState() => _CaptionCategoryState();
+  State<CaptionCategoryView> createState() => _CaptionCategoryState();
 }
 
-class _CaptionCategoryState extends State<CaptionCategory> {
+class _CaptionCategoryState extends State<CaptionCategoryView> {
   @override
   Widget build(BuildContext context) {
-    final captionController = Provider.of<CaptionCategoryController>(context);
 
-    return Scaffold(
-      appBar: AppBar(title: Text("Caption Category")),
-      body: captionController.categories.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        itemCount: captionController.categories.length,
-        itemBuilder: (context, index) {
-          final category = captionController.categories[index];
-          return ListTile(
-            title: Text(category.name ?? ''),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      CaptionScreen(categoryId: category.name ?? ''),
+    return CustomScrollView(slivers: [
+      Consumer<CaptionCategoryController>(
+          builder: (_, captionCategoryController, __) {
+            return SliverAppBar(
+              backgroundColor: Colors.deepPurpleAccent,
+              floating: true,
+              pinned: true,
+              snap: true,
+              collapsedHeight: 80,
+              expandedHeight: 80,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  width: double.infinity,
+                  height: 50,
+                  color: Colors.deepPurpleAccent,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    elevation: 20,
+                    color: Colors.white,
+                    child: Center(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            flex: 6,
+                            child: TextField(
+                              textInputAction: TextInputAction.go,
+                              /// todo - need to update this
+                              // onChanged: (String value)=> captionCategoryController.filterNotes(queryText: value, userId: userId ?? 'guest'),
+                              style: const TextStyle(fontSize: 12, color: Colors.black),
+                              decoration: InputDecoration(
+                                hintText: "Search Diary",
+                                hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.only( left: 10, bottom: 5),
+                              ),
+                            ),
+                          ),
+                          const Expanded(
+                            flex: 1,
+                            child: Icon(
+                              Icons.search,
+                              color: Colors.black38,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              );
-            },
-          );
-        },
+              ),
+            );
+          }
+      ),
+
+      Consumer<CaptionCategoryController>(
+          builder: (_, captionCategoryController, __) {
+            return captionCategoryController.categories != null ? (captionCategoryController.categories?.isNotEmpty ?? false)
+                ? SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              sliver: SliverMasonryGrid.count(
+                crossAxisCount: 2, // Number of columns
+                mainAxisSpacing: 8, // Vertical spacing
+                crossAxisSpacing: 8, // Horizontal spacing
+                childCount: captionCategoryController.categories?.length,
+                itemBuilder: (context, index){
+                  CaptionCategory? category = captionCategoryController.categories?[index];
+
+                  return _CategoryWidget(category: category!, index: index);
+                },
+              ),
+            ) : SliverToBoxAdapter(
+              child: SizedBox(
+                  height: 400,
+                  child: Center(
+                    child: Text(
+                      'No Category Available',
+                      style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  )),
+            ) : SliverToBoxAdapter(child: _CategoryCardShimmer());
+          }
+      ),
+    ]);
+  }
+}
+
+class _CategoryWidget extends StatelessWidget {
+  const _CategoryWidget({
+    required this.category,
+    required this.index,
+  });
+
+  final CaptionCategory category;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 8,
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                border: Border.all(color: Theme.of(context).primaryColor, width: 2)
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: CachedNetworkImage(
+                  imageUrl: category.imageUrl ?? '',
+                  placeholder: (context, url) => Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  ),
+                  fit: BoxFit.cover,
+                  height: 70,
+                  width: 70,
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Divider(height: 5,thickness: 1, color: Theme.of(context).disabledColor),
+            ),
+
+            Text(category.name ?? '', style: TextStyle(
+                fontSize: 20,
+            )),
+          ],
+        ),
       ),
     );
   }
 }
+
+class _CategoryCardShimmer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 8,
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Shimmering Circular Image
+            Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Container(
+                height: 70,
+                width: 70,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Theme.of(context).disabledColor,
+                    width: 1,
+                  ),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Divider(
+                height: 5,
+                thickness: 1,
+                color: Theme.of(context).disabledColor,
+              ),
+            ),
+
+            // Shimmering Category Name
+            Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Container(
+                height: 20,
+                width: 100, // Placeholder width
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

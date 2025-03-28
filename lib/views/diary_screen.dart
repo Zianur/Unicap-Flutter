@@ -31,92 +31,96 @@ class _DiaryScreenState extends State<DiaryScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      // appBar: AppBar(title: Text('Diary')),
-      body: Consumer<DiaryController>(
-        builder: (_, diaryController, __) {
-            return CustomScrollView(slivers: [
-              SliverAppBar(
-                backgroundColor: Colors.deepPurpleAccent,
-                floating: true,
-                pinned: true,
-                snap: true,
-                collapsedHeight: 80,
-                expandedHeight: 80,
-                flexibleSpace: FlexibleSpaceBar(
-                  centerTitle: true,
-                  title: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    width: double.infinity,
-                    height: 50,
-                    color: Colors.deepPurpleAccent,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      elevation: 20,
-                      color: Colors.white,
-                      child: Center(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              flex: 6,
-                              child: TextField(
-                                textInputAction: TextInputAction.go,
-                                onChanged: (String value)=> diaryController.filterNotes(queryText: value, userId: userId ?? 'guest'),
-                                style: const TextStyle(fontSize: 12, color: Colors.black),
-                                decoration: InputDecoration(
-                                  hintText: "Search Diary",
-                                  hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
-                                  border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.only( left: 10, bottom: 5),
-                                ),
+      body: CustomScrollView(slivers: [
+        Consumer<DiaryController>(
+          builder: (_, diaryController, __) {
+            return SliverAppBar(
+              backgroundColor: Colors.deepPurpleAccent,
+              floating: true,
+              pinned: true,
+              snap: true,
+              collapsedHeight: 80,
+              expandedHeight: 80,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  width: double.infinity,
+                  height: 50,
+                  color: Colors.deepPurpleAccent,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    elevation: 20,
+                    color: Colors.white,
+                    child: Center(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            flex: 6,
+                            child: TextField(
+                              textInputAction: TextInputAction.go,
+                              onChanged: (String value)=> diaryController.filterNotes(queryText: value, userId: userId ?? 'guest'),
+                              style: const TextStyle(fontSize: 12, color: Colors.black),
+                              decoration: InputDecoration(
+                                hintText: "Search Diary",
+                                hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.only( left: 10, bottom: 5),
                               ),
                             ),
-                            const Expanded(
-                              flex: 1,
-                              child: Icon(
-                                Icons.search,
-                                color: Colors.black38,
-                              ),
+                          ),
+                          const Expanded(
+                            flex: 1,
+                            child: Icon(
+                              Icons.search,
+                              color: Colors.black38,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
               ),
-              diaryController.notes != null ? (diaryController.notes?.isNotEmpty ?? false)
-                  ? SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  sliver: SliverMasonryGrid.count(
-                    crossAxisCount: 2, // Number of columns
-                    mainAxisSpacing: 8, // Vertical spacing
-                    crossAxisSpacing: 8, // Horizontal spacing
-                    childCount: diaryController.notes?.length,
-                    itemBuilder: (context, index){
-                      var diary = diaryController.notes?[index];
+            );
+          }
+        ),
 
-                      return _DiaryWidget(diary: diary!, index: index);
-                    },
-                  ),
-                ) : SliverToBoxAdapter(
-                child: SizedBox(
-                    height: 400,
-                    child: Center(
-                      child: Text(
-                        'No Diary Available',
-                        style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    )),
-              ) : _DiaryShimmer(),
-            ]);
-          },
-      ),
+        Consumer<DiaryController>(
+          builder: (_, diaryController, __) {
+            return diaryController.notes != null ? (diaryController.notes?.isNotEmpty ?? false)
+                ? SliverPadding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                sliver: SliverMasonryGrid.count(
+                  crossAxisCount: 2, // Number of columns
+                  mainAxisSpacing: 8, // Vertical spacing
+                  crossAxisSpacing: 8, // Horizontal spacing
+                  childCount: diaryController.notes?.length,
+                  itemBuilder: (context, index){
+                    var diary = diaryController.notes?[index];
+
+                    return _DiaryWidget(diary: diary!, index: index);
+                  },
+                ),
+              ) : SliverToBoxAdapter(
+              child: SizedBox(
+                  height: 400,
+                  child: Center(
+                    child: Text(
+                      'No Diary Available',
+                      style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  )),
+            ) : _DiaryShimmer();
+          }
+        ),
+      ]),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           String noteName = 'note name';

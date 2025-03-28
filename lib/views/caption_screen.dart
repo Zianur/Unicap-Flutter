@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../controllers/caption_controller.dart';
+import '../controllers/caption_category_controller.dart';
 
 class CaptionScreen extends StatefulWidget {
   final String categoryId;
