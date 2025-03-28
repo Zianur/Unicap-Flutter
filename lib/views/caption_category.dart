@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:unicap_cg/common/basewidgets/color_animated_text.dart';
 import 'package:unicap_cg/controllers/caption_category_controller.dart';
 import 'package:unicap_cg/models/caption_category.dart';
 
@@ -21,7 +22,7 @@ class _CaptionCategoryState extends State<CaptionCategoryView> {
       Consumer<CaptionCategoryController>(
           builder: (_, captionCategoryController, __) {
             return SliverAppBar(
-              backgroundColor: Colors.deepPurpleAccent,
+              backgroundColor: Theme.of(context).primaryColor,
               floating: true,
               pinned: true,
               snap: true,
@@ -33,7 +34,7 @@ class _CaptionCategoryState extends State<CaptionCategoryView> {
                   margin: EdgeInsets.symmetric(horizontal: 10),
                   width: double.infinity,
                   height: 50,
-                  color: Colors.deepPurpleAccent,
+                  color: Theme.of(context).primaryColor,
                   child: Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5),
@@ -132,6 +133,7 @@ class _CategoryWidget extends StatelessWidget {
           children: [
 
             Container(
+              alignment: Alignment.center,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
                 border: Border.all(color: Theme.of(context).primaryColor, width: 2)
@@ -159,9 +161,7 @@ class _CategoryWidget extends StatelessWidget {
               child: Divider(height: 5,thickness: 1, color: Theme.of(context).disabledColor),
             ),
 
-            Text(category.name ?? '', style: TextStyle(
-                fontSize: 20,
-            )),
+            ColorAnimatedText(text: category.name ?? ''),
           ],
         ),
       ),
