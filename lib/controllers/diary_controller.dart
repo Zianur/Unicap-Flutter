@@ -21,7 +21,7 @@ class DiaryController with ChangeNotifier {
       for (var noteId in notesMap?.keys ?? {}) {
         String noteName = notesMap?[noteId]['name'] ?? 'noteName';
         String noteContent = notesMap?[noteId]['note'];
-        print('--------note----------${noteId}');
+        debugPrint('--------note----------${noteId}');
 
         // Check if the note already exists in the local database
         bool noteExists = await _dbHelper.noteExists(userId, noteId);
@@ -37,11 +37,11 @@ class DiaryController with ChangeNotifier {
       // Update the local notes list
       List<Map<String, dynamic>> mapList = await _dbHelper.getNotes(userId);
       _notes = mapList.map((element)=> DiaryEntry.fromMap(element)).toList();
-      print('=========NOTES===========${_notes.length}');
-      print('=========NOTES===========$_notes');
+      debugPrint('=========NOTES===========${_notes.length}');
+      debugPrint('=========NOTES===========$_notes');
       notifyListeners();
     } catch (e) {
-      print('=========Error fetching notes=======: $e');
+      debugPrint('=========Error fetching notes=======: $e');
     }
   }
 
