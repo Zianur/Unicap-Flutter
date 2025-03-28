@@ -1,12 +1,11 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:unicap_cg/data/local/databse_helper.dart';
 import 'package:unicap_cg/models/diary_entry.dart';
 import 'package:unicap_cg/services/firebase_service.dart';
 
 class DiaryController with ChangeNotifier {
-  final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();
+  // final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final Connectivity _connectivity = Connectivity();
   FirebaseService firebaseService = FirebaseService();
@@ -66,6 +65,7 @@ class DiaryController with ChangeNotifier {
       await firebaseService.saveNote(userId, noteId, noteName, note);
     }
 
+    getAllNotesFromLocal(userId);
     notifyListeners();
   }
 
@@ -75,15 +75,15 @@ class DiaryController with ChangeNotifier {
     fetchAndSaveNotes(userId);
   }
 
- void filterNotes({required String queryText, String? userId}) async {
-    if(queryText.isEmpty && userId != null){
+ void filterNotes({required String queryText, required String userId}) async {
+    if(queryText.isEmpty){
      await getAllNotesFromLocal(userId);
     }
     else{
       _notes = _notes.where((note) {
-        final titleMatches = note.noteId.toLowerCase().contains(queryText.toLowerCase());
-        final contentMatches = note.noteId.toLowerCase().contains(queryText.toLowerCase());
-        return titleMatches || contentMatches; // Match if either title or content contains the query
+        final titleMatches = note.noteName.toLowerCase().contains(queryText.toLowerCase());
+        final contentMatches = note.note.toLowerCase().contains(queryText.toLowerCase());
+        return titleMatches || contentMatches;
       }).toList();
     }
 

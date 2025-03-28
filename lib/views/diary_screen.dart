@@ -3,6 +3,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/diary_controller.dart';
+import 'package:unicap_cg/models/diary_entry.dart';
 
 class DiaryScreen extends StatefulWidget {
 
@@ -28,25 +29,25 @@ class _DiaryScreenState extends State<DiaryScreen> {
   @override
   Widget build(BuildContext context) {
 
-
     return Scaffold(
-      appBar: AppBar(title: Text('Diary')),
+      // appBar: AppBar(title: Text('Diary')),
       body: Consumer<DiaryController>(
         builder: (_, diaryController, __) {
             return CustomScrollView(slivers: [
               SliverAppBar(
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.deepPurpleAccent,
                 floating: true,
-                pinned: false,
+                pinned: true,
                 snap: true,
                 collapsedHeight: 80,
                 expandedHeight: 80,
                 flexibleSpace: FlexibleSpaceBar(
                   centerTitle: true,
                   title: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
                     width: double.infinity,
                     height: 50,
-                    color: Colors.blue,
+                    color: Colors.deepPurpleAccent,
                     child: Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
@@ -61,7 +62,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                               flex: 6,
                               child: TextField(
                                 textInputAction: TextInputAction.go,
-                                onChanged: (String value)=> diaryController.filterNotes(queryText: value, userId: userId),
+                                onChanged: (String value)=> diaryController.filterNotes(queryText: value, userId: userId ?? 'guest'),
                                 style: const TextStyle(fontSize: 12, color: Colors.black),
                                 decoration: InputDecoration(
                                   hintText: "Search Diary",
@@ -100,151 +101,20 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       )),
                 )
               else
-                SliverMasonryGrid.count(
-                  crossAxisCount: 2, // Number of columns
-                  mainAxisSpacing: 10, // Vertical spacing
-                  crossAxisSpacing: 5, // Horizontal spacing
-                  childCount: diaryController.notes.length,
-                  itemBuilder: (context, index){
-                    var diary = diaryController.notes[index];
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  sliver: SliverMasonryGrid.count(
+                    crossAxisCount: 2, // Number of columns
+                    mainAxisSpacing: 8, // Vertical spacing
+                    crossAxisSpacing: 8, // Horizontal spacing
+                    childCount: diaryController.notes.length,
+                    itemBuilder: (context, index){
+                      var diary = diaryController.notes[index];
 
-                    return Card(
-                      elevation: 10,
-                      shadowColor: Colors.blue.withValues(alpha: 0.1),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  diary.noteName,
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-
-                                Text(
-                                  diary.note,
-                                  maxLines: 5,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 5),
-                                  child: Divider(height: 5,thickness: 1,color: Theme.of(context).primaryColor),
-                                ),
-
-                                Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Text(diary.isSynced ? 'Synced' : 'Unsynced'),
-
-                                    IconButton(
-                                      onPressed: () {
-                                        ///todo - need to delete note here
-                                        // diaryController
-                                        //     .delete(task.id);
-                                      },
-                                      icon: const Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                      return _DiaryWidget(diary: diary, index: index);
+                    },
+                  ),
                 ),
-
-                // SliverGrid(
-                //   delegate: SliverChildBuilderDelegate(
-                //     childCount: diaryController.notes.length,
-                //         (BuildContext context, int index) {
-                //       var diary = diaryController.notes[index];
-                //
-                //       return Card(
-                //         elevation: 10,
-                //         shadowColor: Colors.blue.withValues(alpha: 0.1),
-                //         child: Column(
-                //           crossAxisAlignment: CrossAxisAlignment.start,
-                //           children: [
-                //
-                //             Padding(
-                //               padding: const EdgeInsets.symmetric(vertical: 10),
-                //               child: Column(
-                //                 crossAxisAlignment: CrossAxisAlignment.start,
-                //                 children: [
-                //                   Text(
-                //                     diary.noteName,
-                //                     maxLines: 2,
-                //                     style: TextStyle(
-                //                       fontSize: 14,
-                //                       fontWeight: FontWeight.bold,
-                //                     ),
-                //                     overflow: TextOverflow.ellipsis,
-                //                   ),
-                //
-                //                   Text(
-                //                     diary.note,
-                //                     maxLines: 5,
-                //                     style: TextStyle(
-                //                       fontSize: 12,
-                //                     ),
-                //                     overflow: TextOverflow.ellipsis,
-                //                   ),
-                //
-                //                   Padding(
-                //                     padding: const EdgeInsets.symmetric(vertical: 5),
-                //                     child: Divider(height: 5,thickness: 1,color: Theme.of(context).primaryColor),
-                //                   ),
-                //
-                //                   Row(
-                //                     mainAxisAlignment:
-                //                     MainAxisAlignment.spaceAround,
-                //                     children: [
-                //                       Text(diary.isSynced ? 'Synced' : 'Unsynced'),
-                //
-                //                       IconButton(
-                //                         onPressed: () {
-                //                           ///todo - need to delete note here
-                //                           // diaryController
-                //                           //     .delete(task.id);
-                //                         },
-                //                         icon: const Icon(
-                //                           Icons.delete,
-                //                           color: Colors.red,
-                //                         ),
-                //                       ),
-                //                     ],
-                //                   ),
-                //                 ],
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       );
-                //     },
-                //   ),
-                //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                //     crossAxisCount: 2,
-                //   ),
-                // ),
             ]);
           },
       ),
@@ -255,6 +125,85 @@ class _DiaryScreenState extends State<DiaryScreen> {
           await Provider.of<DiaryController>(context, listen: false).saveNote(userId ?? 'guest', noteName, note);
         },
         child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class _DiaryWidget extends StatelessWidget {
+  const _DiaryWidget({
+    super.key,
+    required this.diary,
+    required this.index,
+  });
+
+  final DiaryEntry diary;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final int noteMaxLines = (index % 2 == 0) ? 3 : 5;
+
+    return Card(
+      elevation: 8,
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            Text(
+              diary.noteName,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+            SizedBox(height: 5),
+
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                diary.note,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.black.withValues(alpha: 0.5)
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: noteMaxLines,
+                textAlign: TextAlign.right,
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Divider(height: 5,thickness: 1, color: Theme.of(context).disabledColor),
+            ),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+
+                Text(diary.isSynced ? 'Synced' : 'Unsynced', style: TextStyle(
+                  fontSize: 12,
+                  color: diary.isSynced ? Colors.green : Colors.red
+                )),
+
+                InkWell(
+                  onTap: (){},
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.red.withValues(alpha: 0.8),
+                    size: 20,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
