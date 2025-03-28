@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<CaptionController>(context, listen: false).loadCategories();
+    Provider.of<CaptionCategoryController>(context, listen: false).loadCategories();
 
     /// Get Notes
     final AuthController authController = Provider.of<AuthController>(context, listen: false);

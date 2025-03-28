@@ -5,7 +5,7 @@ import '../controllers/caption_controller.dart';
 
 class CaptionScreen extends StatefulWidget {
   final String categoryId;
-  CaptionScreen({required this.categoryId});
+  const CaptionScreen({super.key, required this.categoryId});
 
   @override
   _CaptionScreenState createState() => _CaptionScreenState();
@@ -15,12 +15,11 @@ class _CaptionScreenState extends State<CaptionScreen> {
   @override
   void initState() {
     super.initState();
-    // Provider.of<CaptionController>(context, listen: false).loadCaptions(widget.categoryId);
   }
 
   @override
   Widget build(BuildContext context) {
-    final captionController = Provider.of<CaptionController>(context);
+    final captionController = Provider.of<CaptionCategoryController>(context);
 
     return Scaffold(
       appBar: AppBar(title: Text("Captions")),

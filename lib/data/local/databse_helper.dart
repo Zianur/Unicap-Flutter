@@ -31,6 +31,7 @@ class DatabaseHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId TEXT,
         noteId TEXT,
+        noteName TEXT,
         note TEXT,
         isSynced INTEGER
       )
@@ -38,13 +39,14 @@ class DatabaseHelper {
   }
 
   // Insert a note into the local database
-  Future<void> insertNote(String userId, String noteId, String note, bool isSynced) async {
+  Future<void> insertNote(String userId, String noteId, String noteName, String note, bool isSynced) async {
     final db = await database;
     await db.insert(
       'notes',
       {
         'userId': userId,
         'noteId': noteId,
+        'noteName': noteName,
         'note': note,
         'isSynced': isSynced ? 1 : 0,
       },
@@ -53,11 +55,12 @@ class DatabaseHelper {
   }
 
   // Update an existing note in the local database
-  Future<void> updateNote(String userId, String noteId, String note, bool isSynced) async {
+  Future<void> updateNote(String userId, String noteId, String noteName, String note, bool isSynced) async {
     final db = await database;
     await db.update(
       'notes',
       {
+        'noteName': noteName,
         'note': note,
         'isSynced': isSynced ? 1 : 0,
       },

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/caption_category.dart';
 import '../services/firebase_service.dart';
-import '../services/local_db_service.dart';
 
-class CaptionController extends ChangeNotifier {
+class CaptionCategoryController extends ChangeNotifier {
   final FirebaseService _firebaseService;
-  final LocalDBService _localDBService;
 
   List<CaptionCategory> _categories = [];
   List<CaptionCategory> get categories => _categories;
@@ -13,32 +11,16 @@ class CaptionController extends ChangeNotifier {
   List<Caption> _captions = [];
   List<Caption> get captions => _captions;
 
-  CaptionController(this._firebaseService, this._localDBService);
+  CaptionCategoryController(this._firebaseService);
 
   Future<void> loadCategories() async {
-    print('-------inside load categories----------------------');
-    // Load from local database first
-    // _categories = await _localDBService.getCategories();
-    // notifyListeners();
 
     // Fetch from Firebase and update the local database
-    final onlineCategories = await _firebaseService.fetchCategories();
-    print('----------------checkData------------$onlineCategories}');
-    if (onlineCategories.isNotEmpty) {
-      _categories = onlineCategories;
-      // await _localDBService.insertCategories(_categories);
+    final captionCategories = await _firebaseService.fetchCategories();
+    print('----------------checkData------------$captionCategories}');
+    if (captionCategories.isNotEmpty) {
+      _categories = captionCategories;
       notifyListeners();
     }
   }
-
-  // Future<void> loadCaptions(String categoryId) async {
-  //   // Clear previous captions
-  //   _captions = [];
-  //   notifyListeners();
-  //
-  //   // Fetch from Firebase
-  //   final onlineCaptions = await _firebaseService.fetchCaptions(categoryId);
-  //   _captions = onlineCaptions;
-  //   notifyListeners();
-  // }
 }

@@ -13,7 +13,7 @@ class CaptionCategory extends StatefulWidget {
 class _CaptionCategoryState extends State<CaptionCategory> {
   @override
   Widget build(BuildContext context) {
-    final captionController = Provider.of<CaptionController>(context);
+    final captionController = Provider.of<CaptionCategoryController>(context);
 
     return Scaffold(
       appBar: AppBar(title: Text("Caption Category")),
