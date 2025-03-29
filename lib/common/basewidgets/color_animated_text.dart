@@ -13,7 +13,7 @@ class ColorAnimatedText extends StatelessWidget {
     ), textAlign: TextAlign.center)
         .animate(onPlay: (controller) => controller.repeat()) // Infinite loop
         .shimmer(
-      duration: 2.seconds, // Smooth shimmer effect
+      duration: 3.seconds, // Smooth shimmer effect
       colors: [Theme.of(context).primaryColor, Colors.blue, Colors.deepPurpleAccent],
     );
   }

@@ -19,7 +19,6 @@ class CaptionCategoryController extends ChangeNotifier {
 
       // Fetch from Firebase and update the local database
       final captionCategories = await _firebaseService.fetchCategories();
-      print('----------------checkData------------$captionCategories}');
       if (captionCategories.isNotEmpty) {
         _categories = captionCategories;
       }

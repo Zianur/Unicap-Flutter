@@ -6,6 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:unicap_cg/common/basewidgets/color_animated_text.dart';
 import 'package:unicap_cg/controllers/caption_category_controller.dart';
 import 'package:unicap_cg/models/caption_category.dart';
+import 'package:unicap_cg/views/caption_screen.dart';
 
 class CaptionCategoryView extends StatefulWidget {
   const CaptionCategoryView({super.key});
@@ -123,46 +124,50 @@ class _CategoryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 8,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-
-            Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                border: Border.all(color: Theme.of(context).primaryColor, width: 2)
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: CachedNetworkImage(
-                  imageUrl: category.imageUrl ?? '',
-                  placeholder: (context, url) => Center(
-                    child: CircularProgressIndicator(),
+    return InkWell(
+      onTap: ()=> Navigator.push(context,
+          MaterialPageRoute(builder: (context)=> CaptionScreen(category: category)),
+      ),
+      child: Card(
+        elevation: 8,
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+      
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(color: Theme.of(context).primaryColor, width: 2)
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: CachedNetworkImage(
+                    imageUrl: category.imageUrl ?? '',
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) => Icon(
+                      Icons.error,
+                      color: Colors.red,
+                    ),
+                    fit: BoxFit.cover,
+                    height: 70,
+                    width: 70,
                   ),
-                  errorWidget: (context, url, error) => Icon(
-                    Icons.error,
-                    color: Colors.red,
-                  ),
-                  fit: BoxFit.cover,
-                  height: 70,
-                  width: 70,
                 ),
               ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: Divider(height: 5,thickness: 1, color: Theme.of(context).disabledColor),
-            ),
-
-            ColorAnimatedText(text: category.name ?? ''),
-          ],
+      
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Divider(height: 5,thickness: 1, color: Theme.of(context).disabledColor),
+              ),
+      
+              ColorAnimatedText(text: category.name ?? ''),
+            ],
+          ),
         ),
       ),
     );
