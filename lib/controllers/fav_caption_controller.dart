@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unicap_cg/data/local/databse_helper.dart';
+import 'package:unicap_cg/models/caption_category.dart';
 import 'package:unicap_cg/models/fav_caption.dart';
 import 'package:unicap_cg/services/fav_caption_service.dart';
 
@@ -32,13 +33,12 @@ class FavoriteCaptionController with ChangeNotifier {
     }
   }
 
-  Future<void> addFavorite(String userId, String caption) async {
+  Future<void> addFavorite(String userId, Caption caption) async {
     try {
-      final timestampKey = DateTime.now().millisecondsSinceEpoch.toString();
       await _service.addFavoriteCaption(FavoriteCaption(
         userId: userId,
-        captionId: timestampKey,
-        caption: caption,
+        captionId: caption.key,
+        caption: caption.caption,
         isSynced: true,
       ));
       await loadFavorites(userId);

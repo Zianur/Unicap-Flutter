@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
+import 'package:unicap_cg/controllers/auth_controller.dart';
+import 'package:unicap_cg/controllers/fav_caption_controller.dart';
 import 'package:unicap_cg/models/caption_category.dart';
 import '../controllers/caption_category_controller.dart';
 
@@ -15,9 +17,14 @@ class CaptionScreen extends StatefulWidget {
 }
 
 class _CaptionScreenState extends State<CaptionScreen> {
+  String? userId;
+
   @override
   void initState() {
     super.initState();
+
+    final AuthController authController = Provider.of<AuthController>(context, listen: false);
+    userId = authController.user?.uid;
   }
 
   @override
@@ -128,6 +135,10 @@ class _CaptionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final widthSize = MediaQuery.sizeOf(context).width;
+
+    final AuthController authController = Provider.of<AuthController>(context, listen: false);
+    final String userId = authController.user?.uid ?? '';
+
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5), // No rounded corners
@@ -158,7 +169,12 @@ class _CaptionWidget extends StatelessWidget {
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               IconTextWidget(onTap: (){}, icon: Icons.copy, text: 'Copy'),
 
-              IconTextWidget(onTap: (){}, icon: Icons.favorite, text: 'Favorite'),
+              IconTextWidget(
+                  onTap: (){
+                   Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
+                  },
+                  icon: Icons.favorite, text: 'Favorite',
+              ),
 
               IconTextWidget(onTap: (){}, icon: Icons.share, text: 'Share'),
             ])
