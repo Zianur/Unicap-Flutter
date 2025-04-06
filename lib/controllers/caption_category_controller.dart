@@ -14,6 +14,7 @@ class CaptionCategoryController extends ChangeNotifier {
   CaptionCategoryController(this._firebaseService);
 
   Future<void> loadCategories() async {
+    debugPrint('==============inside loadCategories========');
     try{
       _categories = null;
 

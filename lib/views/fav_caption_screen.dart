@@ -3,21 +3,37 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
+import 'package:unicap_cg/controllers/auth_controller.dart';
+import 'package:unicap_cg/controllers/fav_caption_controller.dart';
 import 'package:unicap_cg/models/caption_category.dart';
+import 'package:unicap_cg/models/fav_caption.dart';
 import '../controllers/caption_category_controller.dart';
 
-class CaptionScreen extends StatefulWidget {
-  final CaptionCategory category;
-  const CaptionScreen({super.key, required this.category});
+class FavCaptionScreen extends StatefulWidget {
+  const FavCaptionScreen({super.key});
 
   @override
-  _CaptionScreenState createState() => _CaptionScreenState();
+  _FavCaptionScreenState createState() => _FavCaptionScreenState();
 }
 
-class _CaptionScreenState extends State<CaptionScreen> {
+class _FavCaptionScreenState extends State<FavCaptionScreen> {
   @override
   void initState() {
     super.initState();
+
+
+    /// Get FavCaptions
+    final AuthController authController = Provider.of<AuthController>(context, listen: false);
+    Future.delayed(Duration.zero, () {
+      if(authController.isLoggedIn){
+        debugPrint('==============before calling loadFavorites========');
+        final String? userId = authController.user?.uid;
+        debugPrint('==============user id========${authController.user?.uid}');
+
+        Provider.of<FavoriteCaptionController>(context, listen: false).loadFavorites(userId ?? '');
+        debugPrint('==============after calling loadFavorites========');
+      }
+    });
   }
 
   @override
@@ -25,8 +41,8 @@ class _CaptionScreenState extends State<CaptionScreen> {
 
     return Scaffold(
       body: CustomScrollView(slivers: [
-        Consumer<CaptionCategoryController>(
-            builder: (_, captionCategoryController, __) {
+        Consumer<FavoriteCaptionController>(
+            builder: (_, favCaptionController, __) {
               return SliverAppBar(
                 automaticallyImplyLeading: false, // Removes back button
                 backgroundColor: Theme.of(context).primaryColor,
@@ -57,7 +73,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
                               child: TextField(
                                 textInputAction: TextInputAction.go,
                                 /// todo - need to update this
-                                // onChanged: (String value)=> captionCategoryController.filterNotes(queryText: value, userId: userId ?? 'guest'),
+                                // onChanged: (String value)=> favCaptionController.filterNotes(queryText: value, userId: userId ?? 'guest'),
                                 style: const TextStyle(fontSize: 12, color: Colors.black),
                                 decoration: InputDecoration(
                                   hintText: "Search Diary",
@@ -84,15 +100,15 @@ class _CaptionScreenState extends State<CaptionScreen> {
             }
         ),
 
-        Consumer<CaptionCategoryController>(
-            builder: (_, captionCategoryController, __) {
-              return widget.category.captions != null ? (widget.category.captions?.isNotEmpty ?? false)
+        Consumer<FavoriteCaptionController>(
+            builder: (_, favCaptionController, __) {
+              return favCaptionController.favorites != null ? (favCaptionController.favorites?.isNotEmpty ?? false)
                   ? SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   sliver: SliverList.separated(
-                    itemCount: widget.category.captions?.length,
+                    itemCount: favCaptionController.favorites?.length,
                     itemBuilder: (context, index){
-                      return _CaptionWidget(caption: widget.category.captions![index], index: index);
+                      return _CaptionWidget(caption: favCaptionController.favorites?[index], index: index);
                     },
                     separatorBuilder: (_, index)=> SizedBox(height: 10),
                   )
@@ -122,7 +138,7 @@ class _CaptionWidget extends StatelessWidget {
     required this.index,
   });
 
-  final Caption caption;
+  final FavoriteCaption? caption;
   final int index;
 
   @override
@@ -147,7 +163,7 @@ class _CaptionWidget extends StatelessWidget {
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: Text(caption.caption, style: TextStyle(
+              child: Text(caption?.caption ?? '', style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
                 color: Colors.white,
