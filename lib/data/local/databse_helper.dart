@@ -159,6 +159,7 @@ class DatabaseHelper {
 
   // Add to your existing DatabaseHelper class
   Future<void> insertFavoriteCaption(FavoriteCaption caption) async {
+    print('============Inside database helper and insertFavoriteCaption=========');
     final db = await database;
     await db.insert(
       'favorite_captions',
@@ -171,7 +172,7 @@ class DatabaseHelper {
     final db = await database;
     await db.delete(
       'favorite_captions',
-      where: 'userId = ? AND timestampKey = ?',
+      where: 'userId = ? AND captionId = ?',
       whereArgs: [userId, timestampKey],
     );
   }
@@ -183,16 +184,17 @@ class DatabaseHelper {
       where: 'userId = ?',
       whereArgs: [userId],
     );
-    return maps.map((map) => FavoriteCaption.fromMap(map)).toList();
+    final List<FavoriteCaption> favCaptions = maps.map((map) => FavoriteCaption.fromMap(map)).toList();
+    return favCaptions;
   }
 
-  Future<void> markFavoriteAsSynced(String userId, String timestampKey) async {
+  Future<void> markFavoriteAsSynced(String userId, String captionId) async {
     final db = await database;
     await db.update(
       'favorite_captions',
       {'isSynced': 1},
-      where: 'userId = ? AND timestampKey = ?',
-      whereArgs: [userId, timestampKey],
+      where: 'userId = ? AND captionId = ?',
+      whereArgs: [userId, captionId],
     );
   }
 }

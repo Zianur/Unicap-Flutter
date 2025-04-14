@@ -171,6 +171,7 @@ class _CaptionWidget extends StatelessWidget {
 
               IconTextWidget(
                   onTap: (){
+                    print('============Inside ontap=========');
                    Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
                   },
                   icon: Icons.favorite, text: 'Favorite',

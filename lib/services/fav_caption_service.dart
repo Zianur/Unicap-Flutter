@@ -6,26 +6,53 @@ class FavoriteCaptionService {
   final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
+  Future<List<FavoriteCaption>?> getFavCaptions(String userId) async {
+    try{
+      // 3. Get updated list from Firebase
+      final snapshot = await _dbRef.child(userId).child('FavCaptions').once();
+      final List<FavoriteCaption> allCaptions = [];
+
+      if (snapshot.snapshot.value != null) {
+        final Map<dynamic, dynamic> values =
+        snapshot.snapshot.value as Map<dynamic, dynamic>;
+
+        // 4. Update local cache with Firebase data
+        for (final entry in values.entries) {
+          final captionId = entry.key as String;
+          final data = entry.value as Map<dynamic, dynamic>;
+
+          final favCaption = FavoriteCaption(
+            userId: userId,
+            captionId: captionId,
+            caption: data['caption'] as String,
+            isSynced: true,
+          );
+
+          await _dbHelper.insertFavoriteCaption(favCaption);
+          allCaptions.add(favCaption);
+        }
+      }
+
+      // 5. Return merged list (prioritizing Firebase data)
+      return allCaptions;
+    }catch(e){
+      print('=========could not get fav captions============= $e');
+      return null;
+    }
+  }
+
   Future<void> addFavoriteCaption(FavoriteCaption caption) async {
     try {
-      // 1. Save to local cache first (mark as not synced)
-      await _dbHelper.insertFavoriteCaption(
-          caption.copyWith(isSynced: false).toMap() as FavoriteCaption
-      );
-
-      // 2. Try to save to Firebase
+      print('============Inside service try=========');
+      //Try to save to Firebase
+      ///working fine
       await _dbRef
-          .child(caption.userId)
-          .child('FavCaptions')
-          .child(caption.captionId)
+          .child('User/${caption.userId}/FavCaptions/${caption.captionId}')
           .set({
         'caption': caption.caption,
       });
-
-      // 3. Mark as synced in local cache
-      await _dbHelper.markFavoriteAsSynced(caption.userId, caption.captionId);
     } catch (e) {
-      print('Error adding favorite caption: $e');
+      print('============Error adding favorite caption: =================$e');
       throw Exception('Failed to add favorite caption');
     }
   }
@@ -47,62 +74,21 @@ class FavoriteCaptionService {
     }
   }
 
-  Future<List<FavoriteCaption>> syncFavoriteCaptions(String userId) async {
-    try {
-      // 1. Get all local favorite captions
-      final localMaps = await _dbHelper.getFavoriteCaptions(userId);
-      final localCaptions = localMaps.map((map) => FavoriteCaption.fromMap(map as Map<String, dynamic>)).toList();
+  Future<void> syncFavoriteCaptions(String userId) async {
 
-      // 2. Sync unsynced captions with Firebase
-      final unsynced = localCaptions.where((c) => !c.isSynced).toList();
-      for (final caption in unsynced) {
-        try {
-          await _dbRef
-              .child(userId)
-              .child('FavCaptions')
-              .child(caption.captionId)
-              .set({
-            'caption': caption.caption,
-          });
-          await _dbHelper.markFavoriteAsSynced(userId, caption.captionId);
-        } catch (e) {
-          print('Failed to sync caption ${caption.captionId}: $e');
-          continue;
-        }
+    // 1. Get all local favorite captions
+    final localCaptions = await _dbHelper.getFavoriteCaptions(userId);
+
+    // 2. Sync unsynced captions with Firebase
+    final unsynced = localCaptions.where((c) => !c.isSynced).toList();
+    for (final caption in unsynced) {
+      try {
+        await addFavoriteCaption(caption);
+        await _dbHelper.markFavoriteAsSynced(userId, caption.captionId);
+      } catch (e) {
+        print('Failed to sync caption ${caption.captionId}: $e');
+        continue;
       }
-
-      // 3. Get updated list from Firebase
-      final snapshot = await _dbRef.child(userId).child('FavCaptions').once();
-      final List<FavoriteCaption> allCaptions = [];
-
-      if (snapshot.snapshot.value != null) {
-        final Map<dynamic, dynamic> values =
-        snapshot.snapshot.value as Map<dynamic, dynamic>;
-
-        // 4. Update local cache with Firebase data
-        for (final entry in values.entries) {
-          final captionId = entry.key as String;
-          final data = entry.value as Map<dynamic, dynamic>;
-
-          final favCaption = FavoriteCaption(
-            userId: userId,
-            captionId: captionId,
-            caption: data['caption'] as String,
-            isSynced: true,
-          );
-
-          await _dbHelper.insertFavoriteCaption(favCaption.toMap() as FavoriteCaption);
-          allCaptions.add(favCaption);
-        }
-      }
-
-      // 5. Return merged list (prioritizing Firebase data)
-      return allCaptions;
-    } catch (e) {
-      print('Error syncing favorite captions: $e');
-      // Fallback to local data if sync fails
-      final localMaps = await _dbHelper.getFavoriteCaptions(userId);
-      return localMaps.map((map) => FavoriteCaption.fromMap(map as Map<String, dynamic>)).toList();
     }
   }
 }

@@ -11,22 +11,23 @@ class FavoriteCaption {
     required this.isSynced,
   });
 
+  /// todo - need to remove this code
   // Add this copyWith method
-  FavoriteCaption copyWith({
-    String? userId,
-    String? captionId,
-    String? caption,
-    bool? isSynced,
-    DateTime? createdAt,
-  }) {
-    return FavoriteCaption(
-      userId: userId ?? this.userId,
-      captionId: captionId ?? this.captionId,
-      caption: caption ?? this.caption,
-      isSynced: isSynced ?? this.isSynced,
-
-    );
-  }
+  // FavoriteCaption copyWith({
+  //   String? userId,
+  //   String? captionId,
+  //   String? caption,
+  //   bool? isSynced,
+  //   DateTime? createdAt,
+  // }) {
+  //   return FavoriteCaption(
+  //     userId: userId ?? this.userId,
+  //     captionId: captionId ?? this.captionId,
+  //     caption: caption ?? this.caption,
+  //     isSynced: isSynced ?? this.isSynced,
+  //
+  //   );
+  // }
 
   Map<String, dynamic> toMap() {
     return {

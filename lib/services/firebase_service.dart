@@ -68,8 +68,10 @@ class FirebaseService {
   Future<void> saveNote(String userId, String noteId, String noteName, String note) async {
 
 
+
     // Save the note locally
-    await _dbHelper.insertNote(userId, noteId, noteName, note, false);
+    /// todo - need to check the need of this line here
+    // await _dbHelper.insertNote(userId, noteId, noteName, note, false);
 
     // Check internet connection
     var connectivityResult = await _connectivity.checkConnectivity();

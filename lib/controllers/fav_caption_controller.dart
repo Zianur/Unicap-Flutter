@@ -13,7 +13,7 @@ class FavoriteCaptionController with ChangeNotifier {
   List<FavoriteCaption>? get favorites => _favorites;
   bool get isLoading => _isLoading;
 
-  Future<void> loadFavorites(String userId) async {
+  Future<void> loadAndSyncFavorites(String userId) async {
     print('--------------inside loadFavorites---------');
     _favorites = null;
     _isLoading = true;
@@ -21,7 +21,7 @@ class FavoriteCaptionController with ChangeNotifier {
 
     try {
       // 1. Try to sync with Firebase first
-      _favorites = await _service.syncFavoriteCaptions(userId);
+      _favorites = await _service.getFavCaptions(userId);
       print('=====favorites=========${favorites?.length}==============');
     } catch (e) {
       print('Error syncing favorites: $e');
@@ -34,16 +34,27 @@ class FavoriteCaptionController with ChangeNotifier {
   }
 
   Future<void> addFavorite(String userId, Caption caption) async {
+    print('============Inside addFavorit=========');
     try {
+      print('============Inside try=========');
+      await _dbHelper.insertFavoriteCaption(FavoriteCaption(
+        userId: userId,
+        captionId: caption.key,
+        caption: caption.caption,
+        isSynced: false,
+      ));
+
       await _service.addFavoriteCaption(FavoriteCaption(
         userId: userId,
         captionId: caption.key,
         caption: caption.caption,
-        isSynced: true,
+        isSynced: false,
       ));
-      await loadFavorites(userId);
+
+      await getAllFavCaptionsFromLocal(userId);
+
     } catch (e) {
-      print('Error adding favorite: $e');
+      print('==============Error Inserting favorite favorite: ================$e');
       rethrow;
     }
   }
@@ -61,5 +72,12 @@ class FavoriteCaptionController with ChangeNotifier {
 
   bool? isCaptionFavorite(String caption) {
     return _favorites?.any((fav) => fav.caption == caption);
+  }
+
+  Future<void> getAllFavCaptionsFromLocal(String userId, {bool isUpdate = true}) async {
+    _favorites = await _dbHelper.getFavoriteCaptions(userId);
+    if(isUpdate){
+      notifyListeners();
+    }
   }
 }

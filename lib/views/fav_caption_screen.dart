@@ -24,13 +24,14 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
 
     /// Get FavCaptions
     final AuthController authController = Provider.of<AuthController>(context, listen: false);
+
     Future.delayed(Duration.zero, () {
       if(authController.isLoggedIn){
         debugPrint('==============before calling loadFavorites========');
         final String? userId = authController.user?.uid;
         debugPrint('==============user id========${authController.user?.uid}');
 
-        Provider.of<FavoriteCaptionController>(context, listen: false).loadFavorites(userId ?? '');
+        Provider.of<FavoriteCaptionController>(context, listen: false).loadAndSyncFavorites(userId ?? '');
         debugPrint('==============after calling loadFavorites========');
       }
     });
