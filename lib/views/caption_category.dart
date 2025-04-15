@@ -51,7 +51,7 @@ class _CaptionCategoryState extends State<CaptionCategoryView> {
                             child: TextField(
                               textInputAction: TextInputAction.go,
                               /// todo - need to update this
-                              // onChanged: (String value)=> captionCategoryController.filterNotes(queryText: value, userId: userId ?? 'guest'),
+                              onChanged: (String value)=> captionCategoryController.filterCategories(queryText: value),
                               style: const TextStyle(fontSize: 12, color: Colors.black),
                               decoration: InputDecoration(
                                 hintText: "Search Diary",

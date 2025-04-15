@@ -146,6 +146,7 @@ class _DiaryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final int noteMaxLines = (index % 2 == 0) ? 3 : 5;
+    final DiaryController diaryController = Provider.of<DiaryController>(context);
 
     return Card(
       elevation: 8,
@@ -196,7 +197,9 @@ class _DiaryWidget extends StatelessWidget {
                 )),
 
                 InkWell(
-                  onTap: (){},
+                  onTap: (){
+                    diaryController.removeNote(diary.userId, diary.noteId);
+                  },
                   child: Icon(
                     Icons.delete,
                     color: Colors.red.withValues(alpha: 0.8),

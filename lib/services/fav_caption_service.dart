@@ -3,13 +3,13 @@ import 'package:unicap_cg/data/local/databse_helper.dart';
 import 'package:unicap_cg/models/fav_caption.dart';
 
 class FavoriteCaptionService {
-  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
+  final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
   Future<List<FavoriteCaption>?> getFavCaptions(String userId) async {
     try{
       // 3. Get updated list from Firebase
-      final snapshot = await _dbRef.child('User').child(userId).child('FavCaptions').once();
+      final snapshot = await _databaseRef.child('User').child(userId).child('FavCaptions').once();
       final List<FavoriteCaption> allCaptions = [];
 
       if (snapshot.snapshot.value != null) {
@@ -46,7 +46,7 @@ class FavoriteCaptionService {
       print('============Inside service try=========');
       //Try to save to Firebase
       ///working fine
-      await _dbRef
+      await _databaseRef
           .child('User/${caption.userId}/FavCaptions/${caption.captionId}')
           .set({
         'caption': caption.caption,
@@ -59,7 +59,7 @@ class FavoriteCaptionService {
 
   Future<void> removeFavoriteCaption(String userId, String captionId) async {
     try {
-      await _dbRef
+      await _databaseRef
           .child('User/$userId')
           .child('FavCaptions')
           .child(captionId)

@@ -92,4 +92,18 @@ class FavoriteCaptionController with ChangeNotifier {
       notifyListeners();
     }
   }
+
+
+  void filterFavCaption({required String queryText, required String userId}) async {
+    if(queryText.isEmpty){
+      await getAllFavCaptionsFromLocal(userId);
+    }
+    else{
+      _favorites = _favorites?.where((caption) {
+        return caption.caption.toLowerCase().contains(queryText.toLowerCase());
+      }).toList();
+    }
+
+    notifyListeners();
+  }
 }

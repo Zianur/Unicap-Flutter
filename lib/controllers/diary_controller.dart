@@ -8,7 +8,7 @@ class DiaryController with ChangeNotifier {
   // final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final Connectivity _connectivity = Connectivity();
-  FirebaseService firebaseService = FirebaseService();
+  final FirebaseService _service =  FirebaseService();
 
   // List of notes
   List<DiaryEntry>? _notes;
@@ -22,7 +22,7 @@ class DiaryController with ChangeNotifier {
       // _notes = null;
       // notifyListeners();
 
-      Map<dynamic, dynamic>? notesMap = await firebaseService.fetchAndSaveNotes(userId);
+      Map<dynamic, dynamic>? notesMap = await _service.fetchAndSaveNotes(userId);
 
       for (var noteId in notesMap?.keys ?? {}) {
         String noteName = notesMap?[noteId]['name'] ?? 'noteName';
@@ -68,7 +68,7 @@ class DiaryController with ChangeNotifier {
       await _dbHelper.insertNote(userId, noteId, noteName, note, isOnline ? true : false);
     }
     if(isOnline){
-      await firebaseService.saveNote(userId, noteId, noteName, note);
+      await _service.saveNote(userId, noteId, noteName, note);
     }
 
     getAllNotesFromLocal(userId);
@@ -77,7 +77,7 @@ class DiaryController with ChangeNotifier {
 
   // Sync unsynced notes with Firebase
   Future<void> syncUnsyncedNotes(String userId) async {
-    await firebaseService.syncUnsyncedNotes(userId);
+    await _service.syncUnsyncedNotes(userId);
     await fetchAndSaveNotes(userId);
   }
 
@@ -100,5 +100,17 @@ class DiaryController with ChangeNotifier {
   Future<void> getAllNotesFromLocal(String userId) async {
     List<Map<String, dynamic>> mapList = await _dbHelper.getNotes(userId);
     _notes = mapList.map((element)=> DiaryEntry.fromMap(element)).toList();
+  }
+
+  Future<void> removeNote(String userId, String noteId) async {
+    try {
+      await _service.removeNote(userId, noteId);
+      await _dbHelper.deleteNote(userId, noteId);
+      await fetchAndSaveNotes(userId);
+      notifyListeners();
+    } catch (e) {
+      print('Error removing favorite: $e');
+      rethrow;
+    }
   }
 }

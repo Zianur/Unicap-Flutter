@@ -26,6 +26,8 @@ class _CaptionScreenState extends State<CaptionScreen> {
 
     final AuthController authController = Provider.of<AuthController>(context, listen: false);
     userId = authController.user?.uid;
+
+    Provider.of<CaptionCategoryController>(context, listen: false).getCaptions(widget.category);
   }
 
   @override
@@ -65,7 +67,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
                               child: TextField(
                                 textInputAction: TextInputAction.go,
                                 /// todo - need to update this
-                                // onChanged: (String value)=> captionCategoryController.filterNotes(queryText: value, userId: userId ?? 'guest'),
+                                onChanged: (String value)=> captionCategoryController.filterCaptions(queryText: value, category: widget.category),
                                 style: const TextStyle(fontSize: 12, color: Colors.black),
                                 decoration: InputDecoration(
                                   hintText: "Search Diary",
@@ -94,13 +96,13 @@ class _CaptionScreenState extends State<CaptionScreen> {
 
         Consumer<CaptionCategoryController>(
             builder: (_, captionCategoryController, __) {
-              return widget.category.captions != null ? (widget.category.captions?.isNotEmpty ?? false)
+              return captionCategoryController.captions != null ? (captionCategoryController.captions?.isNotEmpty ?? false)
                   ? SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   sliver: SliverList.separated(
-                    itemCount: widget.category.captions?.length,
+                    itemCount: captionCategoryController.captions?.length,
                     itemBuilder: (context, index){
-                      return CaptionWidget(caption: widget.category.captions![index], index: index);
+                      return CaptionWidget(caption: captionCategoryController.captions![index], index: index);
                     },
                     separatorBuilder: (_, index)=> SizedBox(height: 10),
                   )

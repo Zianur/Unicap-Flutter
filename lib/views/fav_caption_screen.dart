@@ -19,6 +19,7 @@ class FavCaptionScreen extends StatefulWidget {
 }
 
 class _FavCaptionScreenState extends State<FavCaptionScreen> {
+  String? userId;
   @override
   void initState() {
     super.initState();
@@ -28,7 +29,7 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
     final AuthController authController = Provider.of<AuthController>(context, listen: false);
 
     if(authController.isLoggedIn){
-      final String? userId = authController.user?.uid;
+      userId = authController.user?.uid;
       debugPrint('==============user id========${authController.user?.uid}');
 
       Provider.of<FavoriteCaptionController>(context, listen: false).syncUnsyncedFavCaptions(userId ?? '');
@@ -72,7 +73,7 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
                               child: TextField(
                                 textInputAction: TextInputAction.go,
                                 /// todo - need to update this
-                                // onChanged: (String value)=> favCaptionController.filterNotes(queryText: value, userId: userId ?? 'guest'),
+                                onChanged: (String value)=> favCaptionController.filterFavCaption(queryText: value, userId: userId ?? ''),
                                 style: const TextStyle(fontSize: 12, color: Colors.black),
                                 decoration: InputDecoration(
                                   hintText: "Search Diary",

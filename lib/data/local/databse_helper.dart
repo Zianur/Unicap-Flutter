@@ -153,6 +153,15 @@ class DatabaseHelper {
     return result.isNotEmpty;
   }
 
+  Future<void> deleteNote(String userId, String noteId) async {
+    final db = await database;
+    await db.delete(
+      'notes',
+      where: 'userId = ? AND noteId = ?',
+      whereArgs: [userId, noteId],
+    );
+  }
+
 
 
   /// ================== Fav Caption OPERATIONS ==================

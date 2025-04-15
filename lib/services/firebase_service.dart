@@ -96,4 +96,18 @@ class FirebaseService {
       await _dbHelper.updateSyncStatus(noteId, true); // Mark as synced
     }
   }
+
+
+  Future<void> removeNote(String userId, String noteId) async {
+    try {
+      await _databaseRef
+          .child('User/$userId')
+          .child('Note')
+          .child(noteId)
+          .remove();
+    } catch (e) {
+      print('=====Remove============Error removing favorite caption:================= $e');
+      throw Exception('Failed to remove favorite caption');
+    }
+  }
 }
