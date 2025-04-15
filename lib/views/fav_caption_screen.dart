@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:unicap_cg/common/basewidgets/caption_widget.dart';
+import 'package:unicap_cg/common/basewidgets/fav_caption_widget.dart';
 import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
@@ -25,16 +27,12 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
     /// Get FavCaptions
     final AuthController authController = Provider.of<AuthController>(context, listen: false);
 
-    Future.delayed(Duration.zero, () {
-      if(authController.isLoggedIn){
-        debugPrint('==============before calling loadFavorites========');
-        final String? userId = authController.user?.uid;
-        debugPrint('==============user id========${authController.user?.uid}');
+    if(authController.isLoggedIn){
+      final String? userId = authController.user?.uid;
+      debugPrint('==============user id========${authController.user?.uid}');
 
-        Provider.of<FavoriteCaptionController>(context, listen: false).loadAndSyncFavorites(userId ?? '');
-        debugPrint('==============after calling loadFavorites========');
-      }
-    });
+      Provider.of<FavoriteCaptionController>(context, listen: false).syncUnsyncedFavCaptions(userId ?? '');
+    }
   }
 
   @override
@@ -109,7 +107,7 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
                   sliver: SliverList.separated(
                     itemCount: favCaptionController.favorites?.length,
                     itemBuilder: (context, index){
-                      return _CaptionWidget(caption: favCaptionController.favorites?[index], index: index);
+                      return FavCaptionWidget(caption: favCaptionController.favorites![index], index: index);
                     },
                     separatorBuilder: (_, index)=> SizedBox(height: 10),
                   )
@@ -125,67 +123,21 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
                             fontWeight: FontWeight.bold),
                       ),
                     )),
-              ) : SliverToBoxAdapter(child: _CaptionCardShimmer());
+              ) : SliverToBoxAdapter(
+                  child: ListView.builder(
+                    itemCount: 10,
+                    shrinkWrap: true,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    itemBuilder: (context, index) {
+                      return _CaptionCardShimmer();
+                    },
+                  ));
             }
         ),
       ]),
     );
   }
 }
-
-class _CaptionWidget extends StatelessWidget {
-  const _CaptionWidget({
-    required this.caption,
-    required this.index,
-  });
-
-  final FavoriteCaption? caption;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    final widthSize = MediaQuery.sizeOf(context).width;
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5), // No rounded corners
-      ),
-      elevation: 8,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-
-            Container(
-              width: widthSize,
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Text(caption?.caption ?? '', style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.white,
-              ), textAlign: TextAlign.center),
-            ),
-            SizedBox(height: 10),
-
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              IconTextWidget(onTap: (){}, icon: Icons.copy, text: 'Copy'),
-
-              IconTextWidget(onTap: (){}, icon: Icons.favorite, text: 'Favorite'),
-
-              IconTextWidget(onTap: (){}, icon: Icons.share, text: 'Share'),
-            ])
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 
 class _CaptionCardShimmer extends StatelessWidget {
   @override
@@ -200,15 +152,15 @@ class _CaptionCardShimmer extends StatelessWidget {
           children: [
             // Shimmering Caption Box
             Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
+              baseColor: Colors.grey[500]!,
+              highlightColor: Colors.grey[200]!,
               child: Container(
                 alignment: Alignment.center,
-                height: 40,
+                height: 100,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(100),
+                  borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: Theme.of(context).primaryColor,
                     width: 2,

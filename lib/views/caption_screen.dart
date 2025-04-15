@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:unicap_cg/common/basewidgets/caption_widget.dart';
 import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
@@ -99,7 +100,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
                   sliver: SliverList.separated(
                     itemCount: widget.category.captions?.length,
                     itemBuilder: (context, index){
-                      return _CaptionWidget(caption: widget.category.captions![index], index: index);
+                      return CaptionWidget(caption: widget.category.captions![index], index: index);
                     },
                     separatorBuilder: (_, index)=> SizedBox(height: 10),
                   )
@@ -115,73 +116,17 @@ class _CaptionScreenState extends State<CaptionScreen> {
                             fontWeight: FontWeight.bold),
                       ),
                     )),
-              ) : SliverToBoxAdapter(child: _CaptionCardShimmer());
+              ) :  SliverToBoxAdapter(
+                  child: ListView.builder(
+                    itemCount: 10,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return _CaptionCardShimmer();
+                    },
+                  ));
             }
         ),
       ]),
-    );
-  }
-}
-
-class _CaptionWidget extends StatelessWidget {
-  const _CaptionWidget({
-    required this.caption,
-    required this.index,
-  });
-
-  final Caption caption;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    final widthSize = MediaQuery.sizeOf(context).width;
-
-    final AuthController authController = Provider.of<AuthController>(context, listen: false);
-    final String userId = authController.user?.uid ?? '';
-
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5), // No rounded corners
-      ),
-      elevation: 8,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-
-            Container(
-              width: widthSize,
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Text(caption.caption, style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.white,
-              ), textAlign: TextAlign.center),
-            ),
-            SizedBox(height: 10),
-
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              IconTextWidget(onTap: (){}, icon: Icons.copy, text: 'Copy'),
-
-              IconTextWidget(
-                  onTap: (){
-                    print('============Inside ontap=========');
-                   Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
-                  },
-                  icon: Icons.favorite, text: 'Favorite',
-              ),
-
-              IconTextWidget(onTap: (){}, icon: Icons.share, text: 'Share'),
-            ])
-          ],
-        ),
-      ),
     );
   }
 }

@@ -21,7 +21,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
   void initState() {
 
     userId = Provider.of<AuthController>(context, listen: false).user?.uid;
-    print('==============USER ID===================$userId');
     Provider.of<DiaryController>(context, listen: false).syncUnsyncedNotes(userId ?? 'guest');
 
     super.initState();

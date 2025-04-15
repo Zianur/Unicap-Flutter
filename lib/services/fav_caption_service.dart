@@ -9,7 +9,7 @@ class FavoriteCaptionService {
   Future<List<FavoriteCaption>?> getFavCaptions(String userId) async {
     try{
       // 3. Get updated list from Firebase
-      final snapshot = await _dbRef.child(userId).child('FavCaptions').once();
+      final snapshot = await _dbRef.child('User').child(userId).child('FavCaptions').once();
       final List<FavoriteCaption> allCaptions = [];
 
       if (snapshot.snapshot.value != null) {
@@ -59,17 +59,13 @@ class FavoriteCaptionService {
 
   Future<void> removeFavoriteCaption(String userId, String captionId) async {
     try {
-      // 1. Remove from local cache first
-      await _dbHelper.deleteFavoriteCaption(userId, captionId);
-
-      // 2. Try to remove from Firebase
       await _dbRef
-          .child(userId)
+          .child('User/$userId')
           .child('FavCaptions')
           .child(captionId)
           .remove();
     } catch (e) {
-      print('Error removing favorite caption: $e');
+      print('=====Remove============Error removing favorite caption:================= $e');
       throw Exception('Failed to remove favorite caption');
     }
   }

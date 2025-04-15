@@ -159,7 +159,6 @@ class DatabaseHelper {
 
   // Add to your existing DatabaseHelper class
   Future<void> insertFavoriteCaption(FavoriteCaption caption) async {
-    print('============Inside database helper and insertFavoriteCaption=========');
     final db = await database;
     await db.insert(
       'favorite_captions',
@@ -168,12 +167,12 @@ class DatabaseHelper {
     );
   }
 
-  Future<void> deleteFavoriteCaption(String userId, String timestampKey) async {
+  Future<void> deleteFavoriteCaption(String userId, String captionId) async {
     final db = await database;
     await db.delete(
       'favorite_captions',
       where: 'userId = ? AND captionId = ?',
-      whereArgs: [userId, timestampKey],
+      whereArgs: [userId, captionId],
     );
   }
 

@@ -8,27 +8,37 @@ class FavoriteCaptionController with ChangeNotifier {
   final FavoriteCaptionService _service = FavoriteCaptionService();
   final DatabaseHelper _dbHelper = DatabaseHelper();
   List<FavoriteCaption>? _favorites;
-  bool _isLoading = false;
 
   List<FavoriteCaption>? get favorites => _favorites;
-  bool get isLoading => _isLoading;
 
-  Future<void> loadAndSyncFavorites(String userId) async {
-    print('--------------inside loadFavorites---------');
-    _favorites = null;
-    _isLoading = true;
-    notifyListeners();
+  Future<void> syncUnsyncedFavCaptions(String userId) async {
+    await _service.syncFavoriteCaptions(userId);
+    await loadAndSaveFavCaptions(userId);
+  }
+
+  Future<void> loadAndSaveFavCaptions(String userId) async {
+    // _favorites = null;
+    // notifyListeners();
 
     try {
-      // 1. Try to sync with Firebase first
-      _favorites = await _service.getFavCaptions(userId);
+      List<FavoriteCaption>? allFavCaptions = await _service.getFavCaptions(userId);
+
+
+      if(allFavCaptions?.isNotEmpty ?? false){
+        for(FavoriteCaption caption in allFavCaptions!){
+          _dbHelper.insertFavoriteCaption(caption);
+        }
+      }
+
+      _favorites = await _dbHelper.getFavoriteCaptions(userId);
+
       print('=====favorites=========${favorites?.length}==============');
+
     } catch (e) {
-      print('Error syncing favorites: $e');
+      print('=========Error getting favorites captions===============: $e');
       // Fallback to local cache if sync fails
       _favorites = await _dbHelper.getFavoriteCaptions(userId);
     } finally {
-      _isLoading = false;
       notifyListeners();
     }
   }
@@ -59,10 +69,11 @@ class FavoriteCaptionController with ChangeNotifier {
     }
   }
 
-  Future<void> removeFavorite(String userId, String timestampKey) async {
+  Future<void> removeFavorite(String userId, String captionId) async {
     try {
-      await _service.removeFavoriteCaption(userId, timestampKey);
-      _favorites?.removeWhere((fav) => fav.captionId == timestampKey);
+      await _service.removeFavoriteCaption(userId, captionId);
+      await _dbHelper.deleteFavoriteCaption(userId, captionId);
+      await loadAndSaveFavCaptions(userId);
       notifyListeners();
     } catch (e) {
       print('Error removing favorite: $e');
@@ -70,12 +81,13 @@ class FavoriteCaptionController with ChangeNotifier {
     }
   }
 
-  bool? isCaptionFavorite(String caption) {
-    return _favorites?.any((fav) => fav.caption == caption);
+  bool isCaptionFavorite(String caption) {
+    return _favorites?.any((fav) => fav.caption == caption) ?? false;
   }
 
   Future<void> getAllFavCaptionsFromLocal(String userId, {bool isUpdate = true}) async {
     _favorites = await _dbHelper.getFavoriteCaptions(userId);
+    print('==========inside getAllFavCaptionsFromLocal _favorites length==========${_favorites?.length}');
     if(isUpdate){
       notifyListeners();
     }

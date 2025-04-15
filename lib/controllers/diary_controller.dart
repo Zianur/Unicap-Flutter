@@ -14,10 +14,14 @@ class DiaryController with ChangeNotifier {
   List<DiaryEntry>? _notes;
   List<DiaryEntry>? get notes => _notes;
 
+
+  /// Refactor this method by following the favorite caption controller
   // Fetch notes from Firebase and save/update them locally
   Future<void> fetchAndSaveNotes(String userId) async {
     try {
-      _notes = null;
+      // _notes = null;
+      // notifyListeners();
+
       Map<dynamic, dynamic>? notesMap = await firebaseService.fetchAndSaveNotes(userId);
 
       for (var noteId in notesMap?.keys ?? {}) {
@@ -74,7 +78,7 @@ class DiaryController with ChangeNotifier {
   // Sync unsynced notes with Firebase
   Future<void> syncUnsyncedNotes(String userId) async {
     await firebaseService.syncUnsyncedNotes(userId);
-    fetchAndSaveNotes(userId);
+    await fetchAndSaveNotes(userId);
   }
 
  void filterNotes({required String queryText, required String userId}) async {
