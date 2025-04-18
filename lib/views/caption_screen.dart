@@ -39,7 +39,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
             builder: (_, captionCategoryController, __) {
               return SliverAppBar(
                 automaticallyImplyLeading: false, // Removes back button
-                backgroundColor: Theme.of(context).primaryColor,
+                backgroundColor: Colors.deepPurpleAccent,
                 floating: true,
                 pinned: true,
                 snap: true,
@@ -51,7 +51,6 @@ class _CaptionScreenState extends State<CaptionScreen> {
                     margin: EdgeInsets.symmetric(horizontal: 10),
                     width: double.infinity,
                     height: 50,
-                    color: Theme.of(context).primaryColor,
                     child: Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
@@ -70,7 +69,8 @@ class _CaptionScreenState extends State<CaptionScreen> {
                                 onChanged: (String value)=> captionCategoryController.filterCaptions(queryText: value, category: widget.category),
                                 style: const TextStyle(fontSize: 12, color: Colors.black),
                                 decoration: InputDecoration(
-                                  hintText: "Search Diary",
+                                  hintText: "Search Captions with Keywords",
+                                  hintFadeDuration: Duration(milliseconds: 500),
                                   hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
                                   border: InputBorder.none,
                                   contentPadding: const EdgeInsets.only( left: 10, bottom: 5),

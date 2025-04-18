@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
 import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
@@ -51,12 +54,18 @@ class FavCaptionWidget extends StatelessWidget {
             SizedBox(height: 10),
 
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              IconTextWidget(onTap: (){}, icon: Icons.copy, text: 'Copy'),
+              IconTextWidget(
+                  onTap: (){
+                    Clipboard.setData(ClipboardData(text: caption.caption));
+                  },
+                  icon: Icons.copy,
+                  text: 'Copy',
+              ),
 
               IconTextWidget(
                 onTap: (){
-                  print('============Inside ontap=========');
                   Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.captionId);
+                  CustomToast.showToast('Removed from favorites successfully', ToastType.success, null);
                 },
                 icon: Icons.favorite,
                 text: 'Favorite',
@@ -64,7 +73,7 @@ class FavCaptionWidget extends StatelessWidget {
                 textStyle: isFav ? TextStyle(color: Colors.pink) : null,
               ),
 
-              IconTextWidget(onTap: (){}, icon: Icons.share, text: 'Share'),
+              IconTextWidget(onTap: ()=> Share.share(caption.caption), icon: Icons.share, text: 'Share'),
             ])
           ],
         ),

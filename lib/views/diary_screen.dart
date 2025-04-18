@@ -1,245 +1,171 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:unicap_cg/common/basewidgets/custom_button_widget.dart';
+import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/diary_controller.dart';
 import 'package:unicap_cg/models/diary_entry.dart';
 
 class DiaryScreen extends StatefulWidget {
+  final DiaryEntry? diaryEntry;
 
-  const DiaryScreen({super.key});
+  const DiaryScreen({super.key, this.diaryEntry});
 
   @override
   State<DiaryScreen> createState() => _DiaryScreenState();
 }
 
 class _DiaryScreenState extends State<DiaryScreen> {
-  String? userId;
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
+
+  String? initialTitle;
+  String? initialNote;
+  late String userId;
 
   @override
   void initState() {
+    // TODO: implement initState
 
-    userId = Provider.of<AuthController>(context, listen: false).user?.uid;
-    Provider.of<DiaryController>(context, listen: false).syncUnsyncedNotes(userId ?? 'guest');
+    final AuthController authController = Provider.of<AuthController>(context, listen: false);
+    userId = authController.user?.uid ?? 'guest';
 
-    super.initState();
+    initialTitle = widget.diaryEntry?.noteName ?? '';
+    initialNote = widget.diaryEntry?.note ?? '';
+
+    _titleController.text = widget.diaryEntry?.noteName ?? '';
+    _noteController.text = widget.diaryEntry?.note ?? '';
   }
+
+
 
 
   @override
   Widget build(BuildContext context) {
+    // final double heightSize = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
-      body: CustomScrollView(slivers: [
-        Consumer<DiaryController>(
-          builder: (_, diaryController, __) {
-            return SliverAppBar(
-              backgroundColor: Colors.deepPurpleAccent,
-              floating: true,
-              pinned: true,
-              snap: true,
-              collapsedHeight: 80,
-              expandedHeight: 80,
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                title: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  width: double.infinity,
-                  height: 50,
-                  color: Colors.deepPurpleAccent,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    elevation: 20,
-                    color: Colors.white,
-                    child: Center(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: 6,
-                            child: TextField(
-                              textInputAction: TextInputAction.go,
-                              onChanged: (String value)=> diaryController.filterNotes(queryText: value, userId: userId ?? 'guest'),
-                              style: const TextStyle(fontSize: 12, color: Colors.black),
-                              decoration: InputDecoration(
-                                hintText: "Search Diary",
-                                hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
-                                border: InputBorder.none,
-                                contentPadding: const EdgeInsets.only( left: 10, bottom: 5),
-                              ),
-                            ),
-                          ),
-                          const Expanded(
-                            flex: 1,
-                            child: Icon(
-                              Icons.search,
-                              color: Colors.black38,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }
+      appBar: AppBar(
+        backgroundColor: Colors.deepPurpleAccent,
+        title: Text(widget.diaryEntry == null ? 'Add note' : 'Update note', style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold
+        )),
+        centerTitle: true,
+        leading: InkWell(
+          onTap: ()=> Navigator.pop(context),
+          child: Icon(Icons.arrow_back_ios_new_outlined, color: Colors.white),
         ),
+      ),
+      body: Column(children: [
 
-        Consumer<DiaryController>(
-          builder: (_, diaryController, __) {
-            return diaryController.notes != null ? (diaryController.notes?.isNotEmpty ?? false)
-                ? SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                sliver: SliverMasonryGrid.count(
-                  crossAxisCount: 2, // Number of columns
-                  mainAxisSpacing: 8, // Vertical spacing
-                  crossAxisSpacing: 8, // Horizontal spacing
-                  childCount: diaryController.notes?.length,
-                  itemBuilder: (context, index){
-                    var diary = diaryController.notes?[index];
+        Expanded(child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
 
-                    return _DiaryWidget(diary: diary!, index: index);
-                  },
+              TextField(
+                controller: _titleController,
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                  border: OutlineInputBorder(),
                 ),
-              ) : SliverToBoxAdapter(
-              child: SizedBox(
-                  height: 400,
-                  child: Center(
-                    child: Text(
-                      'No Diary Available',
-                      style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  )),
-            ) : _DiaryShimmer();
-          }
+                maxLength: 100,
+              ),
+              SizedBox(height: 16),
+
+              TextField(
+                controller: _noteController,
+                decoration: InputDecoration(
+                  labelText: 'Note',
+                  border: OutlineInputBorder(),
+                  alignLabelWithHint: true,
+                ),
+                keyboardType: TextInputType.multiline,
+                minLines: 5,     // minimum height
+                maxLines: null,  // grows as user types
+                maxLength: 30000,
+              ),
+            ]),
+          ),
+        )),
+
+        Container(
+          height: 65,
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          decoration: BoxDecoration(
+            color: Colors.deepPurpleAccent,
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.deepPurpleAccent.withValues(alpha: 0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+
+              // Flexible(child: CustomButtonWidget(
+              //   backgroundColor: Colors.black,
+              //   buttonText: 'Cancel',
+              //   textStyle: TextStyle(color: Colors.red),
+              //   onPressed: ()=> Navigator.pop(context),
+              // )),
+              // SizedBox(width: 10),
+
+              Flexible(child: CustomButtonWidget(
+                borderRadius: 100,
+                backgroundColor: Colors.black,
+                buttonText: 'Copy',
+                textStyle: TextStyle(color: Colors.white),
+                onPressed: null,
+              )),
+              SizedBox(width: 10),
+
+              Consumer<DiaryController>(
+                  builder: (context, diaryController, _) {
+                    return Flexible(child: CustomButtonWidget(
+                      isLoading: diaryController.isLoading,
+                      borderRadius: 100,
+                      backgroundColor: Colors.black,
+                      buttonText: 'Save',
+                      textStyle: TextStyle(color: Colors.green),
+                      onPressed: () async {
+                        final String newTitle = _titleController.text;
+                        final String newNote = _noteController.text;
+
+                        if(newTitle == initialTitle && newNote == initialNote){
+                          CustomToast.showToast("Nothing to update", ToastType.error, null);
+                        } else{
+
+                          if(widget.diaryEntry != null){
+                            await diaryController.saveNote(
+                                widget.diaryEntry?.userId ?? userId,
+                                widget.diaryEntry?.noteId ?? '',
+                                newTitle,
+                                newNote
+                            );
+                          }
+                          else{
+                            await diaryController.saveNote(userId, newTitle, null, newNote);
+                          }
+
+                          CustomToast.showToast("Note saved successfully", ToastType.success, null);
+
+                          Navigator.pop(context);
+                        }
+                      },
+                    ));
+                  }
+              ),
+            ],
+          ),
         ),
       ]),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          String noteName = 'note name';
-          String note = 'Sample note content';
-          await Provider.of<DiaryController>(context, listen: false).saveNote(userId ?? 'guest', noteName, note);
-        },
-        child: Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-class _DiaryWidget extends StatelessWidget {
-  const _DiaryWidget({
-    super.key,
-    required this.diary,
-    required this.index,
-  });
-
-  final DiaryEntry diary;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    final int noteMaxLines = (index % 2 == 0) ? 3 : 5;
-    final DiaryController diaryController = Provider.of<DiaryController>(context);
-
-    return Card(
-      elevation: 8,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            Text(
-              diary.noteName,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-            ),
-            SizedBox(height: 5),
-
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Text(
-                diary.note,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.black.withValues(alpha: 0.5)
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: noteMaxLines,
-                textAlign: TextAlign.right,
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: Divider(height: 5,thickness: 1, color: Theme.of(context).disabledColor),
-            ),
-
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-
-                Text(diary.isSynced ? 'Synced' : 'Unsynced', style: TextStyle(
-                  fontSize: 12,
-                  color: diary.isSynced ? Colors.green : Colors.red
-                )),
-
-                InkWell(
-                  onTap: (){
-                    diaryController.removeNote(diary.userId, diary.noteId);
-                  },
-                  child: Icon(
-                    Icons.delete,
-                    color: Colors.red.withValues(alpha: 0.8),
-                    size: 20,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-
-class _DiaryShimmer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      sliver: SliverMasonryGrid.count(
-        crossAxisCount: 2, // Number of columns
-        mainAxisSpacing: 8, // Vertical spacing
-        crossAxisSpacing: 8, // Horizontal spacing
-        itemBuilder: (context, index) {
-          return Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
-            child: Container(
-              height: index.isEven ? 120 : 160, // Varying height for masonry effect
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          );
-        },
-        childCount: 10,
-      ),
     );
   }
 }

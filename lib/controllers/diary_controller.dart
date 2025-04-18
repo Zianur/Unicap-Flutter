@@ -13,6 +13,8 @@ class DiaryController with ChangeNotifier {
   // List of notes
   List<DiaryEntry>? _notes;
   List<DiaryEntry>? get notes => _notes;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
 
   /// Refactor this method by following the favorite caption controller
@@ -53,25 +55,33 @@ class DiaryController with ChangeNotifier {
   }
 
   // Save a note locally and sync with Firebase
-  Future<void> saveNote(String userId, String noteName, String note) async {
+  Future<void> saveNote(String userId, String noteName, String? noteId, String note) async {
+    _isLoading = true;
+    notifyListeners();
+
     var connectivityResult = await _connectivity.checkConnectivity();
     bool isOnline = connectivityResult != ConnectivityResult.none;
 
-    final String noteId = DateTime.now().millisecondsSinceEpoch.toString();
-    bool noteExists = await _dbHelper.noteExists(userId, noteId);
+    // bool noteExists = await _dbHelper.noteExists(userId, noteId);
 
-    if (noteExists) {
+    if (noteId?.isNotEmpty ?? false) {
+      print('=============inside noteId != null==============');
       // Update the existing note
-      await _dbHelper.updateNote(userId, noteId, noteName, note, isOnline ? true : false);
+      await _dbHelper.updateNote(userId, noteId!, noteName, note, isOnline ? true : false);
     } else {
+      print('=============inside noteId == null==============');
+      noteId = DateTime.now().millisecondsSinceEpoch.toString();
       // Insert the note into the local database if it doesn't exist
       await _dbHelper.insertNote(userId, noteId, noteName, note, isOnline ? true : false);
     }
-    if(isOnline){
+    if (isOnline){
+      print('=============inside isonline==============');
       await _service.saveNote(userId, noteId, noteName, note);
     }
 
-    getAllNotesFromLocal(userId);
+    await getAllNotesFromLocal(userId);
+
+    _isLoading = false;
     notifyListeners();
   }
 
@@ -98,18 +108,21 @@ class DiaryController with ChangeNotifier {
 
 
   Future<void> getAllNotesFromLocal(String userId) async {
+    print('=============inside getAllNotesFromLocal==================');
     List<Map<String, dynamic>> mapList = await _dbHelper.getNotes(userId);
     _notes = mapList.map((element)=> DiaryEntry.fromMap(element)).toList();
+    print('=============notes length==================${_notes?.length}');
   }
 
   Future<void> removeNote(String userId, String noteId) async {
     try {
+      print('===========================inside removeNote==================${_notes?.length}');
       await _service.removeNote(userId, noteId);
       await _dbHelper.deleteNote(userId, noteId);
       await fetchAndSaveNotes(userId);
       notifyListeners();
     } catch (e) {
-      print('Error removing favorite: $e');
+      print('==================Error Removing notes: $e===================');
       rethrow;
     }
   }

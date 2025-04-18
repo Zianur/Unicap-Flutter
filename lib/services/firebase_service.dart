@@ -49,7 +49,7 @@ class FirebaseService {
   // Fetch notes from Firebase and save/update them locally
   Future<Map<dynamic, dynamic>?> fetchAndSaveNotes(String userId) async {
     try {
-      DatabaseEvent event = await _databaseRef.child('User/$userId/Note').once();
+      DatabaseEvent event = await _databaseRef.child('User/${int.parse(userId)}/Note').once();
       DataSnapshot snapshot = event.snapshot;
 
       if (snapshot.value != null) {

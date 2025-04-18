@@ -45,7 +45,7 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
             builder: (_, favCaptionController, __) {
               return SliverAppBar(
                 automaticallyImplyLeading: false, // Removes back button
-                backgroundColor: Theme.of(context).primaryColor,
+                backgroundColor: Colors.deepPurpleAccent,
                 floating: true,
                 pinned: true,
                 snap: true,
@@ -57,7 +57,6 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
                     margin: EdgeInsets.symmetric(horizontal: 10),
                     width: double.infinity,
                     height: 50,
-                    color: Theme.of(context).primaryColor,
                     child: Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
@@ -73,10 +72,10 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
                               child: TextField(
                                 textInputAction: TextInputAction.go,
                                 /// todo - need to update this
-                                onChanged: (String value)=> favCaptionController.filterFavCaption(queryText: value, userId: userId ?? ''),
+                                onChanged: (String value)=> favCaptionController.filterFavCaption(queryText: value, userId: userId ?? 'guest'),
                                 style: const TextStyle(fontSize: 12, color: Colors.black),
                                 decoration: InputDecoration(
-                                  hintText: "Search Diary",
+                                  hintText: "Search Favorite Captions with Keywords",
                                   hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
                                   border: InputBorder.none,
                                   contentPadding: const EdgeInsets.only( left: 10, bottom: 5),

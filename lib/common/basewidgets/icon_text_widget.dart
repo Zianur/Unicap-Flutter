@@ -5,14 +5,14 @@ class IconTextWidget extends StatelessWidget {
   final IconData icon;
   final Color? iconColor;
   final TextStyle? textStyle;
-  final String text;
+  final String? text;
 
   const IconTextWidget({super.key,
     required this.onTap,
     required this.icon,
     this.iconColor,
     this.textStyle,
-     required this.text
+    this.text
   });
 
   @override
@@ -20,12 +20,12 @@ class IconTextWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Row(children: [
-        Icon(icon, color: iconColor ?? Theme.of(context).disabledColor, size: 16),
+        Icon(icon, color: iconColor ?? Theme.of(context).disabledColor, size: 20),
         SizedBox(width: 5),
 
-        Text(text, style: textStyle ?? TextStyle(
+        Text(text ?? '', style: textStyle ?? TextStyle(
             color: Theme.of(context).disabledColor,
-          fontSize: 12,
+          fontSize: 14,
           fontWeight: FontWeight.bold
         ), overflow: TextOverflow.ellipsis),
       ]),

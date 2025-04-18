@@ -5,10 +5,12 @@ import 'package:unicap_cg/controllers/diary_controller.dart';
 import 'package:unicap_cg/views/caption_category_screen.dart';
 import 'package:unicap_cg/views/fav_caption_screen.dart';
 import '../controllers/caption_category_controller.dart';
-import 'diary_screen.dart';
+import 'diary_list_screen.dart';
 import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -43,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       body: TabBarView(
         controller: _tabController,
         children: [
-          DiaryScreen(),
+          DiaryListScreen(),
           CaptionCategoryView(),
           FavCaptionScreen(),
           LoginScreen(),
@@ -52,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       bottomNavigationBar: Container(
         height: 60,
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          color: Colors.deepPurpleAccent,
           boxShadow: [
             BoxShadow(
               color: Colors.black12,
@@ -68,8 +70,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           indicatorColor: Colors.transparent,
           dividerColor: Colors.transparent,
           tabs: [
-            Tab(icon: Icon(Icons.category), text: 'Captions'),
-            Tab(icon: Icon(Icons.book), text: 'Diary'),
+            Tab(icon: Icon(Icons.book), text: 'Diary '),
+            Tab(icon: Icon(Icons.category ), text: 'Captions'),
             Tab(icon: Icon(Icons.favorite), text: 'Favorite'),
             Tab(icon: Icon(Icons.login), text: 'Login'),
           ],
