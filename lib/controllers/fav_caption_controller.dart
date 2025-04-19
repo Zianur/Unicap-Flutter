@@ -7,7 +7,7 @@ import 'package:unicap_cg/services/fav_caption_service.dart';
 class FavoriteCaptionController with ChangeNotifier {
   final FavoriteCaptionService _service = FavoriteCaptionService();
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  List<FavoriteCaption>? _favorites;
+  List<FavoriteCaption> _favorites = [];
 
   List<FavoriteCaption>? get favorites => _favorites;
 
@@ -99,7 +99,7 @@ class FavoriteCaptionController with ChangeNotifier {
       await getAllFavCaptionsFromLocal(userId);
     }
     else{
-      _favorites = _favorites?.where((caption) {
+      _favorites = _favorites.where((caption) {
         return caption.caption.toLowerCase().contains(queryText.toLowerCase());
       }).toList();
     }

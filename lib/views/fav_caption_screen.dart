@@ -9,6 +9,7 @@ import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
 import 'package:unicap_cg/models/caption_category.dart';
 import 'package:unicap_cg/models/fav_caption.dart';
+import 'package:unicap_cg/views/diary_list_screen.dart';
 import '../controllers/caption_category_controller.dart';
 
 class FavCaptionScreen extends StatefulWidget {
@@ -39,103 +40,91 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      body: CustomScrollView(slivers: [
-        Consumer<FavoriteCaptionController>(
-            builder: (_, favCaptionController, __) {
-              return SliverAppBar(
-                automaticallyImplyLeading: false, // Removes back button
-                backgroundColor: Colors.deepPurpleAccent,
-                floating: true,
-                pinned: true,
-                snap: true,
-                collapsedHeight: 80,
-                expandedHeight: 80,
-                flexibleSpace: FlexibleSpaceBar(
-                  centerTitle: true,
-                  title: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    width: double.infinity,
-                    height: 50,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      elevation: 20,
-                      color: Colors.white,
-                      child: Center(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              flex: 6,
-                              child: TextField(
-                                textInputAction: TextInputAction.go,
-                                /// todo - need to update this
-                                onChanged: (String value)=> favCaptionController.filterFavCaption(queryText: value, userId: userId ?? 'guest'),
-                                style: const TextStyle(fontSize: 12, color: Colors.black),
-                                decoration: InputDecoration(
-                                  hintText: "Search Favorite Captions with Keywords",
-                                  hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
-                                  border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.only( left: 10, bottom: 5),
-                                ),
+    return CustomScrollView(slivers: [
+      Consumer<FavoriteCaptionController>(
+          builder: (_, favCaptionController, __) {
+            return SliverAppBar(
+              automaticallyImplyLeading: false, // Removes back button
+              backgroundColor: Colors.deepPurpleAccent,
+              floating: true,
+              pinned: true,
+              snap: true,
+              collapsedHeight: 80,
+              expandedHeight: 80,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  width: double.infinity,
+                  height: 50,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    elevation: 20,
+                    color: Colors.white,
+                    child: Center(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            flex: 6,
+                            child: TextField(
+                              textInputAction: TextInputAction.go,
+                              /// todo - need to update this
+                              onChanged: (String value)=> favCaptionController.filterFavCaption(queryText: value, userId: userId ?? 'guest'),
+                              style: const TextStyle(fontSize: 12, color: Colors.black),
+                              decoration: InputDecoration(
+                                hintText: "Search Favorite Captions with Keywords",
+                                hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.only( left: 10, bottom: 5),
                               ),
                             ),
-                            const Expanded(
-                              flex: 1,
-                              child: Icon(
-                                Icons.search,
-                                color: Colors.black38,
-                              ),
+                          ),
+                          const Expanded(
+                            flex: 1,
+                            child: Icon(
+                              Icons.search,
+                              color: Colors.black38,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              );
-            }
-        ),
+              ),
+            );
+          }
+      ),
 
-        Consumer<FavoriteCaptionController>(
-            builder: (_, favCaptionController, __) {
-              return favCaptionController.favorites != null ? (favCaptionController.favorites?.isNotEmpty ?? false)
-                  ? SliverPadding(
+      Consumer<FavoriteCaptionController>(
+          builder: (_, favCaptionController, __) {
+            return favCaptionController.favorites != null ? (favCaptionController.favorites?.isNotEmpty ?? false)
+                ? SliverPadding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                sliver: SliverList.separated(
+                  itemCount: favCaptionController.favorites?.length,
+                  itemBuilder: (context, index){
+                    return FavCaptionWidget(caption: favCaptionController.favorites![index], index: index);
+                  },
+                  separatorBuilder: (_, index)=> SizedBox(height: 10),
+                )
+            ) : SliverToBoxAdapter(
+              child: EmptyWidget(),
+            ) : SliverToBoxAdapter(
+                child: ListView.builder(
+                  itemCount: 10,
+                  shrinkWrap: true,
                   padding: EdgeInsets.symmetric(horizontal: 10),
-                  sliver: SliverList.separated(
-                    itemCount: favCaptionController.favorites?.length,
-                    itemBuilder: (context, index){
-                      return FavCaptionWidget(caption: favCaptionController.favorites![index], index: index);
-                    },
-                    separatorBuilder: (_, index)=> SizedBox(height: 10),
-                  )
-              ) : SliverToBoxAdapter(
-                child: SizedBox(
-                    height: 400,
-                    child: Center(
-                      child: Text(
-                        'No Category Available',
-                        style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    )),
-              ) : SliverToBoxAdapter(
-                  child: ListView.builder(
-                    itemCount: 10,
-                    shrinkWrap: true,
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    itemBuilder: (context, index) {
-                      return _CaptionCardShimmer();
-                    },
-                  ));
-            }
-        ),
-      ]),
-    );
+                  itemBuilder: (context, index) {
+                    return _CaptionCardShimmer();
+                  },
+                ));
+          }
+      ),
+    ]);
   }
 }
 

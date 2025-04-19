@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unicap_cg/common/basewidgets/custom_button_widget.dart';
+import 'package:unicap_cg/views/signup_screen.dart';
 import '../controllers/auth_controller.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -27,97 +28,71 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final double widthSize = MediaQuery.sizeOf(context).width;
+    final double heightSize = MediaQuery.sizeOf(context).width;
 
     return Consumer<AuthController>(
       builder: (context, authController, _) {
         return Scaffold(
-          appBar: !authController.isLoggedIn ? AppBar(title: Text("Login")) : null,
-          body: SingleChildScrollView(child: Column(children: [
+          backgroundColor: Colors.deepPurpleAccent,
+          body: Center(
+            child: SingleChildScrollView(child: Column(children: [
 
-            authController.isLoggedIn ? Column(children: [
-              /// profile Section
-              Container(
-                width: widthSize,
-                padding: EdgeInsets.all(20),
-                color: Colors.deepPurpleAccent,
-                child: Column(children: [
+              authController.isLoggedIn ? Column(children: [
+                /// profile Section
+                Container(
+                  width: widthSize,
+                  padding: EdgeInsets.all(20),
+                  color: Colors.deepPurpleAccent,
+                  child: Column(children: [
 
-                  Icon(Icons.person, size: 100),
-                  SizedBox(width: 20),
+                    Icon(Icons.person, size: 200),
+                    SizedBox(width: 20),
 
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(width: 1, color: Colors.white),
+                    Container(
+                      alignment: Alignment.center,
+                      width: widthSize,
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(width: 1, color: Colors.white),
+                      ),
+                      child: Text(authController.user?.email ?? '', style: TextStyle(fontSize: 18, color: Colors.white)),
                     ),
-                    child: Text(authController.user?.email ?? '', style: TextStyle(fontSize: 16, color: Colors.white)),
-                  ),
-                ]),
-              ),
-              SizedBox(height: 100),
+                  ]),
+                ),
+                // SizedBox(height: heightSize * 0.125),
 
-              Padding(
-                padding: const EdgeInsets.all(20),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: CustomButtonWidget(
+                    buttonText: 'Logout',
+                    onPressed: ()=> authController.signOut(),
+                    backgroundColor: Colors.red.withValues(alpha: 0.85),
+                  ),
+                ),
+
+              ]) : Center(
                 child: CustomButtonWidget(
-                  buttonText: 'Logout',
-                  onPressed: ()=> authController.signOut(),
-                  backgroundColor: Colors.deepPurpleAccent,
+                  margin: 20,
+                  onPressed: () async {
+                    await authController.signInWithGoogle();
+                    // print("Google Sign-In failed");
+                  },
+                  buttonText:"Login with Google",
+                  backgroundColor: Colors.white,
+                  textStyle: TextStyle(color: Colors.black),
+                  icon: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      height: 30,
+                      width: 30,
+                      child: Image.asset('assets/png/google_icon.png', fit: BoxFit.cover),
+                  ),
+                  textColor: Colors.black,
                 ),
               ),
 
-            ]) : SizedBox(),
-
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(labelText: "Email"),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(labelText: "Password"),
-              obscureText: true,
-            ),
-            SizedBox(height: 10),
-            if (authController.errorMessage != null)
-              Text(authController.errorMessage!, style: TextStyle(color: Colors.red)),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                String? error = await authController.signInWithEmail(
-                  _emailController.text.trim(),
-                  _passwordController.text.trim(),
-                );
-
-                if (error == null) {
-                  print("Google Sign-In failed");
-                }
-              },
-              child: Text(authController.isLoggedIn ? "Logout" : "Login"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await authController.signInWithGoogle();
-                // print("Google Sign-In failed");
-              },
-              child: Text(authController.isLoggedIn ? "Logout" : "Login with Google"),
-            ),
-            if (!authController.isVerified)
-              TextButton(
-                onPressed: () async {
-                  await authController.sendEmailVerification();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Verification email sent!")),
-                  );
-                },
-                child: Text("Resend Verification Email"),
-              ),
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/signup');
-              },
-              child: Text("Don't have an account? Sign Up"),
-            ),
-          ])),
+            ])),
+          ),
         );
       }
     );

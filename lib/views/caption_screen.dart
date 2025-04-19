@@ -34,6 +34,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      backgroundColor: Colors.deepPurpleAccent,
       body: CustomScrollView(slivers: [
         Consumer<CaptionCategoryController>(
             builder: (_, captionCategoryController, __) {

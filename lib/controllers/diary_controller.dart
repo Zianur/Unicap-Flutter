@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:unicap_cg/data/local/databse_helper.dart';
@@ -25,20 +27,29 @@ class DiaryController with ChangeNotifier {
       // notifyListeners();
 
       Map<dynamic, dynamic>? notesMap = await _service.fetchAndSaveNotes(userId);
+      print('================Fetched notes map: ${jsonEncode(notesMap)}');
+
 
       for (var noteId in notesMap?.keys ?? {}) {
-        String noteName = notesMap?[noteId]['name'] ?? 'noteName';
-        String noteContent = notesMap?[noteId]['note'];
-        debugPrint('--------note----------${noteId}');
+        var noteData = notesMap?[noteId];
 
-        // Check if the note already exists in the local database
-        bool noteExists = await _dbHelper.noteExists(userId, noteId);
-        if (noteExists) {
-          // Update the existing note
-          await _dbHelper.updateNote(userId, noteId, noteName, noteContent, true);
+        // Only process entries where value is a Map (i.e., valid note)
+        if (noteData is Map) {
+          String noteName = noteData['name'] ?? 'noteName';
+          String noteContent = noteData['note'] ?? '';
+
+          debugPrint('--------note----------$noteId');
+          debugPrint('--------note name----------$noteName');
+          debugPrint('--------note content----------$noteContent');
+
+          bool noteExists = await _dbHelper.noteExists(userId, noteId);
+          if (noteExists) {
+            await _dbHelper.updateNote(userId, noteId, noteName, noteContent, true);
+          } else {
+            await _dbHelper.insertNote(userId, noteId, noteName, noteContent, true);
+          }
         } else {
-          // Insert the note into the local database if it doesn't exist
-          await _dbHelper.insertNote(userId, noteId, noteName, noteContent, true);
+          print('⚠️ Skipped invalid note: ID=$noteId | value=$noteData');
         }
       }
 
@@ -56,6 +67,8 @@ class DiaryController with ChangeNotifier {
 
   // Save a note locally and sync with Firebase
   Future<void> saveNote(String userId, String noteName, String? noteId, String note) async {
+    print('=============inside noteName==============$noteName');
+    print('=============inside note==============$note');
     _isLoading = true;
     notifyListeners();
 
@@ -97,7 +110,7 @@ class DiaryController with ChangeNotifier {
     }
     else{
       _notes = _notes?.where((note) {
-        final titleMatches = note.noteName.toLowerCase().contains(queryText.toLowerCase());
+        final titleMatches = note.noteName?.toLowerCase().contains(queryText.toLowerCase()) ?? false;
         final contentMatches = note.note.toLowerCase().contains(queryText.toLowerCase());
         return titleMatches || contentMatches;
       }).toList();

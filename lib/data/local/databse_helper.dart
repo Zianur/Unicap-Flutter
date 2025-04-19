@@ -34,7 +34,7 @@ class DatabaseHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId TEXT ,
         noteId TEXT ,
-        noteName TEXT ,
+        name TEXT ,
         note TEXT ,
         isSynced INTEGER ,
         createdAt TEXT 
@@ -88,7 +88,7 @@ class DatabaseHelper {
       {
         'userId': userId,
         'noteId': noteId,
-        'noteName': noteName,
+        'name': noteName,
         'note': note,
         'isSynced': isSynced ? 1 : 0,
       },
@@ -102,7 +102,7 @@ class DatabaseHelper {
     await db.update(
       'notes',
       {
-        'noteName': noteName,
+        'name': noteName,
         'note': note,
         'isSynced': isSynced ? 1 : 0,
       },

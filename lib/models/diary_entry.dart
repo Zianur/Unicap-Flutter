@@ -1,7 +1,7 @@
 class DiaryEntry {
   String userId;
   String noteId;
-  String noteName;
+  String? noteName;
   String note;
   bool isSynced;
 
@@ -31,7 +31,7 @@ class DiaryEntry {
       noteId: map['noteId'] as String,
       note: map['note'] as String,
       isSynced: (map['isSynced'] as int) == 1,// Convert int back to bool
-      noteName: map['note'] as String,
+      noteName: map['name'] as String,
     );
   }
 }

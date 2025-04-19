@@ -42,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.deepPurpleAccent,
       body: TabBarView(
         controller: _tabController,
         children: [
@@ -73,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             Tab(icon: Icon(Icons.book), text: 'Diary '),
             Tab(icon: Icon(Icons.category ), text: 'Captions'),
             Tab(icon: Icon(Icons.favorite), text: 'Favorite'),
-            Tab(icon: Icon(Icons.login), text: 'Login'),
+            Tab(icon: Icon(Icons.person), text: 'Profile'),
           ],
         ),
       ),

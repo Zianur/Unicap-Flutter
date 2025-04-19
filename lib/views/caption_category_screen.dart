@@ -140,14 +140,14 @@ class _CategoryWidget extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(100),
-                  border: Border.all(color: Theme.of(context).primaryColor, width: 2)
+                  border: Border.all(color: Colors.black, width: 2)
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
                   child: CachedNetworkImage(
                     imageUrl: category.imageUrl ?? '',
                     placeholder: (context, url) => Center(
-                      child: CircularProgressIndicator(),
+                      child: Icon(Icons.image),
                     ),
                     errorWidget: (context, url, error) => Icon(
                       Icons.error,

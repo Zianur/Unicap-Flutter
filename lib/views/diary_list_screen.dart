@@ -33,6 +33,7 @@ class _DiaryListScreenState extends State<DiaryListScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      backgroundColor: Colors.deepPurpleAccent,
       body: CustomScrollView(slivers: [
         Consumer<DiaryController>(
           builder: (_, diaryController, __) {
@@ -112,27 +113,46 @@ class _DiaryListScreenState extends State<DiaryListScreen> {
                   },
                 ),
               ) : SliverToBoxAdapter(
-              child: SizedBox(
-                  height: 400,
-                  child: Center(
-                    child: Text(
-                      'No Diary Available',
-                      style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  )),
+              child: EmptyWidget(),
             ) : _DiaryShimmer();
           }
         ),
       ]),
       floatingActionButton: FloatingActionButton(
         onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (_)=> DiaryScreen())),
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor: Colors.black,
         child: Icon(Icons.add, color: Colors.white),
 
       ),
+    );
+  }
+}
+
+class EmptyWidget extends StatelessWidget {
+  const EmptyWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(height: MediaQuery.of(context).size.height*0.225),
+
+        Image.asset('assets/png/empty_icon.png'),
+
+        SizedBox(height: MediaQuery.of(context).size.height*0.02),
+
+        Text(
+          'Empty',
+          style: const TextStyle(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 }
@@ -161,7 +181,7 @@ class _DiaryWidget extends StatelessWidget {
           children: [
 
             Text(
-              diary.noteName,
+              diary.noteName ?? '',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,

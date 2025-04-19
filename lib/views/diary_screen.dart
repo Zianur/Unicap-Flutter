@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:unicap_cg/common/basewidgets/custom_button_widget.dart';
 import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
@@ -46,6 +45,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
     // final double heightSize = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
+      backgroundColor: Colors.deepPurpleAccent,
       appBar: AppBar(
         backgroundColor: Colors.deepPurpleAccent,
         title: Text(widget.diaryEntry == null ? 'Add note' : 'Update note', style: TextStyle(
@@ -69,7 +69,10 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 controller: _titleController,
                 decoration: InputDecoration(
                   labelText: 'Title',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(borderSide: BorderSide(
+
+
+                  )),
                 ),
                 maxLength: 100,
               ),
@@ -109,14 +112,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
 
-              // Flexible(child: CustomButtonWidget(
-              //   backgroundColor: Colors.black,
-              //   buttonText: 'Cancel',
-              //   textStyle: TextStyle(color: Colors.red),
-              //   onPressed: ()=> Navigator.pop(context),
-              // )),
-              // SizedBox(width: 10),
-
               Flexible(child: CustomButtonWidget(
                 borderRadius: 100,
                 backgroundColor: Colors.black,
@@ -145,8 +140,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
                           if(widget.diaryEntry != null){
                             await diaryController.saveNote(
                                 widget.diaryEntry?.userId ?? userId,
-                                widget.diaryEntry?.noteId ?? '',
                                 newTitle,
+                                widget.diaryEntry?.noteId ?? '',
                                 newNote
                             );
                           }

@@ -11,7 +11,7 @@ class CustomButtonWidget extends StatelessWidget {
   final double borderRadius;
   final double? width;
   final double? height;
-  final IconData? icon;
+  final Widget? icon;
   final TextStyle? textStyle;
   final bool isLoading;
 
@@ -59,7 +59,7 @@ class CustomButtonWidget extends StatelessWidget {
 
           icon != null ? Padding(
             padding: const EdgeInsets.only(right: Dimensions.paddingSizeExtraSmall),
-            child: Icon(icon, color: textColor ?? Theme.of(context).cardColor),
+            child: icon,
           ) : const SizedBox(),
 
           Text(buttonText ?? '', textAlign: TextAlign.center,  style: textStyle ?? TextStyle(
