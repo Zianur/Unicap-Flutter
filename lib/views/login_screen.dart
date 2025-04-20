@@ -17,12 +17,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
-     final authController = Provider.of<AuthController>(context, listen: false);
-      if (authController.isLoggedIn) {
-        print("---------------------Google Sign-In failed---------------------");
-      }
-    });
   }
 
   @override

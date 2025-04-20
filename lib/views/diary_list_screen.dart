@@ -3,6 +3,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
+import 'package:unicap_cg/common/basewidgets/diary_shimmer.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/diary_controller.dart';
 import 'package:unicap_cg/models/diary_entry.dart';
@@ -17,13 +18,21 @@ class DiaryListScreen extends StatefulWidget {
 }
 
 class _DiaryListScreenState extends State<DiaryListScreen> {
-  String? userId;
+  late String userId;
 
   @override
   void initState() {
 
-    userId = Provider.of<AuthController>(context, listen: false).user?.uid;
-    Provider.of<DiaryController>(context, listen: false).syncUnsyncedNotes(userId ?? 'guest');
+    Future.delayed(Duration.zero, () async {
+      final authController = Provider.of<AuthController>(context, listen: false);
+      await authController.getUserId();
+
+      userId = authController.userId ?? 'guest';
+      print('=========diarylist screen=========userid======================$userId');
+
+
+      Provider.of<DiaryController>(context, listen: false).syncUnsyncedNotes(userId);
+    });
 
     super.initState();
   }
@@ -114,7 +123,7 @@ class _DiaryListScreenState extends State<DiaryListScreen> {
                 ),
               ) : SliverToBoxAdapter(
               child: EmptyWidget(),
-            ) : _DiaryShimmer();
+            ) : DiaryShimmer();
           }
         ),
       ]),
@@ -220,15 +229,22 @@ class _DiaryWidget extends StatelessWidget {
                   color: diary.isSynced ? Colors.green : Colors.red
                 )),
 
-                InkWell(
-                  onTap: (){
-                    diaryController.removeNote(diary.userId, diary.noteId);
-                    CustomToast.showToast('Removed Diary successfully', ToastType.success, null);
-                  },
-                  child: Icon(
-                    Icons.delete,
-                    color: Colors.red.withValues(alpha: 0.8),
-                    size: 20,
+                Expanded(
+                  child: InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    onTap: () async{
+                      await diaryController.removeNote(diary.userId, diary.noteId);
+                      CustomToast.showToast('Removed Diary successfully', ToastType.success, null);
+                    },
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.red.withValues(alpha: 0.8),
+                        size: 20,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -240,31 +256,3 @@ class _DiaryWidget extends StatelessWidget {
   }
 }
 
-
-class _DiaryShimmer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      sliver: SliverMasonryGrid.count(
-        crossAxisCount: 2, // Number of columns
-        mainAxisSpacing: 8, // Vertical spacing
-        crossAxisSpacing: 8, // Horizontal spacing
-        itemBuilder: (context, index) {
-          return Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
-            child: Container(
-              height: index.isEven ? 120 : 160, // Varying height for masonry effect
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          );
-        },
-        childCount: 10,
-      ),
-    );
-  }
-}

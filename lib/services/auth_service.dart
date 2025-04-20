@@ -7,14 +7,24 @@ class AuthService {
 
   User? get currentUser => _auth.currentUser;
 
+  Future<String?> getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_id');
+  }
+
+  Future<void> _saveUserId(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_id', userId);
+  }
+
   Future<void> _saveLoginStatus(bool status) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', status);
+    await prefs.setBool('is_logged_in', status);
   }
 
   Future<bool> checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('isLoggedIn') ?? false;
+    return prefs.getBool('is_logged_in') ?? false;
   }
 
   // ✅ Sign in with Google
@@ -37,6 +47,7 @@ class AuthService {
       );
 
       final userCredential = await _auth.signInWithCredential(credential);
+      _saveUserId(userCredential.user!.uid);
       await _saveLoginStatus(true);
 
       return userCredential.user;

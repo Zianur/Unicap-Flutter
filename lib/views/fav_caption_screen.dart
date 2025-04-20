@@ -2,14 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:unicap_cg/common/basewidgets/caption_widget.dart';
 import 'package:unicap_cg/common/basewidgets/fav_caption_widget.dart';
-import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
-import 'package:unicap_cg/models/caption_category.dart';
 import 'package:unicap_cg/views/diary_list_screen.dart';
-import '../controllers/caption_category_controller.dart';
 
 class FavCaptionScreen extends StatefulWidget {
   const FavCaptionScreen({super.key});
@@ -19,21 +15,24 @@ class FavCaptionScreen extends StatefulWidget {
 }
 
 class _FavCaptionScreenState extends State<FavCaptionScreen> {
-  String? userId;
+  late String userId;
+
+
+
   @override
   void initState() {
     super.initState();
 
+    Future.delayed(Duration.zero, () async {
+      final authController = Provider.of<AuthController>(context, listen: false);
+      await authController.getUserId();
 
-    /// Get FavCaptions
-    final AuthController authController = Provider.of<AuthController>(context, listen: false);
+      userId = authController.userId ?? 'guest';
+      print('=========home screen=========userid======================$userId');
 
-    if(authController.isLoggedIn){
-      userId = authController.user?.uid;
-      debugPrint('==============user id========${authController.user?.uid}');
+      Provider.of<FavoriteCaptionController>(context, listen: false).syncUnsyncedFavCaptions(userId);
+    });
 
-      Provider.of<FavoriteCaptionController>(context, listen: false).syncUnsyncedFavCaptions(userId ?? '');
-    }
   }
 
   @override
@@ -70,7 +69,6 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
                             flex: 6,
                             child: TextField(
                               textInputAction: TextInputAction.go,
-                              /// todo - need to update this
                               onChanged: (String value)=> favCaptionController.filterFavCaption(queryText: value, userId: userId ?? 'guest'),
                               style: const TextStyle(fontSize: 12, color: Colors.black),
                               decoration: InputDecoration(

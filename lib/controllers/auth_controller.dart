@@ -77,4 +77,12 @@ class AuthController extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
   }
+
+
+  String? userId;
+  Future<void> getUserId() async{
+    userId = await _authService.getUserId();
+    print('================controller userId============$userId');
+    notifyListeners();
+  }
 }

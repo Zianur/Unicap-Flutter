@@ -7,7 +7,6 @@ import 'package:unicap_cg/models/diary_entry.dart';
 import 'package:unicap_cg/services/firebase_service.dart';
 
 class DiaryController with ChangeNotifier {
-  // final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final Connectivity _connectivity = Connectivity();
   final FirebaseService _service =  FirebaseService();
@@ -26,7 +25,10 @@ class DiaryController with ChangeNotifier {
       // _notes = null;
       // notifyListeners();
 
-      Map<dynamic, dynamic>? notesMap = await _service.fetchAndSaveNotes(userId);
+      Map<dynamic, dynamic>? notesMap;
+      if(await isUserOnline()){
+        notesMap = await _service.fetchAndSaveNotes(userId);
+      }
       print('================Fetched notes map: ${jsonEncode(notesMap)}');
 
 
@@ -54,12 +56,12 @@ class DiaryController with ChangeNotifier {
       }
 
       // Update the local notes list
-      List<Map<String, dynamic>> mapList = await _dbHelper.getNotes(userId);
-      _notes = mapList.map((element)=> DiaryEntry.fromMap(element)).toList();
+      await getAllNotesFromLocal(userId);
+      notifyListeners();
+
+      debugPrint('=========userId===========$userId');
       debugPrint('=========NOTES===========${_notes?.length}');
       debugPrint('=========NOTES===========$_notes');
-
-      notifyListeners();
     } catch (e) {
       debugPrint('=========Error fetching notes=======: $e');
     }
@@ -72,8 +74,7 @@ class DiaryController with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    var connectivityResult = await _connectivity.checkConnectivity();
-    bool isOnline = connectivityResult != ConnectivityResult.none;
+    bool isOnline = await isUserOnline();
 
     // bool noteExists = await _dbHelper.noteExists(userId, noteId);
 
@@ -83,8 +84,9 @@ class DiaryController with ChangeNotifier {
       await _dbHelper.updateNote(userId, noteId!, noteName, note, isOnline ? true : false);
     } else {
       print('=============inside noteId == null==============');
+
       noteId = DateTime.now().millisecondsSinceEpoch.toString();
-      // Insert the note into the local database if it doesn't exist
+      print('=============noteId ==============$noteId');
       await _dbHelper.insertNote(userId, noteId, noteName, note, isOnline ? true : false);
     }
     if (isOnline){
@@ -96,6 +98,12 @@ class DiaryController with ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<bool> isUserOnline() async {
+       var connectivityResult = await _connectivity.checkConnectivity();
+    bool isOnline = connectivityResult != ConnectivityResult.none;
+    return isOnline;
   }
 
   // Sync unsynced notes with Firebase
@@ -130,8 +138,12 @@ class DiaryController with ChangeNotifier {
   Future<void> removeNote(String userId, String noteId) async {
     try {
       print('===========================inside removeNote==================${_notes?.length}');
-      await _service.removeNote(userId, noteId);
       await _dbHelper.deleteNote(userId, noteId);
+
+      if(await isUserOnline()){
+        await _service.removeNote(userId, noteId);
+      }
+
       await fetchAndSaveNotes(userId);
       notifyListeners();
     } catch (e) {

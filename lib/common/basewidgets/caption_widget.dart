@@ -61,11 +61,14 @@ class CaptionWidget extends StatelessWidget {
 
               IconTextWidget(
                 onTap: (){
-                  if(isFav){
+                  print('==================isFav=============$isFav');
+
+                  if(!isFav){
                     print('============Inside ontap=========');
                     Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
                   }
                   else{
+                    print('==================inside else=============$isFav');
                     Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.caption);
                   }
                 },

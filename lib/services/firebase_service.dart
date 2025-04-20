@@ -107,7 +107,7 @@ class FirebaseService {
           .child(noteId)
           .remove();
     } catch (e) {
-      print('=====Remove============Error removing favorite caption:================= $e');
+      print('=====Remove============Error removing note:================= $e');
       throw Exception('Failed to remove favorite caption');
     }
   }

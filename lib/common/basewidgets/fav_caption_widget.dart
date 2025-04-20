@@ -21,7 +21,7 @@ class FavCaptionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final widthSize = MediaQuery.sizeOf(context).width;
     final AuthController authController = Provider.of<AuthController>(context, listen: false);
-    final String userId = authController.user?.uid ?? '';
+    final String userId = authController.user?.uid ?? 'guest';
     final FavoriteCaptionController favoriteCaptionController = Provider.of<FavoriteCaptionController>(context);
 
     final bool isFav = favoriteCaptionController.isCaptionFavorite(caption.caption);
@@ -64,8 +64,13 @@ class FavCaptionWidget extends StatelessWidget {
 
               IconTextWidget(
                 onTap: (){
-                  Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.captionId);
-                  CustomToast.showToast('Removed from favorites successfully', ToastType.success, null);
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    return Provider.of<FavoriteCaptionController>(context, listen: false)
+                        .removeFavorite(userId, caption.captionId)
+                        .then((_) {
+                      CustomToast.showToast('Removed from favorites successfully', ToastType.success, null);
+                    });
+                  });
                 },
                 icon: Icons.favorite,
                 text: 'Favorite',

@@ -27,8 +27,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
   void initState() {
     // TODO: implement initState
 
-    final AuthController authController = Provider.of<AuthController>(context, listen: false);
-    userId = authController.user?.uid ?? 'guest';
+    Future.delayed(Duration.zero, () async {
+      final authController = Provider.of<AuthController>(context, listen: false);
+      await authController.getUserId();
+
+      userId = authController.userId ?? 'guest';
+      print('=========diary screen=========userid======================$userId');
+    });
 
     initialTitle = widget.diaryEntry?.noteName ?? '';
     initialNote = widget.diaryEntry?.note ?? '';

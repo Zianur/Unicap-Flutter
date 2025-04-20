@@ -17,21 +17,26 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late String userId;
 
   @override
   void initState() {
     super.initState();
-
     _tabController = TabController(length: 4, vsync: this);
 
-    Provider.of<CaptionCategoryController>(context, listen: false).loadCategories();
+    // Get userId first, then fetch notes
+    Future.delayed(Duration.zero, () async {
+      final authController = Provider.of<AuthController>(context, listen: false);
+      await authController.getUserId();
 
-    final authController = Provider.of<AuthController>(context, listen: false);
-    if (authController.isLoggedIn) {
-      String? userId = authController.user?.uid;
-      Provider.of<DiaryController>(context, listen: false).fetchAndSaveNotes(userId ?? '');
-    }
+      userId = authController.userId ?? 'guest';
+      print('=========home screen=========userid======================$userId');
+
+      Provider.of<DiaryController>(context, listen: false).fetchAndSaveNotes(userId);
+      Provider.of<CaptionCategoryController>(context, listen: false).loadCategories();
+    });
   }
+
 
   @override
   void dispose() {

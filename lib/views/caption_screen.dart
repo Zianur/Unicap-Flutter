@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:unicap_cg/common/basewidgets/caption_widget.dart';
-import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
-import 'package:unicap_cg/controllers/fav_caption_controller.dart';
 import 'package:unicap_cg/models/caption_category.dart';
 import '../controllers/caption_category_controller.dart';
 
@@ -18,16 +15,22 @@ class CaptionScreen extends StatefulWidget {
 }
 
 class _CaptionScreenState extends State<CaptionScreen> {
-  String? userId;
+  late String userId;
 
   @override
   void initState() {
     super.initState();
 
-    final AuthController authController = Provider.of<AuthController>(context, listen: false);
-    userId = authController.user?.uid;
+    Future.delayed(Duration.zero, () async {
+      final authController = Provider.of<AuthController>(context, listen: false);
+      await authController.getUserId();
 
-    Provider.of<CaptionCategoryController>(context, listen: false).getCaptions(widget.category);
+      userId = authController.userId ?? 'guest';
+      print('=========caption screen=========userid======================$userId');
+
+      Provider.of<CaptionCategoryController>(context, listen: false).getCaptions(widget.category);
+    });
+
   }
 
   @override

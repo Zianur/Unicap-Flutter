@@ -4,6 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:unicap_cg/common/basewidgets/color_animated_text.dart';
+import 'package:unicap_cg/common/basewidgets/diary_shimmer.dart';
 import 'package:unicap_cg/controllers/caption_category_controller.dart';
 import 'package:unicap_cg/models/caption_category.dart';
 import 'package:unicap_cg/views/caption_screen.dart';
@@ -49,7 +50,6 @@ class _CaptionCategoryState extends State<CaptionCategoryView> {
                             flex: 6,
                             child: TextField(
                               textInputAction: TextInputAction.go,
-                              /// todo - need to update this
                               onChanged: (String value)=> captionCategoryController.filterCategories(queryText: value),
                               style: const TextStyle(fontSize: 12, color: Colors.black),
                               decoration: InputDecoration(
@@ -61,6 +61,7 @@ class _CaptionCategoryState extends State<CaptionCategoryView> {
                               ),
                             ),
                           ),
+
                           const Expanded(
                             flex: 1,
                             child: Icon(
@@ -106,7 +107,7 @@ class _CaptionCategoryState extends State<CaptionCategoryView> {
                           fontWeight: FontWeight.bold),
                     ),
                   )),
-            ) : SliverToBoxAdapter(child: _CategoryCardShimmer());
+            ) : SliverToBoxAdapter(child: DiaryShimmer());
           }
       ),
     ]);
@@ -168,60 +169,6 @@ class _CategoryWidget extends StatelessWidget {
               ColorAnimatedText(text: category.name ?? ''),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CategoryCardShimmer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 8,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Shimmering Circular Image
-            Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Container(
-                height: 70,
-                width: 70,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Theme.of(context).disabledColor,
-                    width: 1,
-                  ),
-                ),
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: Divider(
-                height: 5,
-                thickness: 1,
-                color: Theme.of(context).disabledColor,
-              ),
-            ),
-
-            // Shimmering Category Name
-            Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Container(
-                height: 20,
-                width: 100, // Placeholder width
-                color: Colors.white,
-              ),
-            ),
-          ],
         ),
       ),
     );
