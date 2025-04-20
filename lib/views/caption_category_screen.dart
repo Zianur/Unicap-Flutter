@@ -126,6 +126,8 @@ class _CategoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
       onTap: ()=> Navigator.push(context,
           MaterialPageRoute(builder: (context)=> CaptionScreen(category: category)),
       ),

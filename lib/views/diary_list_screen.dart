@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
 import 'package:unicap_cg/common/basewidgets/diary_shimmer.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
@@ -108,14 +107,16 @@ class _DiaryListScreenState extends State<DiaryListScreen> {
                 ? SliverPadding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 sliver: SliverMasonryGrid.count(
-                  crossAxisCount: 2, // Number of columns
-                  mainAxisSpacing: 8, // Vertical spacing
-                  crossAxisSpacing: 8, // Horizontal spacing
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
                   childCount: diaryController.notes?.length,
                   itemBuilder: (context, index){
                     var diary = diaryController.notes?[index];
 
                     return InkWell(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
                       onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (_)=> DiaryScreen(diaryEntry: diary))),
                       child: _DiaryWidget(diary: diary!, index: index),
                     );
@@ -220,7 +221,7 @@ class _DiaryWidget extends StatelessWidget {
             ),
 
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
 
@@ -239,10 +240,13 @@ class _DiaryWidget extends StatelessWidget {
                     },
                     child: Align(
                       alignment: Alignment.centerRight,
-                      child: Icon(
-                        Icons.delete,
-                        color: Colors.red.withValues(alpha: 0.8),
-                        size: 20,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.red.withValues(alpha: 0.8),
+                          size: 25,
+                        ),
                       ),
                     ),
                   ),

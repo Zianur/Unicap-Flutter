@@ -11,8 +11,8 @@ class FavoriteCaptionController with ChangeNotifier {
   final Connectivity _connectivity = Connectivity();
   final FavoriteCaptionService _service = FavoriteCaptionService();
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  List<FavoriteCaption> _favorites = [];
 
+  List<FavoriteCaption> _favorites = [];
   List<FavoriteCaption>? get favorites => _favorites;
 
   Future<void> syncUnsyncedFavCaptions(String userId) async {
@@ -40,7 +40,7 @@ class FavoriteCaptionController with ChangeNotifier {
         }
       }
 
-      _favorites = await _dbHelper.getFavoriteCaptions(userId);
+      await getAllFavCaptionsFromLocal(userId);
       notifyListeners();
       print('=====favorites=========${favorites?.length}==============');
 

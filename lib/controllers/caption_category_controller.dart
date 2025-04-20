@@ -32,6 +32,7 @@ class CaptionCategoryController extends ChangeNotifier {
 
   void getCaptions(CaptionCategory category){
     _captions = category.captions ?? [];
+    notifyListeners();
   }
 
   void filterCategories({required String queryText}) async {

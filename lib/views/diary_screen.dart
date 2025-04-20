@@ -74,11 +74,16 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 controller: _titleController,
                 decoration: InputDecoration(
                   labelText: 'Title',
-                  border: OutlineInputBorder(borderSide: BorderSide(
-
-
-                  )),
+                  labelStyle: TextStyle(color: Colors.white),
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2),
+                  ),
                 ),
+                style: TextStyle(color: Colors.black),
                 maxLength: 100,
               ),
               SizedBox(height: 16),
@@ -87,14 +92,23 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 controller: _noteController,
                 decoration: InputDecoration(
                   labelText: 'Note',
+                  labelStyle: TextStyle(color: Colors.white),
                   border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2),
+                  ),
                   alignLabelWithHint: true,
                 ),
+                style: TextStyle(color: Colors.black),
                 keyboardType: TextInputType.multiline,
-                minLines: 5,     // minimum height
-                maxLines: null,  // grows as user types
+                minLines: 5,
+                maxLines: null,
                 maxLength: 30000,
               ),
+
             ]),
           ),
         )),
@@ -132,7 +146,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       isLoading: diaryController.isLoading,
                       borderRadius: 100,
                       backgroundColor: Colors.black,
-                      buttonText: 'Save',
+                      buttonText: widget.diaryEntry == null ? 'Save' : 'Update',
                       textStyle: TextStyle(color: Colors.green),
                       onPressed: () async {
                         final String newTitle = _titleController.text;

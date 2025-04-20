@@ -28,7 +28,7 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
       await authController.getUserId();
 
       userId = authController.userId ?? 'guest';
-      print('=========home screen=========userid======================$userId');
+      print('=========fav caption screen=========userid======================$userId');
 
       Provider.of<FavoriteCaptionController>(context, listen: false).syncUnsyncedFavCaptions(userId);
     });

@@ -90,10 +90,14 @@ class FirebaseService {
     List<Map<String, dynamic>> unsyncedNotes = await _dbHelper.getUnsyncedNotes();
 
     for (var note in unsyncedNotes) {
-      String noteId = note['noteId'];
-      String noteContent = note['note'];
+      final String noteId = note['noteId'];
+      final String noteContent = note['note'];
+      final String noteName = note['name'];
 
-      await _databaseRef.child('User/$userId/Note/$noteId').set({'note': noteContent});
+      await _databaseRef.child('User/$userId/Note/$noteId').set({
+        'name': noteName,
+        'note': noteContent,
+      });
       await _dbHelper.updateSyncStatus(noteId, true); // Mark as synced
     }
   }

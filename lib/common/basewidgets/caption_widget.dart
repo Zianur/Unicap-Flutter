@@ -9,80 +9,83 @@ class CaptionWidget extends StatelessWidget {
   const CaptionWidget({super.key,
     required this.caption,
     required this.index,
+    required this.userId,
+    this.isFav = false
   });
 
   final Caption caption;
   final int index;
+  final String userId;
+  final bool isFav;
 
   @override
   Widget build(BuildContext context) {
     final widthSize = MediaQuery.sizeOf(context).width;
-    final AuthController authController = Provider.of<AuthController>(context, listen: false);
-    final String userId = authController.user?.uid ?? '';
-    final FavoriteCaptionController favoriteCaptionController = Provider.of<FavoriteCaptionController>(context);
 
-    final bool isFav = favoriteCaptionController.isCaptionFavorite(caption.caption);
+    return Consumer<FavoriteCaptionController>(
+      builder: (context, favCaptionController, _) {
+        return Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5), // No rounded corners
+          ),
+          elevation: 8,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
 
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5), // No rounded corners
-      ),
-      elevation: 8,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+                Container(
+                  width: widthSize,
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text(caption.caption, style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.white,
+                  ), textAlign: TextAlign.center),
+                ),
+                SizedBox(height: 10),
 
-            Container(
-              width: widthSize,
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Text(caption.caption, style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.white,
-              ), textAlign: TextAlign.center),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  IconTextWidget(
+                    onTap: (){
+
+                    },
+                    icon: Icons.copy,
+                    text: 'Copy',
+                  ),
+
+                  IconTextWidget(
+                    onTap: (){
+                      print('==================isFav=============$isFav');
+
+                      if(!isFav){
+                        print('============Inside ontap=========');
+                        Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
+                      }
+                      else{
+                        print('==================inside else=============$isFav');
+                        Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.caption);
+                      }
+                    },
+                    icon: Icons.favorite,
+                    text: 'Favorite',
+                    iconColor: isFav ? Colors.pink : null,
+                    textStyle: isFav ? TextStyle(color: Colors.pink) : null,
+                  ),
+
+                  IconTextWidget(onTap: (){}, icon: Icons.share, text: 'Share'),
+                ])
+              ],
             ),
-            SizedBox(height: 10),
-
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              IconTextWidget(
-                onTap: (){
-
-                },
-                icon: Icons.copy,
-                text: 'Copy',
-              ),
-
-              IconTextWidget(
-                onTap: (){
-                  print('==================isFav=============$isFav');
-
-                  if(!isFav){
-                    print('============Inside ontap=========');
-                    Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
-                  }
-                  else{
-                    print('==================inside else=============$isFav');
-                    Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.caption);
-                  }
-                },
-                icon: Icons.favorite,
-                text: 'Favorite',
-                iconColor: isFav ? Colors.pink : null,
-                textStyle: isFav ? TextStyle(color: Colors.pink) : null,
-              ),
-
-              IconTextWidget(onTap: (){}, icon: Icons.share, text: 'Share'),
-            ])
-          ],
-        ),
-      ),
+          ),
+        );
+      }
     );
   }
 }

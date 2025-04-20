@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:unicap_cg/common/basewidgets/caption_widget.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
+import 'package:unicap_cg/controllers/fav_caption_controller.dart';
 import 'package:unicap_cg/models/caption_category.dart';
 import '../controllers/caption_category_controller.dart';
 
@@ -105,22 +106,22 @@ class _CaptionScreenState extends State<CaptionScreen> {
                   sliver: SliverList.separated(
                     itemCount: captionCategoryController.captions?.length,
                     itemBuilder: (context, index){
-                      return CaptionWidget(caption: captionCategoryController.captions![index], index: index);
+                      final bool isFav = Provider.of<FavoriteCaptionController>(context, listen: false).isCaptionFavorite(captionCategoryController.captions![index].caption);
+                      return CaptionWidget(caption: captionCategoryController.captions![index], index: index, userId: userId, isFav: isFav);
                     },
                     separatorBuilder: (_, index)=> SizedBox(height: 10),
                   )
               ) : SliverToBoxAdapter(
                 child: SizedBox(
-                    height: 400,
-                    child: Center(
-                      child: Text(
-                        'No Category Available',
-                        style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    )),
+                  height: 400,
+                  child: Center(child: Text(
+                    'No Category Available',
+                    style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  )),
+                ),
               ) :  SliverToBoxAdapter(
                   child: ListView.builder(
                     itemCount: 10,
@@ -140,50 +141,53 @@ class _CaptionScreenState extends State<CaptionScreen> {
 class _CaptionCardShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 8,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Shimmering Caption Box
-            Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Container(
-                alignment: Alignment.center,
-                height: 40,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(
-                    color: Theme.of(context).primaryColor,
-                    width: 2,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Card(
+        elevation: 8,
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Shimmering Caption Box
+              Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 40,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(100),
+                    border: Border.all(
+                      color: Theme.of(context).primaryColor,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 5),
+              SizedBox(height: 5),
 
-            // Shimmering Icons Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(3, (index) {
-                return Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
-                  child: Container(
-                    width: 24,
-                    height: 24,
-                    color: Colors.white,
-                  ),
-                );
-              }),
-            ),
-          ],
+              // Shimmering Icons Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(3, (index) {
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      width: 24,
+                      height: 24,
+                      color: Colors.white,
+                    ),
+                  );
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );
