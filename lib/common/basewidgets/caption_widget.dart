@@ -51,12 +51,23 @@ class CaptionWidget extends StatelessWidget {
             SizedBox(height: 10),
 
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              IconTextWidget(onTap: (){}, icon: Icons.copy, text: 'Copy'),
+              IconTextWidget(
+                onTap: (){
+
+                },
+                icon: Icons.copy,
+                text: 'Copy',
+              ),
 
               IconTextWidget(
                 onTap: (){
-                  print('============Inside ontap=========');
-                  Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
+                  if(isFav){
+                    print('============Inside ontap=========');
+                    Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
+                  }
+                  else{
+                    Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.caption);
+                  }
                 },
                 icon: Icons.favorite,
                 text: 'Favorite',

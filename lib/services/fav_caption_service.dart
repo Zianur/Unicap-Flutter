@@ -1,6 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:unicap_cg/data/local/databse_helper.dart';
-import 'package:unicap_cg/models/fav_caption.dart';
+import 'package:unicap_cg/models/fav_caption_model.dart';
 
 class FavoriteCaptionService {
   final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();

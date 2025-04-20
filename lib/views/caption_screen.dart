@@ -66,7 +66,6 @@ class _CaptionScreenState extends State<CaptionScreen> {
                               flex: 6,
                               child: TextField(
                                 textInputAction: TextInputAction.go,
-                                /// todo - need to update this
                                 onChanged: (String value)=> captionCategoryController.filterCaptions(queryText: value, category: widget.category),
                                 style: const TextStyle(fontSize: 12, color: Colors.black),
                                 decoration: InputDecoration(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unicap_cg/data/local/databse_helper.dart';
 import 'package:unicap_cg/models/caption_category.dart';
-import 'package:unicap_cg/models/fav_caption.dart';
+import 'package:unicap_cg/models/fav_caption_model.dart';
 import 'package:unicap_cg/services/fav_caption_service.dart';
 
 class FavoriteCaptionController with ChangeNotifier {

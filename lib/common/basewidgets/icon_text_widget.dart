@@ -18,17 +18,23 @@ class IconTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      borderRadius: BorderRadius.circular(100),
+      highlightColor: Colors.deepPurpleAccent,
+      splashColor: Colors.deepPurpleAccent,
       onTap: onTap,
-      child: Row(children: [
-        Icon(icon, color: iconColor ?? Theme.of(context).disabledColor, size: 20),
-        SizedBox(width: 5),
+      child: Padding(
+        padding: const EdgeInsets.all(5),
+        child: Row(children: [
+          Icon(icon, color: iconColor ?? Theme.of(context).disabledColor, size: 20),
+          SizedBox(width: 5),
 
-        Text(text ?? '', style: textStyle ?? TextStyle(
-            color: Theme.of(context).disabledColor,
-          fontSize: 14,
-          fontWeight: FontWeight.bold
-        ), overflow: TextOverflow.ellipsis),
-      ]),
+          Text(text ?? '', style: textStyle ?? TextStyle(
+              color: Theme.of(context).disabledColor,
+            fontSize: 14,
+            fontWeight: FontWeight.bold
+          ), overflow: TextOverflow.ellipsis),
+        ]),
+      ),
     );
   }
 }

@@ -8,7 +8,6 @@ import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
 import 'package:unicap_cg/models/caption_category.dart';
-import 'package:unicap_cg/models/fav_caption.dart';
 import 'package:unicap_cg/views/diary_list_screen.dart';
 import '../controllers/caption_category_controller.dart';
 
