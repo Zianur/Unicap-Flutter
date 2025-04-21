@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/app_providers.dart';
@@ -20,9 +21,12 @@ Future<void> main() async {
     ),
   );
 
-  // Enable disk persistence
-  FirebaseDatabase.instance.setPersistenceEnabled(true);
-  FirebaseDatabase.instance.setPersistenceCacheSizeBytes(10000000); // 10MB cache size
+  if (!kIsWeb) {
+    // Enable disk persistence
+    FirebaseDatabase.instance.setPersistenceEnabled(true);
+    FirebaseDatabase.instance.setPersistenceCacheSizeBytes(10000000); // 10MB cache size
+  }
+
   runApp(
     MultiProvider(
       providers: appProviders,
