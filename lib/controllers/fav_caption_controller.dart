@@ -1,7 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
 import 'package:unicap_cg/data/local/databse_helper.dart';
 import 'package:unicap_cg/models/caption_category.dart';
 import 'package:unicap_cg/models/fav_caption_model.dart';
@@ -16,7 +14,7 @@ class FavoriteCaptionController with ChangeNotifier {
   List<FavoriteCaption>? get favorites => _favorites;
 
   Future<void> syncUnsyncedFavCaptions(String userId) async {
-    if(await isUserOnline()){
+    if(await isUserOnline() && userId != 'guest'){
       await _service.syncFavoriteCaptions(userId);
     }
     await loadAndSaveFavCaptions(userId);
@@ -29,7 +27,7 @@ class FavoriteCaptionController with ChangeNotifier {
     try {
       List<FavoriteCaption>? allFavCaptions;
 
-      if(await isUserOnline()){
+      if(await isUserOnline() && userId != 'guest'){
         allFavCaptions = await _service.getFavCaptions(userId);
       }
 
@@ -68,7 +66,7 @@ class FavoriteCaptionController with ChangeNotifier {
       print('==============Error Inserting favorite favorite to local: ================$e');
     }
 
-    if(await isUserOnline()){
+    if(await isUserOnline() && userId != 'guest'){
       await _service.addFavoriteCaption(FavoriteCaption(
         userId: userId,
         captionId: caption.key,
@@ -95,7 +93,7 @@ class FavoriteCaptionController with ChangeNotifier {
       print('=============controller============Error removing favorite from local: $e');
     }
 
-    if(await isUserOnline()){
+    if(await isUserOnline() && userId != 'guest'){
       await _service.removeFavoriteCaption(userId, captionId);
     }
 
@@ -109,7 +107,6 @@ class FavoriteCaptionController with ChangeNotifier {
 
   Future<void> getAllFavCaptionsFromLocal(String userId, {bool isUpdate = true}) async {
     _favorites = await _dbHelper.getFavoriteCaptions(userId);
-    print('==========inside getAllFavCaptionsFromLocal _favorites length==========${_favorites.length}');
     if(isUpdate){
       notifyListeners();
     }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
-import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
 import 'package:unicap_cg/models/caption_category.dart';
 
@@ -10,13 +9,11 @@ class CaptionWidget extends StatelessWidget {
     required this.caption,
     required this.index,
     required this.userId,
-    this.isFav = false
   });
 
   final Caption caption;
   final int index;
   final String userId;
-  final bool isFav;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +21,9 @@ class CaptionWidget extends StatelessWidget {
 
     return Consumer<FavoriteCaptionController>(
       builder: (context, favCaptionController, _) {
+        final bool isFav = favCaptionController.isCaptionFavorite(caption.caption);
+        print('=============isFav=====================$isFav');
+
         return Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5), // No rounded corners
@@ -62,7 +62,6 @@ class CaptionWidget extends StatelessWidget {
 
                   IconTextWidget(
                     onTap: (){
-                      print('==================isFav=============$isFav');
 
                       if(!isFav){
                         print('============Inside ontap=========');
@@ -70,7 +69,7 @@ class CaptionWidget extends StatelessWidget {
                       }
                       else{
                         print('==================inside else=============$isFav');
-                        Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.caption);
+                        Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.key);
                       }
                     },
                     icon: Icons.favorite,

@@ -16,6 +16,7 @@ class DiaryScreen extends StatefulWidget {
 }
 
 class _DiaryScreenState extends State<DiaryScreen> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
 
@@ -68,48 +69,67 @@ class _DiaryScreenState extends State<DiaryScreen> {
         Expanded(child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(10),
-            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            child: Form(
+              key: _formKey,
+              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
 
-              TextField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  labelText: 'Title',
-                  labelStyle: TextStyle(color: Colors.white),
-                  border: OutlineInputBorder(),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
+                TextFormField(
+                  controller: _titleController,
+                  cursorColor: Colors.black,
+                  decoration: InputDecoration(
+                    labelText: 'Title',
+                    labelStyle: TextStyle(color: Colors.white),
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.7), width: 2),
+                    ),
+                    counterStyle: TextStyle(color: Colors.black),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white, width: 2),
-                  ),
+                  style: TextStyle(color: Colors.black),
+                  maxLength: 100,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Title is required';
+                    }
+                    return null;
+                  },
                 ),
-                style: TextStyle(color: Colors.black),
-                maxLength: 100,
-              ),
-              SizedBox(height: 16),
+                SizedBox(height: 16),
 
-              TextField(
-                controller: _noteController,
-                decoration: InputDecoration(
-                  labelText: 'Note',
-                  labelStyle: TextStyle(color: Colors.white),
-                  border: OutlineInputBorder(),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
+                TextFormField(
+                  controller: _noteController,
+                  cursorColor: Colors.black,
+                  decoration: InputDecoration(
+                    labelText: 'Note',
+                    labelStyle: TextStyle(color: Colors.white),
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.7), width: 2),
+                    ),
+                    alignLabelWithHint: true,
+                    counterStyle: TextStyle(color: Colors.black),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white, width: 2),
-                  ),
-                  alignLabelWithHint: true,
+                  style: TextStyle(color: Colors.black),
+                  keyboardType: TextInputType.multiline,
+                  minLines: 5,
+                  maxLines: null,
+                  maxLength: 30000,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Note is required';
+                    }
+                    return null;
+                  },
                 ),
-                style: TextStyle(color: Colors.black),
-                keyboardType: TextInputType.multiline,
-                minLines: 5,
-                maxLines: null,
-                maxLength: 30000,
-              ),
 
-            ]),
+              ]),
+            ),
           ),
         )),
 
@@ -152,26 +172,28 @@ class _DiaryScreenState extends State<DiaryScreen> {
                         final String newTitle = _titleController.text;
                         final String newNote = _noteController.text;
 
-                        if(newTitle == initialTitle && newNote == initialNote){
-                          CustomToast.showToast("Nothing to update", ToastType.error, null);
-                        } else{
+                        if(_formKey.currentState!.validate()){
 
-                          if(widget.diaryEntry != null){
-                            await diaryController.saveNote(
-                                widget.diaryEntry?.userId ?? userId,
-                                newTitle,
-                                widget.diaryEntry?.noteId ?? '',
-                                newNote
-                            );
+                          if(newTitle == initialTitle && newNote == initialNote){
+                            CustomToast.showToast("Nothing to update", ToastType.error, null);
+                          } else{
+                            if(widget.diaryEntry != null){
+                              await diaryController.saveNote(
+                                  widget.diaryEntry?.userId ?? userId,
+                                  newTitle,
+                                  widget.diaryEntry?.noteId ?? '',
+                                  newNote
+                              );
+                            }
+                            else{
+                              await diaryController.saveNote(userId, newTitle, null, newNote);
+                            }
+
+                            CustomToast.showToast("Note saved successfully", ToastType.success, null);
+                            Navigator.pop(context);
                           }
-                          else{
-                            await diaryController.saveNote(userId, newTitle, null, newNote);
-                          }
-
-                          CustomToast.showToast("Note saved successfully", ToastType.success, null);
-
-                          Navigator.pop(context);
                         }
+
                       },
                     ));
                   }

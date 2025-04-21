@@ -79,10 +79,11 @@ class FavoriteCaptionService {
     final unsynced = localCaptions.where((c) => !c.isSynced).toList();
     for (final caption in unsynced) {
       try {
+        /// adding to firebase
         await addFavoriteCaption(caption);
         await _dbHelper.markFavoriteAsSynced(userId, caption.captionId);
       } catch (e) {
-        print('Failed to sync caption ${caption.captionId}: $e');
+        print('==================Failed to sync caption ${caption.captionId}: $e');
         continue;
       }
     }

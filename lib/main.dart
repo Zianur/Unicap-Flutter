@@ -6,8 +6,19 @@ import 'core/app_providers.dart';
 import 'views/home_screen.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter binding is initialized
-  await Firebase.initializeApp();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+        apiKey: "AIzaSyB4oeyIyZ3YNnNR-VDCIMZSZ4L8bcQixdU",
+        authDomain: "all-in-all-professional.firebaseapp.com",
+        databaseURL: "https://all-in-all-professional-default-rtdb.firebaseio.com",
+        projectId: "all-in-all-professional",
+        storageBucket: "all-in-all-professional.appspot.com",
+        messagingSenderId: "897423988557",
+        appId: "1:897423988557:web:e48a95289a5498f1fcc904",
+        measurementId: "G-XQPVDWQCD4"
+    ),
+  );
 
   // Enable disk persistence
   FirebaseDatabase.instance.setPersistenceEnabled(true);

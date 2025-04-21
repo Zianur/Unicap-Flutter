@@ -18,6 +18,17 @@ class DiaryController with ChangeNotifier {
   bool get isLoading => _isLoading;
 
 
+  // Sync unsynced notes with Firebase
+  Future<void> syncUnsyncedNotes(String userId) async {
+    if(await isUserOnline() && userId != 'guest'){
+      await _service.syncUnsyncedNotes(userId);
+    }
+
+    await fetchAndSaveNotes(userId);
+  }
+
+
+
   /// Refactor this method by following the favorite caption controller
   // Fetch notes from Firebase and save/update them locally
   Future<void> fetchAndSaveNotes(String userId) async {
@@ -26,7 +37,7 @@ class DiaryController with ChangeNotifier {
       // notifyListeners();
 
       Map<dynamic, dynamic>? notesMap;
-      if(await isUserOnline()){
+      if(await isUserOnline() && userId != 'guest'){
         notesMap = await _service.fetchAndSaveNotes(userId);
       }
       print('================Fetched notes map: ${jsonEncode(notesMap)}');
@@ -67,6 +78,8 @@ class DiaryController with ChangeNotifier {
     }
   }
 
+
+
   // Save a note locally and sync with Firebase
   Future<void> saveNote(String userId, String noteName, String? noteId, String note) async {
     print('=============inside noteName==============$noteName');
@@ -106,11 +119,8 @@ class DiaryController with ChangeNotifier {
     return isOnline;
   }
 
-  // Sync unsynced notes with Firebase
-  Future<void> syncUnsyncedNotes(String userId) async {
-    await _service.syncUnsyncedNotes(userId);
-    await fetchAndSaveNotes(userId);
-  }
+
+
 
  void filterNotes({required String queryText, required String userId}) async {
     if(queryText.isEmpty){
@@ -128,12 +138,15 @@ class DiaryController with ChangeNotifier {
   }
 
 
+
   Future<void> getAllNotesFromLocal(String userId) async {
     print('=============inside getAllNotesFromLocal==================');
     List<Map<String, dynamic>> mapList = await _dbHelper.getNotes(userId);
     _notes = mapList.map((element)=> DiaryEntry.fromMap(element)).toList();
     print('=============notes length==================${_notes?.length}');
   }
+
+
 
   Future<void> removeNote(String userId, String noteId) async {
     try {

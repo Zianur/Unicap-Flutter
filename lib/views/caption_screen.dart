@@ -30,6 +30,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
       print('=========caption screen=========userid======================$userId');
 
       Provider.of<CaptionCategoryController>(context, listen: false).getCaptions(widget.category);
+      Provider.of<FavoriteCaptionController>(context, listen: false).getAllFavCaptionsFromLocal(userId);
     });
 
   }
@@ -106,8 +107,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
                   sliver: SliverList.separated(
                     itemCount: captionCategoryController.captions?.length,
                     itemBuilder: (context, index){
-                      final bool isFav = Provider.of<FavoriteCaptionController>(context, listen: false).isCaptionFavorite(captionCategoryController.captions![index].caption);
-                      return CaptionWidget(caption: captionCategoryController.captions![index], index: index, userId: userId, isFav: isFav);
+                      return CaptionWidget(caption: captionCategoryController.captions![index], index: index, userId: userId);
                     },
                     separatorBuilder: (_, index)=> SizedBox(height: 10),
                   )
