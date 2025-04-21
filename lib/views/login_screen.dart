@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
           body: Center(
             child: SingleChildScrollView(child: Column(children: [
 
-              authController.isLoggedIn ? Column(children: [
+              authController.user != null ? Column(children: [
                 /// profile Section
                 Container(
                   width: widthSize,

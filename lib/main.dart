@@ -8,7 +8,9 @@ import 'views/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
+    name: 'Omnia Captions and Notes',
     options: const FirebaseOptions(
         apiKey: "AIzaSyB4oeyIyZ3YNnNR-VDCIMZSZ4L8bcQixdU",
         authDomain: "all-in-all-professional.firebaseapp.com",
@@ -20,6 +22,7 @@ Future<void> main() async {
         measurementId: "G-XQPVDWQCD4"
     ),
   );
+
 
   if (!kIsWeb) {
     // Enable disk persistence

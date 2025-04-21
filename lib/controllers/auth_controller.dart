@@ -21,6 +21,7 @@ class AuthController extends ChangeNotifier {
 
   void getCurrentUser(){
     _user = _authService.currentUser;
+    print('=================_user==============${user?.email}');
   }
 
   Future<void> _checkLoginStatus() async {
