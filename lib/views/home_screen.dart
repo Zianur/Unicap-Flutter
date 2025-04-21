@@ -27,8 +27,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     // Get userId first, then fetch notes
     Future.delayed(Duration.zero, () async {
       final authController = Provider.of<AuthController>(context, listen: false);
-      await authController.getUserId();
+      /// Getting user object
+      authController.getCurrentUser();
 
+      /// getting only user id
+      await authController.getUserId();
       userId = authController.userId ?? 'guest';
       print('=========home screen=========userid======================$userId');
 

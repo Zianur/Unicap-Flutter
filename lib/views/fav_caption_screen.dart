@@ -104,7 +104,7 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
                 sliver: SliverList.separated(
                   itemCount: favCaptionController.favorites?.length,
                   itemBuilder: (context, index){
-                    return FavCaptionWidget(caption: favCaptionController.favorites![index], index: index);
+                    return FavCaptionWidget(caption: favCaptionController.favorites![index], index: index, userId: userId);
                   },
                   separatorBuilder: (_, index)=> SizedBox(height: 10),
                 )

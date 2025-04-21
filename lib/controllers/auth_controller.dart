@@ -6,8 +6,8 @@ class AuthController extends ChangeNotifier {
   final AuthService _authService;
 
   AuthController(this._authService) {
-    _user = _authService.currentUser;
-    _checkLoginStatus();
+    // _user = _authService.currentUser;
+    // _checkLoginStatus();
   }
 
   User? _user;
@@ -19,6 +19,9 @@ class AuthController extends ChangeNotifier {
   bool get isVerified => _user?.emailVerified ?? false;
   String? get errorMessage => _errorMessage;
 
+  void getCurrentUser(){
+    _user = _authService.currentUser;
+  }
 
   Future<void> _checkLoginStatus() async {
     _isLoggedIn = await _authService.checkLoginStatus();
