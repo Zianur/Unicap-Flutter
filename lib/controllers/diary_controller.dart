@@ -102,7 +102,7 @@ class DiaryController with ChangeNotifier {
       print('=============noteId ==============$noteId');
       await _dbHelper.insertNote(userId, noteId, noteName, note, isOnline ? true : false);
     }
-    if (isOnline){
+    if (isOnline && userId != 'guest'){
       print('=============inside isonline==============');
       await _service.saveNote(userId, noteId, noteName, note);
     }

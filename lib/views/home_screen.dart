@@ -27,12 +27,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     // Get userId first, then fetch notes
     Future.delayed(Duration.zero, () async {
       final authController = Provider.of<AuthController>(context, listen: false);
-      /// Getting user object
+      /// Getting user object from firebase
       authController.getCurrentUser();
-
-      /// getting only user id
-      await authController.getUserId();
-      userId = authController.userId ?? 'guest';
+      userId = authController.user?.uid ?? 'guest';
       print('=========home screen=========userid======================$userId');
 
       Provider.of<DiaryController>(context, listen: false).fetchAndSaveNotes(userId);

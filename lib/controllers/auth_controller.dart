@@ -19,6 +19,7 @@ class AuthController extends ChangeNotifier {
   bool get isVerified => _user?.emailVerified ?? false;
   String? get errorMessage => _errorMessage;
 
+  /// user id from firebase
   void getCurrentUser(){
     _user = _authService.currentUser;
     print('=================_user==============${user?.email}');
@@ -83,10 +84,10 @@ class AuthController extends ChangeNotifier {
   }
 
 
-  String? userId;
-  Future<void> getUserId() async{
-    userId = await _authService.getUserId();
-    print('================controller userId============$userId');
-    notifyListeners();
-  }
+  // String? userId;
+  // /// user id from shared preference
+  // Future<void> getUserId() async{
+  //   userId = await _authService.getUserId();
+  //   notifyListeners();
+  // }
 }

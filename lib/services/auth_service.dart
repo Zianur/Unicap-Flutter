@@ -7,10 +7,10 @@ class AuthService {
 
   User? get currentUser => _auth.currentUser;
 
-  Future<String?> getUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('user_id');
-  }
+  // Future<String?> getUserId() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   return prefs.getString('user_id');
+  // }
 
   Future<void> _saveUserId(String userId) async {
     final prefs = await SharedPreferences.getInstance();

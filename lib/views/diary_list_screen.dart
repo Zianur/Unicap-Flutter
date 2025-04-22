@@ -24,9 +24,8 @@ class _DiaryListScreenState extends State<DiaryListScreen> {
 
     Future.delayed(Duration.zero, () async {
       final authController = Provider.of<AuthController>(context, listen: false);
-      await authController.getUserId();
-
-      userId = authController.userId ?? 'guest';
+      authController.getCurrentUser();
+      userId = authController.user?.uid ?? 'guest';
       print('=========diarylist screen=========userid======================$userId');
 
 

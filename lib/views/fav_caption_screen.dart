@@ -25,9 +25,8 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
 
     Future.delayed(Duration.zero, () async {
       final authController = Provider.of<AuthController>(context, listen: false);
-      await authController.getUserId();
-
-      userId = authController.userId ?? 'guest';
+      authController.getCurrentUser();
+      userId = authController.user?.uid ?? 'guest';
       print('=========fav caption screen=========userid======================$userId');
 
       Provider.of<FavoriteCaptionController>(context, listen: false).syncUnsyncedFavCaptions(userId);

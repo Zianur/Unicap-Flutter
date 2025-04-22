@@ -24,9 +24,8 @@ class _CaptionScreenState extends State<CaptionScreen> {
 
     Future.delayed(Duration.zero, () async {
       final authController = Provider.of<AuthController>(context, listen: false);
-      await authController.getUserId();
-
-      userId = authController.userId ?? 'guest';
+      authController.getCurrentUser();
+      userId = authController.user?.uid ?? 'guest';
       print('=========caption screen=========userid======================$userId');
 
       Provider.of<CaptionCategoryController>(context, listen: false).getCaptions(widget.category);
