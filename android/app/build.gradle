@@ -9,6 +9,20 @@ plugins {
 }
 
 
+def keystoreProperties = [:] // Using Groovy Map instead of Properties
+def keystorePropertiesFile = rootProject.file("../key.properties")
+//println "📂 Path to key.properties: ${keystorePropertiesFile.absolutePath}"
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withReader("UTF-8") { reader ->
+        reader.eachLine { line ->
+            def (key, value) = line.split("=")
+            keystoreProperties[key.trim()] = value.trim()
+        }
+    }
+//    println("✅ keystoreProperties loaded: ${keystoreProperties}")
+} else {
+    println("❌ key.properties file NOT FOUND")
+}
 
 android {
     namespace = "com.omniacaptionsandnotes"
@@ -24,6 +38,15 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8
     }
 
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.omniacaptionsandnotes"
@@ -37,9 +60,13 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            // Enable signing with the release config we defined
+            signingConfig signingConfigs.release
+
+            // Optional but recommended for production
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

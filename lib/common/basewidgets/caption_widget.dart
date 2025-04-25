@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
 import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
 import 'package:unicap_cg/models/caption_category.dart';
@@ -53,23 +56,23 @@ class CaptionWidget extends StatelessWidget {
 
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                   IconTextWidget(
-                    onTap: (){
-
-                    },
+                    onTap: ()=>  Clipboard.setData(ClipboardData(text: caption.caption)),
                     icon: Icons.copy,
                     text: 'Copy',
                   ),
 
                   IconTextWidget(
-                    onTap: (){
+                    onTap: () async{
 
                       if(!isFav){
                         print('============Inside ontap=========');
-                        Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
+                        await Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
+                        CustomToast.showToast('Added to the Favorite', ToastType.fav, null);
                       }
                       else{
                         print('==================inside else=============$isFav');
-                        Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.key);
+                        await Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.key);
+                        CustomToast.showToast('Removed from favorites successfully', ToastType.success, null);
                       }
                     },
                     icon: Icons.favorite,
@@ -78,7 +81,7 @@ class CaptionWidget extends StatelessWidget {
                     textStyle: isFav ? TextStyle(color: Colors.pink) : null,
                   ),
 
-                  IconTextWidget(onTap: (){}, icon: Icons.share, text: 'Share'),
+                  IconTextWidget(onTap: ()=> Share.share(caption.caption), icon: Icons.share, text: 'Share'),
                 ])
               ],
             ),

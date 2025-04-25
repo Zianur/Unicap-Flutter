@@ -1,7 +1,7 @@
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 
-enum ToastType { success, error, warning, info }
+enum ToastType { success, error, warning, info, fav }
 
 class CustomToast{
   static void showToast(String message, ToastType type, ToastGravity? gravity) {
@@ -19,6 +19,9 @@ class CustomToast{
         break;
       case ToastType.info:
         backgroundColor = Colors.blue;
+        break;
+      case ToastType.fav:
+        backgroundColor = Colors.pink;
         break;
     }
 
