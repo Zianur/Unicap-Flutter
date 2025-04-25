@@ -17,7 +17,7 @@ class DiaryListScreen extends StatefulWidget {
 }
 
 class _DiaryListScreenState extends State<DiaryListScreen> {
-  late String userId;
+  String userId = 'guest';
 
   @override
   void initState() {
@@ -234,8 +234,12 @@ class _DiaryWidget extends StatelessWidget {
                     highlightColor: Colors.transparent,
                     splashColor: Colors.transparent,
                     onTap: () async{
-                      await diaryController.removeNote(diary.userId, diary.noteId);
-                      CustomToast.showToast('Removed Diary successfully', ToastType.success, null);
+                     if(await diaryController.isUserOnline()){
+                       await diaryController.removeNote(diary.userId, diary.noteId);
+                       CustomToast.showToast('Removed Diary successfully', ToastType.success, null);
+                     }else{
+                       CustomToast.showToast('You are currently offline, can not delete diary', ToastType.warning, null);
+                     }
                     },
                     child: Align(
                       alignment: Alignment.centerRight,

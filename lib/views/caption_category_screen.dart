@@ -107,7 +107,7 @@ class _CaptionCategoryState extends State<CaptionCategoryView> {
                           fontWeight: FontWeight.bold),
                     ),
                   )),
-            ) : SliverToBoxAdapter(child: DiaryShimmer());
+            ) : DiaryShimmer();
           }
       ),
     ]);

@@ -62,20 +62,29 @@ class FavCaptionWidget extends StatelessWidget {
                       text: 'Copy',
                   ),
 
-                  IconTextWidget(
-                    onTap: (){
-                      Future.delayed(Duration(milliseconds: 500), () {
-                        return Provider.of<FavoriteCaptionController>(context, listen: false)
-                            .removeFavorite(userId, caption.captionId)
-                            .then((_) {
-                          CustomToast.showToast('Removed from favorites successfully', ToastType.success, null);
-                        });
-                      });
-                    },
-                    icon: Icons.favorite,
-                    text: 'Favorite',
-                    iconColor: isFav ? Colors.pink : null,
-                    textStyle: isFav ? TextStyle(color: Colors.pink) : null,
+                  Consumer<FavoriteCaptionController>(
+                    builder: (context, favCaptionController, _) {
+                      return IconTextWidget(
+                        onTap: () async{
+                          if(await favCaptionController.isUserOnline()){
+                            Future.delayed(Duration(milliseconds: 500), () {
+                              return Provider.of<FavoriteCaptionController>(context, listen: false)
+                                  .removeFavorite(userId, caption.captionId)
+                                  .then((_) {
+                                CustomToast.showToast('Removed from favorites successfully', ToastType.success, null);
+                              });
+                            });
+                          }else{
+                          CustomToast.showToast('You are currently offline, can not remove caption', ToastType.warning, null);
+                          }
+
+                        },
+                        icon: Icons.favorite,
+                        text: 'Favorite',
+                        iconColor: isFav ? Colors.pink : null,
+                        textStyle: isFav ? TextStyle(color: Colors.pink) : null,
+                      );
+                    }
                   ),
 
                   IconTextWidget(onTap: ()=> Share.share(caption.caption), icon: Icons.share, text: 'Share'),

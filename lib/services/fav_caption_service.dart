@@ -71,6 +71,7 @@ class FavoriteCaptionService {
   }
 
   Future<void> syncFavoriteCaptions(String userId) async {
+    print('=============Service ----------- inside syncUnsyncedFavCaptions====================');
 
     // 1. Get all local favorite captions
     final localCaptions = await _dbHelper.getFavoriteCaptions(userId);

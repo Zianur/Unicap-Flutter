@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unicap_cg/common/basewidgets/custom_button_widget.dart';
+import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
 import 'package:unicap_cg/views/signup_screen.dart';
 import '../controllers/auth_controller.dart';
 
@@ -60,7 +61,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.all(20),
                     child: CustomButtonWidget(
                       buttonText: 'Logout',
-                      onPressed: ()=> authController.signOut(),
+                      onPressed: () async{
+                        await authController.signOut();
+                        CustomToast.showToast('You are now Interacting as Guest', ToastType.warning, null);
+                      },
                       backgroundColor: Colors.red.withValues(alpha: 0.85),
                     ),
                   ),
@@ -69,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   margin: 20,
                   onPressed: () async {
                     await authController.signInWithGoogle();
-                    // print("Google Sign-In failed");
+                    CustomToast.showToast('LoggedIn Successfully', ToastType.success, null);
                   },
                   buttonText:"Login with Google",
                   backgroundColor: Colors.white,

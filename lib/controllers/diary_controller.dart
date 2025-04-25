@@ -20,12 +20,14 @@ class DiaryController with ChangeNotifier {
 
   // Sync unsynced notes with Firebase
   Future<void> syncUnsyncedNotes(String userId) async {
-    if(await isUserOnline() && userId != 'guest'){
+    if(await _canUploadToFirebase(userId)){
       await _service.syncUnsyncedNotes(userId);
     }
 
     await fetchAndSaveNotes(userId);
   }
+
+  Future<bool> _canUploadToFirebase(String userId) async => await isUserOnline() && userId != 'guest';
 
 
 
@@ -37,7 +39,7 @@ class DiaryController with ChangeNotifier {
       // notifyListeners();
 
       Map<dynamic, dynamic>? notesMap;
-      if(await isUserOnline() && userId != 'guest'){
+      if(await _canUploadToFirebase(userId)){
         notesMap = await _service.fetchAndSaveNotes(userId);
       }
       print('================Fetched notes map: ${jsonEncode(notesMap)}');
@@ -82,7 +84,7 @@ class DiaryController with ChangeNotifier {
 
   // Save a note locally and sync with Firebase
   Future<void> saveNote(String userId, String noteName, String? noteId, String note) async {
-    print('=============inside noteName==============$noteName');
+    print('=============inside saveNote userId==============$userId');
     print('=============inside note==============$note');
     _isLoading = true;
     notifyListeners();
@@ -100,7 +102,7 @@ class DiaryController with ChangeNotifier {
 
       noteId = DateTime.now().millisecondsSinceEpoch.toString();
       print('=============noteId ==============$noteId');
-      await _dbHelper.insertNote(userId, noteId, noteName, note, isOnline ? true : false);
+      await _dbHelper.insertNote(userId, noteId, noteName, note, false);
     }
     if (isOnline && userId != 'guest'){
       print('=============inside isonline==============');

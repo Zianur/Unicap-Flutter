@@ -22,7 +22,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
 
   String? initialTitle;
   String? initialNote;
-  late String userId;
+  String userId = 'guest';
 
   @override
   void initState() {

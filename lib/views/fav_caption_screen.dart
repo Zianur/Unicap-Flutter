@@ -15,7 +15,7 @@ class FavCaptionScreen extends StatefulWidget {
 }
 
 class _FavCaptionScreenState extends State<FavCaptionScreen> {
-  late String userId;
+  String userId = 'guest';
 
 
 

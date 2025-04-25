@@ -10,15 +10,18 @@ class FavoriteCaptionController with ChangeNotifier {
   final FavoriteCaptionService _service = FavoriteCaptionService();
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
-  List<FavoriteCaption> _favorites = [];
+  List<FavoriteCaption>? _favorites;
   List<FavoriteCaption>? get favorites => _favorites;
 
   Future<void> syncUnsyncedFavCaptions(String userId) async {
-    if(await isUserOnline() && userId != 'guest'){
+    print('=============inside syncUnsyncedFavCaptions====================');
+    if(await _canUploadToFirebase(userId)){
       await _service.syncFavoriteCaptions(userId);
     }
     await loadAndSaveFavCaptions(userId);
   }
+
+  Future<bool> _canUploadToFirebase(String userId) async => await isUserOnline() && userId != 'guest';
 
   Future<void> loadAndSaveFavCaptions(String userId) async {
     // _favorites = null;
@@ -27,7 +30,7 @@ class FavoriteCaptionController with ChangeNotifier {
     try {
       List<FavoriteCaption>? allFavCaptions;
 
-      if(await isUserOnline() && userId != 'guest'){
+      if(await _canUploadToFirebase(userId)){
         allFavCaptions = await _service.getFavCaptions(userId);
       }
 
@@ -66,7 +69,7 @@ class FavoriteCaptionController with ChangeNotifier {
       print('==============Error Inserting favorite favorite to local: ================$e');
     }
 
-    if(await isUserOnline() && userId != 'guest'){
+    if(await _canUploadToFirebase(userId)){
       await _service.addFavoriteCaption(FavoriteCaption(
         userId: userId,
         captionId: caption.key,
@@ -93,7 +96,7 @@ class FavoriteCaptionController with ChangeNotifier {
       print('=============controller============Error removing favorite from local: $e');
     }
 
-    if(await isUserOnline() && userId != 'guest'){
+    if(await _canUploadToFirebase(userId)){
       await _service.removeFavoriteCaption(userId, captionId);
     }
 
@@ -102,7 +105,7 @@ class FavoriteCaptionController with ChangeNotifier {
   }
 
   bool isCaptionFavorite(String caption) {
-    return _favorites.any((fav) => fav.caption == caption);
+    return _favorites?.any((fav) => fav.caption == caption) ?? false;
   }
 
   Future<void> getAllFavCaptionsFromLocal(String userId, {bool isUpdate = true}) async {
@@ -118,7 +121,7 @@ class FavoriteCaptionController with ChangeNotifier {
       await getAllFavCaptionsFromLocal(userId);
     }
     else{
-      _favorites = _favorites.where((caption) {
+      _favorites = _favorites?.where((caption) {
         return caption.caption.toLowerCase().contains(queryText.toLowerCase());
       }).toList();
     }
