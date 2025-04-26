@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:unicap_cg/common/basewidgets/web_app_bar.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/diary_controller.dart';
 import 'package:unicap_cg/views/caption_category_screen.dart';
@@ -48,7 +47,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: WebAppBar(),
       backgroundColor: Colors.deepPurpleAccent,
       body: TabBarView(
         controller: _tabController,
