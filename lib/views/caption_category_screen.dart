@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:unicap_cg/common/basewidgets/color_animated_text.dart';
 import 'package:unicap_cg/common/basewidgets/diary_shimmer.dart';
 import 'package:unicap_cg/controllers/caption_category_controller.dart';

@@ -1,11 +1,8 @@
-import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:unicap_cg/data/local/databse_helper.dart';
-import '../models/diary_entry.dart';
 import '../models/caption_category.dart';
-import '../models/caption.dart';
 
 class FirebaseService {
   final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();

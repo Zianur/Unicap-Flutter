@@ -23,71 +23,74 @@ class CaptionWidget extends StatelessWidget {
     final widthSize = MediaQuery.sizeOf(context).width;
 
     return Consumer<FavoriteCaptionController>(
-      builder: (context, favCaptionController, _) {
-        final bool isFav = favCaptionController.isCaptionFavorite(caption.caption);
-        print('=============isFav=====================$isFav');
+        builder: (context, favCaptionController, _) {
+          final bool isFav = favCaptionController.isCaptionFavorite(caption.caption);
+          print('=============isFav=====================$isFav');
 
-        return Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5), // No rounded corners
-          ),
-          elevation: 8,
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-
-                Container(
-                  width: widthSize,
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Text(caption.caption, style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.white,
-                  ), textAlign: TextAlign.center),
-                ),
-                SizedBox(height: 10),
-
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  IconTextWidget(
-                    onTap: ()=>  Clipboard.setData(ClipboardData(text: caption.caption)),
-                    icon: Icons.copy,
-                    text: 'Copy',
-                  ),
-
-                  IconTextWidget(
-                    onTap: () async{
-
-                      if(!isFav){
-                        print('============Inside ontap=========');
-                        await Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
-                        CustomToast.showToast('Added to the Favorite', ToastType.fav, null);
-                      }
-                      else{
-                        print('==================inside else=============$isFav');
-                        await Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.key);
-                        CustomToast.showToast('Removed from favorites successfully', ToastType.success, null);
-                      }
-                    },
-                    icon: Icons.favorite,
-                    text: 'Favorite',
-                    iconColor: isFav ? Colors.pink : null,
-                    textStyle: isFav ? TextStyle(color: Colors.pink) : null,
-                  ),
-
-                  IconTextWidget(onTap: ()=> Share.share(caption.caption), icon: Icons.share, text: 'Share'),
-                ])
-              ],
+          return Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5), // No rounded corners
             ),
-          ),
-        );
-      }
+            elevation: 8,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+
+                  Container(
+                    width: widthSize,
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(caption.caption, style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.white,
+                    ), textAlign: TextAlign.center),
+                  ),
+                  SizedBox(height: 10),
+
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    IconTextWidget(
+                      onTap: (){
+                        CustomToast.showToast('Caption Copied', ToastType.success, null);
+                        Clipboard.setData(ClipboardData(text: caption.caption));
+                      }  ,
+                      icon: Icons.copy,
+                      text: 'Copy',
+                    ),
+
+                    IconTextWidget(
+                      onTap: () async{
+
+                        if(!isFav){
+                          print('============Inside ontap=========');
+                          await Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
+                          CustomToast.showToast('Added to the Favorite', ToastType.fav, null);
+                        }
+                        else{
+                          print('==================inside else=============$isFav');
+                          await Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.key);
+                          CustomToast.showToast('Removed from favorites successfully', ToastType.success, null);
+                        }
+                      },
+                      icon: Icons.favorite,
+                      text: 'Favorite',
+                      iconColor: isFav ? Colors.pink : null,
+                      textStyle: isFav ? TextStyle(color: Colors.pink) : null,
+                    ),
+
+                    IconTextWidget(onTap: ()=> Share.share(caption.caption), icon: Icons.share, text: 'Share'),
+                  ])
+                ],
+              ),
+            ),
+          );
+        }
     );
   }
 }

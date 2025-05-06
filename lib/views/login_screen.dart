@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unicap_cg/common/basewidgets/custom_button_widget.dart';
 import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
-import 'package:unicap_cg/views/signup_screen.dart';
 import '../controllers/auth_controller.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }

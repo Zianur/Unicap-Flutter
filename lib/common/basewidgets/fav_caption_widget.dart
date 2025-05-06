@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
 import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
-import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
 import 'package:unicap_cg/models/fav_caption_model.dart';
 
@@ -57,6 +56,7 @@ class FavCaptionWidget extends StatelessWidget {
                   IconTextWidget(
                       onTap: (){
                         Clipboard.setData(ClipboardData(text: caption.caption));
+                        CustomToast.showToast('Caption Copied', ToastType.success, null);
                       },
                       icon: Icons.copy,
                       text: 'Copy',

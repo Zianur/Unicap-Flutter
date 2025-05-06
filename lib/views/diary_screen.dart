@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:unicap_cg/common/basewidgets/custom_button_widget.dart';
 import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
@@ -146,7 +147,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
               ),
             ],
           ),
-          child: Row(
+          child: SafeArea(child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
 
@@ -155,7 +156,10 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 backgroundColor: Colors.black,
                 buttonText: 'Copy',
                 textStyle: TextStyle(color: Colors.white),
-                onPressed: null,
+                onPressed:(){
+                  Clipboard.setData(ClipboardData(text: _noteController.text));
+                  CustomToast.showToast('Note Copied', ToastType.success, null);
+                },
               )),
               SizedBox(width: 10),
 
@@ -198,7 +202,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                   }
               ),
             ],
-          ),
+          )),
         ),
       ]),
     );

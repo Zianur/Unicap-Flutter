@@ -57,32 +57,32 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           LoginScreen(),
         ],
       ),
-      bottomNavigationBar: Container(
-        height: 60,
-        decoration: BoxDecoration(
-          color: Colors.deepPurpleAccent,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 10,
-              offset: Offset(0, -2),
-            ),
-          ],
-        ),
-        child: TabBar(
-          controller: _tabController,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.black,
-          indicatorColor: Colors.transparent,
-          dividerColor: Colors.transparent,
-          tabs: [
-            Tab(icon: Icon(Icons.book), text: 'Diary '),
-            Tab(icon: Icon(Icons.category ), text: 'Captions'),
-            Tab(icon: Icon(Icons.favorite), text: 'Favorite'),
-            Tab(icon: Icon(Icons.person), text: 'Profile'),
-          ],
-        ),
-      ),
+      bottomNavigationBar: SafeArea(child: Container(
+          height: 60,
+          decoration: BoxDecoration(
+            color: Colors.deepPurpleAccent,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                offset: Offset(0, -2),
+              ),
+            ],
+          ),
+          child: TabBar(
+            controller: _tabController,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.black,
+            indicatorColor: Colors.transparent,
+            dividerColor: Colors.transparent,
+            tabs: [
+              Tab(icon: Icon(Icons.book), text: 'Diary '),
+              Tab(icon: Icon(Icons.category ), text: 'Captions'),
+              Tab(icon: Icon(Icons.favorite), text: 'Favorite'),
+              Tab(icon: Icon(Icons.person), text: 'Profile'),
+            ],
+          ),
+        )),
     );
   }
 }

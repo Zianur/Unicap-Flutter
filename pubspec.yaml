@@ -53,6 +53,7 @@ dependencies:
   flutter_animate: ^4.5.2
   fluttertoast: ^8.2.12
 
+  path: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

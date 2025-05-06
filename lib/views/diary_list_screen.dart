@@ -168,7 +168,6 @@ class EmptyWidget extends StatelessWidget {
 
 class _DiaryWidget extends StatelessWidget {
   const _DiaryWidget({
-    super.key,
     required this.diary,
     required this.index,
   });
