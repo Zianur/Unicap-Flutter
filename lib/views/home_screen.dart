@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/diary_controller.dart';
+import 'package:unicap_cg/helper/network_info.dart';
 import 'package:unicap_cg/views/caption_category_screen.dart';
 import 'package:unicap_cg/views/fav_caption_screen.dart';
 import '../controllers/caption_category_controller.dart';
@@ -22,6 +23,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
+
+    NetworkInfo.checkConnectivity(context);
+
     _tabController = TabController(length: 4, vsync: this);
 
     // Get userId first, then fetch notes
@@ -30,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       /// Getting user object from firebase
       authController.getCurrentUser();
       userId = authController.user?.uid ?? 'guest';
-      print('=========home screen=========userid======================$userId');
 
       Provider.of<DiaryController>(context, listen: false).fetchAndSaveNotes(userId);
       Provider.of<CaptionCategoryController>(context, listen: false).loadCategories();

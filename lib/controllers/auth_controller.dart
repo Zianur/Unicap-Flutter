@@ -5,24 +5,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 class AuthController extends ChangeNotifier {
   final AuthService _authService;
 
-  AuthController(this._authService) {
-    // _user = _authService.currentUser;
-    // _checkLoginStatus();
-  }
+  AuthController(this._authService);
 
   User? _user;
   bool _isLoggedIn = false;
   String? _errorMessage;
+  bool _isFirsTimeConnectionCheck = true;
 
   User? get user => _user;
   bool get isLoggedIn => _isLoggedIn;
   bool get isVerified => _user?.emailVerified ?? false;
   String? get errorMessage => _errorMessage;
+  bool get isFirsTimeConnectionCheck => _isFirsTimeConnectionCheck;
 
   /// user id from firebase
   void getCurrentUser(){
     _user = _authService.currentUser;
-    print('=================_user==============${user?.email}');
+    debugPrint('=================_user==============${user?.email}');
   }
 
   Future<void> _checkLoginStatus() async {
@@ -84,10 +83,8 @@ class AuthController extends ChangeNotifier {
   }
 
 
-  // String? userId;
-  // /// user id from shared preference
-  // Future<void> getUserId() async{
-  //   userId = await _authService.getUserId();
-  //   notifyListeners();
-  // }
+  void setFirstTimeConnectionCheck(bool value){
+    _isFirsTimeConnectionCheck = value;
+    notifyListeners();
+  }
 }
