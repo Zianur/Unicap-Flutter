@@ -3,9 +3,9 @@ import '../services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthController extends ChangeNotifier {
-  final AuthService _authService;
+  final AuthService authService;
 
-  AuthController(this._authService);
+  AuthController({required this.authService});
 
   User? _user;
   bool _isLoggedIn = false;
@@ -20,18 +20,18 @@ class AuthController extends ChangeNotifier {
 
   /// user id from firebase
   void getCurrentUser(){
-    _user = _authService.currentUser;
+    _user = authService.currentUser;
     debugPrint('=================_user==============${user?.email}');
   }
 
   Future<void> _checkLoginStatus() async {
-    _isLoggedIn = await _authService.checkLoginStatus();
+    _isLoggedIn = await authService.checkLoginStatus();
     notifyListeners();
   }
 
   Future<void> signInWithGoogle() async {
     try {
-      _user = await _authService.signInWithGoogle();
+      _user = await authService.signInWithGoogle();
       _isLoggedIn = _user != null;
       _errorMessage = null;
     } catch (e) {
@@ -42,7 +42,7 @@ class AuthController extends ChangeNotifier {
 
   Future<String?> signInWithEmail(String email, String password) async {
     try {
-      _user = await _authService.signInWithEmail(email, password);
+      _user = await authService.signInWithEmail(email, password);
       _isLoggedIn = _user != null;
       if (!_user!.emailVerified) {
         _errorMessage = "Email not verified. Please check your inbox.";
@@ -59,7 +59,7 @@ class AuthController extends ChangeNotifier {
 
   Future<void> registerWithEmail(String email, String password) async {
     try {
-      _user = await _authService.registerWithEmail(email, password);
+      _user = await authService.registerWithEmail(email, password);
       _errorMessage = null;
     } catch (e) {
       _errorMessage = e.toString();
@@ -69,13 +69,13 @@ class AuthController extends ChangeNotifier {
 
   Future<void> sendEmailVerification() async {
     if (_user != null && !_user!.emailVerified) {
-      await _authService.sendEmailVerification();
+      await authService.sendEmailVerification();
       notifyListeners();
     }
   }
 
   Future<void> signOut() async {
-    await _authService.signOut();
+    await authService.signOut();
     _user = null;
     _isLoggedIn = false;
     _errorMessage = null;

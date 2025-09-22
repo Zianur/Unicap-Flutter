@@ -1,11 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth firebaseAuth;
 
-  User? get currentUser => _auth.currentUser;
+  AuthService({required this.firebaseAuth});
+
+  User? get currentUser => firebaseAuth.currentUser;
 
   // Future<String?> getUserId() async {
   //   final prefs = await SharedPreferences.getInstance();
@@ -30,15 +33,15 @@ class AuthService {
   // ✅ Sign in with Google
   Future<User?> signInWithGoogle() async {
     try {
-      print('----inside signin');
+      debugPrint('----inside signin');
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
-        print("Google Sign-In failed");
+        debugPrint("Google Sign-In failed");
         return null;
       }
 
-      print("===================Google Sign-In Successful:================== ${googleUser.email}");
+      debugPrint("===================Google Sign-In Successful:================== ${googleUser.email}");
 
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
@@ -46,13 +49,13 @@ class AuthService {
         idToken: googleAuth.idToken,
       );
 
-      final userCredential = await _auth.signInWithCredential(credential);
+      final userCredential = await firebaseAuth.signInWithCredential(credential);
       _saveUserId(userCredential.user!.uid);
       await _saveLoginStatus(true);
 
       return userCredential.user;
     } catch (e) {
-      print("====================Google Sign-In Error:=================== $e");
+      debugPrint("====================Google Sign-In Error:=================== $e");
       rethrow;  // Re-throw the error for further handling if needed
     }
   }
@@ -60,7 +63,7 @@ class AuthService {
 
   // ✅ Sign in with Email
   Future<User?> signInWithEmail(String email, String password) async {
-    final userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+    final userCredential = await firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
 
     if (userCredential.user != null && userCredential.user!.emailVerified) {
       await _saveLoginStatus(true);
@@ -73,21 +76,21 @@ class AuthService {
 
   // ✅ Register with Email (Send Verification Email)
   Future<User?> registerWithEmail(String email, String password) async {
-    final userCredential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    final userCredential = await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
     await userCredential.user?.sendEmailVerification();
     return userCredential.user;
   }
 
   // ✅ Send Email Verification
   Future<void> sendEmailVerification() async {
-    if (_auth.currentUser != null && !_auth.currentUser!.emailVerified) {
-      await _auth.currentUser!.sendEmailVerification();
+    if (firebaseAuth.currentUser != null && !firebaseAuth.currentUser!.emailVerified) {
+      await firebaseAuth.currentUser!.sendEmailVerification();
     }
   }
 
   // ✅ Sign out
   Future<void> signOut() async {
-    await _auth.signOut();
+    await firebaseAuth.signOut();
     await GoogleSignIn().signOut();
     await _saveLoginStatus(false);
   }

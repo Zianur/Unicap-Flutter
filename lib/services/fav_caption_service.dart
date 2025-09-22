@@ -3,13 +3,15 @@ import 'package:unicap_cg/data/local/databse_helper.dart';
 import 'package:unicap_cg/models/fav_caption_model.dart';
 
 class FavoriteCaptionService {
-  final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();
-  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final DatabaseReference databaseRef;
+  final DatabaseHelper dbHelper;
+  
+  FavoriteCaptionService({required this.databaseRef, required this.dbHelper});
 
   Future<List<FavoriteCaption>?> getFavCaptions(String userId) async {
     try{
       // 3. Get updated list from Firebase
-      final snapshot = await _databaseRef.child('User').child(userId).child('FavCaptions').once();
+      final snapshot = await databaseRef.child('User').child(userId).child('FavCaptions').once();
       final List<FavoriteCaption> allCaptions = [];
 
       if (snapshot.snapshot.value != null) {
@@ -28,7 +30,7 @@ class FavoriteCaptionService {
             isSynced: true,
           );
 
-          await _dbHelper.insertFavoriteCaption(favCaption);
+          await dbHelper.insertFavoriteCaption(favCaption);
           allCaptions.add(favCaption);
         }
       }
@@ -46,7 +48,7 @@ class FavoriteCaptionService {
       print('============Inside service try=========');
       //Try to save to Firebase
       ///working fine
-      await _databaseRef
+      await databaseRef
           .child('User/${caption.userId}/FavCaptions/${caption.captionId}')
           .set({
         'caption': caption.caption,
@@ -59,7 +61,7 @@ class FavoriteCaptionService {
 
   Future<void> removeFavoriteCaption(String userId, String captionId) async {
     try {
-      await _databaseRef
+      await databaseRef
           .child('User/$userId')
           .child('FavCaptions')
           .child(captionId)
@@ -74,7 +76,7 @@ class FavoriteCaptionService {
     print('=============Service ----------- inside syncUnsyncedFavCaptions====================');
 
     // 1. Get all local favorite captions
-    final localCaptions = await _dbHelper.getFavoriteCaptions(userId);
+    final localCaptions = await dbHelper.getFavoriteCaptions(userId);
 
     // 2. Sync unsynced captions with Firebase
     final unsynced = localCaptions.where((c) => !c.isSynced).toList();
@@ -82,7 +84,7 @@ class FavoriteCaptionService {
       try {
         /// adding to firebase
         await addFavoriteCaption(caption);
-        await _dbHelper.markFavoriteAsSynced(userId, caption.captionId);
+        await dbHelper.markFavoriteAsSynced(userId, caption.captionId);
       } catch (e) {
         print('==================Failed to sync caption ${caption.captionId}: $e');
         continue;

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/app_providers.dart';
 import 'views/home_screen.dart';
+import 'di_container.dart' as di;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,9 @@ Future<void> main() async {
         measurementId: "G-XQPVDWQCD4"
     ),
   );
+
+  /// Dependency Injection
+  di.init();
 
 
   if (!kIsWeb) {

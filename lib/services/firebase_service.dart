@@ -1,17 +1,23 @@
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:unicap_cg/data/local/databse_helper.dart';
+import 'package:unicap_cg/di_container.dart';
+import 'package:unicap_cg/helper/network_info.dart';
 import '../models/caption_category.dart';
 
 class FirebaseService {
-  final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();
-  final DatabaseHelper _dbHelper = DatabaseHelper();
-  final Connectivity _connectivity = Connectivity();
+
+  final DatabaseReference databaseReference;
+  final DatabaseHelper dbHelper;
+
+  FirebaseService({required this.databaseReference, required this.dbHelper});
 
   /// Caption
   Future<List<CaptionCategory>> fetchCategories() async {
-    final DatabaseReference databaseRef = _databaseRef.child("Omnia").child("AllCaptions");
+    final DatabaseReference databaseRef = databaseReference.child("Omnia").child("AllCaptions");
     //for caching data
     databaseRef.keepSynced(true);
 
@@ -46,7 +52,7 @@ class FirebaseService {
   // Fetch notes from Firebase and save/update them locally
   Future<Map<dynamic, dynamic>?> fetchAndSaveNotes(String userId) async {
     try {
-      DatabaseEvent event = await _databaseRef.child('User/$userId/Note').once();
+      DatabaseEvent event = await databaseReference.child('User/$userId/Note').once();
       DataSnapshot snapshot = event.snapshot;
 
       if (snapshot.value != null) {
@@ -69,40 +75,41 @@ class FirebaseService {
 
     // Save the note locally
     /// todo - need to check the need of this line here
-    // await _dbHelper.insertNote(userId, noteId, noteName, note, false);
+    // await dbHelper.insertNote(userId, noteId, noteName, note, false);
 
     // Check internet connection
-    var connectivityResult = await _connectivity.checkConnectivity();
-    bool isOnline = connectivityResult != ConnectivityResult.none;
+    bool isOnline = await sl<NetworkInfo>().isConnected;
+
+
 
     if (isOnline) {
       // Save the note to Firebase
-      await _databaseRef.child('User/$userId/Note/$noteId').set({'name': noteName, 'note': note});
-      await _dbHelper.updateSyncStatus(noteId, true); // Mark as synced
+      await databaseReference.child('User/$userId/Note/$noteId').set({'name': noteName, 'note': note});
+      await dbHelper.updateSyncStatus(noteId, true); // Mark as synced
     }
   }
 
   // Sync unsynced notes with Firebase
   Future<void> syncUnsyncedNotes(String userId) async {
-    List<Map<String, dynamic>> unsyncedNotes = await _dbHelper.getUnsyncedNotes();
+    List<Map<String, dynamic>> unsyncedNotes = await dbHelper.getUnsyncedNotes();
 
     for (var note in unsyncedNotes) {
       final String noteId = note['noteId'];
       final String noteContent = note['note'];
       final String noteName = note['name'];
 
-      await _databaseRef.child('User/$userId/Note/$noteId').set({
+      await databaseReference.child('User/$userId/Note/$noteId').set({
         'name': noteName,
         'note': noteContent,
       });
-      await _dbHelper.updateSyncStatus(noteId, true); // Mark as synced
+      await dbHelper.updateSyncStatus(noteId, true); // Mark as synced
     }
   }
 
 
   Future<void> removeNote(String userId, String noteId) async {
     try {
-      await _databaseRef
+      await databaseReference
           .child('User/$userId')
           .child('Note')
           .child(noteId)
