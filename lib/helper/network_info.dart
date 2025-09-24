@@ -25,7 +25,7 @@ class NetworkInfo {
         isNotConnected ? const SizedBox() : ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: isNotConnected ? Colors.red : Colors.green,
-          duration: Duration(seconds: isNotConnected ? 6000 : 3),
+          duration: Duration(seconds: isNotConnected ? 5 : 3),
           content: Text(
             isNotConnected ? 'No Internet Connection' : 'Connected',
             textAlign: TextAlign.center,

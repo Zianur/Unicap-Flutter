@@ -29,8 +29,6 @@ class FavoriteCaptionController with ChangeNotifier {
   Future<bool> _canUploadToFirebase(String userId) async => await isUserOnline() && userId != 'guest';
 
   Future<void> loadAndSaveFavCaptions(String userId) async {
-    // _favorites = null;
-    // notifyListeners();
 
     try {
       List<FavoriteCaption>? allFavCaptions;

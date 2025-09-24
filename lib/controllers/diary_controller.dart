@@ -39,14 +39,12 @@ class DiaryController with ChangeNotifier {
   // Fetch notes from Firebase and save/update them locally
   Future<void> fetchAndSaveNotes(String userId) async {
     try {
-      // _notes = null;
-      // notifyListeners();
 
       Map<dynamic, dynamic>? notesMap;
       if(await _canUploadToFirebase(userId)){
         notesMap = await firebaseService.fetchAndSaveNotes(userId);
       }
-      print('================Fetched notes map: ${jsonEncode(notesMap)}');
+      debugPrint('================Fetched notes map: ${jsonEncode(notesMap)}');
 
 
       for (var noteId in notesMap?.keys ?? {}) {
@@ -68,7 +66,7 @@ class DiaryController with ChangeNotifier {
             await dbHelper.insertNote(userId, noteId, noteName, noteContent, true);
           }
         } else {
-          print('⚠️ Skipped invalid note: ID=$noteId | value=$noteData');
+          debugPrint('⚠️ Skipped invalid note: ID=$noteId | value=$noteData');
         }
       }
 
