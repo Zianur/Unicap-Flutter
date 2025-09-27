@@ -35,6 +35,8 @@ migrate_working_dir/
 android/app/.cxx
 key.properties
 devtools_options.yaml
+/build
+
 
 
 # Symbolication related
