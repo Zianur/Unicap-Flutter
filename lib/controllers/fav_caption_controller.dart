@@ -46,10 +46,10 @@ class FavoriteCaptionController with ChangeNotifier {
 
       await getAllFavCaptionsFromLocal(userId);
       notifyListeners();
-      print('=====favorites=========${favorites?.length}==============');
+      debugPrint('=====favorites=========${favorites?.length}==============');
 
     } catch (e) {
-      print('=========Error getting favorites captions===============: $e');
+      debugPrint('=========Error getting favorites captions===============: $e');
       // Fallback to local cache if sync fails
       _favorites = await dbHelper.getFavoriteCaptions(userId);
     } finally {
@@ -58,9 +58,9 @@ class FavoriteCaptionController with ChangeNotifier {
   }
 
   Future<void> addFavorite(String userId, Caption caption) async {
-    print('============Inside addFavorite=========');
+    debugPrint('============Inside addFavorite=========');
     try {
-      print('============Inside try=========');
+      debugPrint('============Inside try=========');
       await dbHelper.insertFavoriteCaption(FavoriteCaption(
         userId: userId,
         captionId: caption.key,
@@ -69,7 +69,7 @@ class FavoriteCaptionController with ChangeNotifier {
       ));
 
     } catch (e) {
-      print('==============Error Inserting favorite favorite to local: ================$e');
+      debugPrint('==============Error Inserting favorite favorite to local: ================$e');
     }
 
     if(await _canUploadToFirebase(userId)){
@@ -93,10 +93,10 @@ class FavoriteCaptionController with ChangeNotifier {
 
   Future<void> removeFavorite(String userId, String captionId) async {
     try {
-      print('============inside remove try==============$userId and $captionId}');
+      debugPrint('============inside remove try==============$userId and $captionId}');
       await dbHelper.deleteFavoriteCaption(userId, captionId);
     } catch (e) {
-      print('=============controller============Error removing favorite from local: $e');
+      debugPrint('=============controller============Error removing favorite from local: $e');
     }
 
     if(await _canUploadToFirebase(userId)){

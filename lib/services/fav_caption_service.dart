@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:unicap_cg/data/local/databse_helper.dart';
 import 'package:unicap_cg/models/fav_caption_model.dart';
 
@@ -38,14 +39,14 @@ class FavoriteCaptionService {
       // 5. Return merged list (prioritizing Firebase data)
       return allCaptions;
     }catch(e){
-      print('=========could not get fav captions============= $e');
+      debugPrint('=========could not get fav captions============= $e');
       return null;
     }
   }
 
   Future<void> addFavoriteCaption(FavoriteCaption caption) async {
     try {
-      print('============Inside service try=========');
+      debugPrint('============Inside service try=========');
       //Try to save to Firebase
       ///working fine
       await databaseRef
@@ -54,7 +55,7 @@ class FavoriteCaptionService {
         'caption': caption.caption,
       });
     } catch (e) {
-      print('============Error adding favorite caption: =================$e');
+      debugPrint('============Error adding favorite caption: =================$e');
       throw Exception('Failed to add favorite caption');
     }
   }
@@ -67,13 +68,13 @@ class FavoriteCaptionService {
           .child(captionId)
           .remove();
     } catch (e) {
-      print('=====Remove============Error removing favorite caption:================= $e');
+      debugPrint('=====Remove============Error removing favorite caption:================= $e');
       throw Exception('Failed to remove favorite caption');
     }
   }
 
   Future<void> syncFavoriteCaptions(String userId) async {
-    print('=============Service ----------- inside syncUnsyncedFavCaptions====================');
+    debugPrint('=============Service ----------- inside syncUnsyncedFavCaptions====================');
 
     // 1. Get all local favorite captions
     final localCaptions = await dbHelper.getFavoriteCaptions(userId);
@@ -86,7 +87,7 @@ class FavoriteCaptionService {
         await addFavoriteCaption(caption);
         await dbHelper.markFavoriteAsSynced(userId, caption.captionId);
       } catch (e) {
-        print('==================Failed to sync caption ${caption.captionId}: $e');
+        debugPrint('==================Failed to sync caption ${caption.captionId}: $e');
         continue;
       }
     }

@@ -1,8 +1,6 @@
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import 'package:unicap_cg/data/local/databse_helper.dart';
 import 'package:unicap_cg/di_container.dart';
 import 'package:unicap_cg/helper/network_info.dart';
@@ -41,7 +39,7 @@ class FirebaseService {
         });
       }
     } catch (e) {
-      print('Error fetching categories: $e');
+      debugPrint('Error fetching categories: $e');
     }
 
     return categories;
@@ -62,7 +60,7 @@ class FirebaseService {
 
       return null;
     } catch (e) {
-      print('Error fetching notes: $e');
+      debugPrint('Error fetching notes: $e');
       return null;
     }
   }
@@ -70,8 +68,8 @@ class FirebaseService {
   // Save a note locally and sync with Firebase
   Future<void> saveNote(String userId, String noteId, String noteName, String note) async {
 
-    print('=============inside noteName==============$noteName');
-    print('=============inside note==============$note');
+    debugPrint('=============inside noteName==============$noteName');
+    debugPrint('=============inside note==============$note');
 
     // Save the note locally
     /// todo - need to check the need of this line here
@@ -115,7 +113,7 @@ class FirebaseService {
           .child(noteId)
           .remove();
     } catch (e) {
-      print('=====Remove============Error removing note:================= $e');
+      debugPrint('=====Remove============Error removing note:================= $e');
       throw Exception('Failed to remove favorite caption');
     }
   }

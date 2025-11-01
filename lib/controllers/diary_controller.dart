@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:unicap_cg/data/local/databse_helper.dart';
 import 'package:unicap_cg/di_container.dart';
@@ -143,17 +141,17 @@ class DiaryController with ChangeNotifier {
 
 
   Future<void> getAllNotesFromLocal(String userId) async {
-    print('=============inside getAllNotesFromLocal==================');
+    debugPrint('=============inside getAllNotesFromLocal==================');
     List<Map<String, dynamic>> mapList = await dbHelper.getNotes(userId);
     _notes = mapList.map((element)=> DiaryEntry.fromMap(element)).toList();
-    print('=============notes length==================${_notes?.length}');
+    debugPrint('=============notes length==================${_notes?.length}');
   }
 
 
 
   Future<void> removeNote(String userId, String noteId) async {
     try {
-      print('===========================inside removeNote==================${_notes?.length}');
+      debugPrint('===========================inside removeNote==================${_notes?.length}');
       await dbHelper.deleteNote(userId, noteId);
 
       if(await isUserOnline()){
@@ -163,7 +161,7 @@ class DiaryController with ChangeNotifier {
       await fetchAndSaveNotes(userId);
       notifyListeners();
     } catch (e) {
-      print('==================Error Removing notes: $e===================');
+      debugPrint('==================Error Removing notes: $e===================');
       rethrow;
     }
   }

@@ -25,7 +25,7 @@ class CaptionWidget extends StatelessWidget {
     return Consumer<FavoriteCaptionController>(
         builder: (context, favCaptionController, _) {
           final bool isFav = favCaptionController.isCaptionFavorite(caption.caption);
-          print('=============isFav=====================$isFav');
+          debugPrint('=============isFav=====================$isFav');
 
           return Card(
             shape: RoundedRectangleBorder(
@@ -68,12 +68,12 @@ class CaptionWidget extends StatelessWidget {
                       onTap: () async{
 
                         if(!isFav){
-                          print('============Inside ontap=========');
+                          debugPrint('============Inside ontap=========');
                           await Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
                           CustomToast.showToast('Added to the Favorite', ToastType.fav, null);
                         }
                         else{
-                          print('==================inside else=============$isFav');
+                          debugPrint('==================inside else=============$isFav');
                           await Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.key);
                           CustomToast.showToast('Removed from favorites successfully', ToastType.success, null);
                         }

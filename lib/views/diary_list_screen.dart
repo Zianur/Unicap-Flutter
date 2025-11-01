@@ -73,7 +73,7 @@ class _DiaryListScreenState extends State<DiaryListScreen> {
                               flex: 6,
                               child: TextField(
                                 textInputAction: TextInputAction.go,
-                                onChanged: (String value)=> diaryController.filterNotes(queryText: value, userId: userId ?? 'guest'),
+                                onChanged: (String value)=> diaryController.filterNotes(queryText: value, userId: userId),
                                 style: const TextStyle(fontSize: 12, color: Colors.black),
                                 decoration: InputDecoration(
                                   hintText: "Search Diaries with Keywords",

@@ -8,12 +8,10 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+class LoginScreenState extends State<LoginScreen> {
 
 
   @override
@@ -24,7 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final double widthSize = MediaQuery.sizeOf(context).width;
-    final double heightSize = MediaQuery.sizeOf(context).width;
 
     return Consumer<AuthController>(
         builder: (context, authController, _) {

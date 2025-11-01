@@ -12,10 +12,10 @@ class CaptionScreen extends StatefulWidget {
   const CaptionScreen({super.key, required this.category});
 
   @override
-  _CaptionScreenState createState() => _CaptionScreenState();
+  CaptionScreenState createState() => CaptionScreenState();
 }
 
-class _CaptionScreenState extends State<CaptionScreen> {
+class CaptionScreenState extends State<CaptionScreen> {
   late String userId;
 
   @override
@@ -26,7 +26,7 @@ class _CaptionScreenState extends State<CaptionScreen> {
       final authController = Provider.of<AuthController>(context, listen: false);
       authController.getCurrentUser();
       userId = authController.user?.uid ?? 'guest';
-      print('=========caption screen=========userid======================$userId');
+      debugPrint('=========caption screen=========userid======================$userId');
 
       Provider.of<CaptionCategoryController>(context, listen: false).getCaptions(widget.category);
       Provider.of<FavoriteCaptionController>(context, listen: false).getAllFavCaptionsFromLocal(userId);

@@ -26,7 +26,8 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
       final authController = Provider.of<AuthController>(context, listen: false);
       authController.getCurrentUser();
       userId = authController.user?.uid ?? 'guest';
-      print('=========fav caption screen=========userid======================$userId');
+
+      debugPrint('=========fav caption screen=========userid======================$userId');
 
       Provider.of<FavoriteCaptionController>(context, listen: false).syncUnsyncedFavCaptions(userId);
     });
@@ -68,7 +69,7 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
                               flex: 6,
                               child: TextField(
                                 textInputAction: TextInputAction.go,
-                                onChanged: (String value)=> favCaptionController.filterFavCaption(queryText: value, userId: userId ?? 'guest'),
+                                onChanged: (String value)=> favCaptionController.filterFavCaption(queryText: value, userId: userId),
                                 style: const TextStyle(fontSize: 12, color: Colors.black),
                                 decoration: InputDecoration(
                                   hintText: "Search Favorite Captions with Keywords",

@@ -24,10 +24,6 @@ class AuthController extends ChangeNotifier {
     debugPrint('=================_user==============${user?.email}');
   }
 
-  Future<void> _checkLoginStatus() async {
-    _isLoggedIn = await authService.checkLoginStatus();
-    notifyListeners();
-  }
 
   Future<void> signInWithGoogle() async {
     try {
