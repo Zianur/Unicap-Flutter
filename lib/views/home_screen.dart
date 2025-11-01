@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_version_plus/new_version_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/diary_controller.dart';
@@ -38,7 +39,33 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       Provider.of<DiaryController>(context, listen: false).fetchAndSaveNotes(userId);
       Provider.of<CaptionCategoryController>(context, listen: false).loadCategories();
     });
+
+    _checkVersion();
   }
+
+  Future<void> _checkVersion() async {
+    final newVersion = NewVersionPlus(
+      // iOSId: 'com.example.yourapp',
+      androidId: 'com.omniacaptionsandnotes',
+    );
+
+    final status = await newVersion.getVersionStatus();
+
+    if (status != null && status.canUpdate) {
+      newVersion.showUpdateDialog(
+        context: context,
+        versionStatus: status,
+        dialogTitle: 'Update Available',
+        dialogText: 'A new version of the app is available! Please update to enjoy the latest features.',
+        updateButtonText: 'Update Now',
+        dismissButtonText: 'Later',
+        dismissAction: () {
+          Navigator.pop(context);
+        },
+      );
+    }
+  }
+
 
 
   @override
