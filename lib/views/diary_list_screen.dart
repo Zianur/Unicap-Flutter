@@ -39,99 +39,101 @@ class _DiaryListScreenState extends State<DiaryListScreen> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      backgroundColor: Colors.deepPurpleAccent,
-      body: CustomScrollView(slivers: [
-        Consumer<DiaryController>(
-          builder: (_, diaryController, __) {
-            return SliverAppBar(
-              backgroundColor: Colors.deepPurpleAccent,
-              floating: true,
-              pinned: true,
-              snap: true,
-              collapsedHeight: 80,
-              expandedHeight: 80,
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                title: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  width: double.infinity,
-                  height: 50,
-                  color: Colors.deepPurpleAccent,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    elevation: 20,
-                    color: Colors.white,
-                    child: Center(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: 6,
-                            child: TextField(
-                              textInputAction: TextInputAction.go,
-                              onChanged: (String value)=> diaryController.filterNotes(queryText: value, userId: userId ?? 'guest'),
-                              style: const TextStyle(fontSize: 12, color: Colors.black),
-                              decoration: InputDecoration(
-                                hintText: "Search Diaries with Keywords",
-                                hintFadeDuration: Duration(milliseconds: 500),
-                                hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
-                                border: InputBorder.none,
-                                contentPadding: const EdgeInsets.only( left: 10, bottom: 5),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.deepPurpleAccent,
+        body: CustomScrollView(slivers: [
+          Consumer<DiaryController>(
+            builder: (_, diaryController, __) {
+              return SliverAppBar(
+                backgroundColor: Colors.deepPurpleAccent,
+                floating: true,
+                pinned: true,
+                snap: true,
+                collapsedHeight: 80,
+                expandedHeight: 80,
+                flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: true,
+                  title: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    width: double.infinity,
+                    height: 50,
+                    color: Colors.deepPurpleAccent,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      elevation: 20,
+                      color: Colors.white,
+                      child: Center(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 6,
+                              child: TextField(
+                                textInputAction: TextInputAction.go,
+                                onChanged: (String value)=> diaryController.filterNotes(queryText: value, userId: userId ?? 'guest'),
+                                style: const TextStyle(fontSize: 12, color: Colors.black),
+                                decoration: InputDecoration(
+                                  hintText: "Search Diaries with Keywords",
+                                  hintFadeDuration: Duration(milliseconds: 500),
+                                  hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.only( left: 10, bottom: 5),
+                                ),
                               ),
                             ),
-                          ),
-                          const Expanded(
-                            flex: 1,
-                            child: Icon(
-                              Icons.search,
-                              color: Colors.black38,
+                            const Expanded(
+                              flex: 1,
+                              child: Icon(
+                                Icons.search,
+                                color: Colors.black38,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            );
-          }
+              );
+            }
+          ),
+      
+          Consumer<DiaryController>(
+            builder: (_, diaryController, __) {
+              return diaryController.notes != null ? (diaryController.notes?.isNotEmpty ?? false)
+                  ? SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  sliver: SliverMasonryGrid.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    childCount: diaryController.notes?.length,
+                    itemBuilder: (context, index){
+                      var diary = diaryController.notes?[index];
+      
+                      return InkWell(
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (_)=> DiaryScreen(diaryEntry: diary))),
+                        child: _DiaryWidget(diary: diary!, index: index),
+                      );
+                    },
+                  ),
+                ) : SliverToBoxAdapter(
+                child: EmptyWidget(),
+              ) : DiaryShimmer();
+            }
+          ),
+        ]),
+        floatingActionButton: FloatingActionButton(
+          onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (_)=> DiaryScreen())),
+          backgroundColor: Colors.black,
+          child: Icon(Icons.add, color: Colors.white),
+      
         ),
-
-        Consumer<DiaryController>(
-          builder: (_, diaryController, __) {
-            return diaryController.notes != null ? (diaryController.notes?.isNotEmpty ?? false)
-                ? SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                sliver: SliverMasonryGrid.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  childCount: diaryController.notes?.length,
-                  itemBuilder: (context, index){
-                    var diary = diaryController.notes?[index];
-
-                    return InkWell(
-                      highlightColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (_)=> DiaryScreen(diaryEntry: diary))),
-                      child: _DiaryWidget(diary: diary!, index: index),
-                    );
-                  },
-                ),
-              ) : SliverToBoxAdapter(
-              child: EmptyWidget(),
-            ) : DiaryShimmer();
-          }
-        ),
-      ]),
-      floatingActionButton: FloatingActionButton(
-        onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (_)=> DiaryScreen())),
-        backgroundColor: Colors.black,
-        child: Icon(Icons.add, color: Colors.white),
-
       ),
     );
   }

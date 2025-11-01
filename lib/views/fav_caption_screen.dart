@@ -36,90 +36,92 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
   @override
   Widget build(BuildContext context) {
 
-    return CustomScrollView(slivers: [
-      Consumer<FavoriteCaptionController>(
-          builder: (_, favCaptionController, __) {
-            return SliverAppBar(
-              automaticallyImplyLeading: false, // Removes back button
-              backgroundColor: Colors.deepPurpleAccent,
-              floating: true,
-              pinned: true,
-              snap: true,
-              collapsedHeight: 80,
-              expandedHeight: 80,
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                title: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  width: double.infinity,
-                  height: 50,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    elevation: 20,
-                    color: Colors.white,
-                    child: Center(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: 6,
-                            child: TextField(
-                              textInputAction: TextInputAction.go,
-                              onChanged: (String value)=> favCaptionController.filterFavCaption(queryText: value, userId: userId ?? 'guest'),
-                              style: const TextStyle(fontSize: 12, color: Colors.black),
-                              decoration: InputDecoration(
-                                hintText: "Search Favorite Captions with Keywords",
-                                hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
-                                border: InputBorder.none,
-                                contentPadding: const EdgeInsets.only( left: 10, bottom: 5),
+    return SafeArea(
+      child: CustomScrollView(slivers: [
+        Consumer<FavoriteCaptionController>(
+            builder: (_, favCaptionController, __) {
+              return SliverAppBar(
+                automaticallyImplyLeading: false, // Removes back button
+                backgroundColor: Colors.deepPurpleAccent,
+                floating: true,
+                pinned: true,
+                snap: true,
+                collapsedHeight: 80,
+                expandedHeight: 80,
+                flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: true,
+                  title: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    width: double.infinity,
+                    height: 50,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      elevation: 20,
+                      color: Colors.white,
+                      child: Center(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 6,
+                              child: TextField(
+                                textInputAction: TextInputAction.go,
+                                onChanged: (String value)=> favCaptionController.filterFavCaption(queryText: value, userId: userId ?? 'guest'),
+                                style: const TextStyle(fontSize: 12, color: Colors.black),
+                                decoration: InputDecoration(
+                                  hintText: "Search Favorite Captions with Keywords",
+                                  hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.only( left: 10, bottom: 5),
+                                ),
                               ),
                             ),
-                          ),
-                          const Expanded(
-                            flex: 1,
-                            child: Icon(
-                              Icons.search,
-                              color: Colors.black38,
+                            const Expanded(
+                              flex: 1,
+                              child: Icon(
+                                Icons.search,
+                                color: Colors.black38,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            );
-          }
-      ),
+              );
+            }
+        ),
 
-      Consumer<FavoriteCaptionController>(
-          builder: (_, favCaptionController, __) {
-            return favCaptionController.favorites != null ? (favCaptionController.favorites?.isNotEmpty ?? false)
-                ? SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                sliver: SliverList.separated(
-                  itemCount: favCaptionController.favorites?.length,
-                  itemBuilder: (context, index){
-                    return FavCaptionWidget(caption: favCaptionController.favorites![index], index: index, userId: userId);
-                  },
-                  separatorBuilder: (_, index)=> SizedBox(height: 10),
-                )
-            ) : SliverToBoxAdapter(
-              child: EmptyWidget(),
-            ) : SliverToBoxAdapter(
-                child: ListView.builder(
-                  itemCount: 10,
-                  shrinkWrap: true,
+        Consumer<FavoriteCaptionController>(
+            builder: (_, favCaptionController, __) {
+              return favCaptionController.favorites != null ? (favCaptionController.favorites?.isNotEmpty ?? false)
+                  ? SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
-                  itemBuilder: (context, index) {
-                    return _CaptionCardShimmer();
-                  },
-                ));
-          }
-      ),
-    ]);
+                  sliver: SliverList.separated(
+                    itemCount: favCaptionController.favorites?.length,
+                    itemBuilder: (context, index){
+                      return FavCaptionWidget(caption: favCaptionController.favorites![index], index: index, userId: userId);
+                    },
+                    separatorBuilder: (_, index)=> SizedBox(height: 10),
+                  )
+              ) : SliverToBoxAdapter(
+                child: EmptyWidget(),
+              ) : SliverToBoxAdapter(
+                  child: ListView.builder(
+                    itemCount: 10,
+                    shrinkWrap: true,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    itemBuilder: (context, index) {
+                      return _CaptionCardShimmer();
+                    },
+                  ));
+            }
+        ),
+      ]),
+    );
   }
 }
 

@@ -49,43 +49,45 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.deepPurpleAccent,
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          DiaryListScreen(),
-          CaptionCategoryView(),
-          FavCaptionScreen(),
-          LoginScreen(),
-        ],
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.deepPurpleAccent,
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            DiaryListScreen(),
+            CaptionCategoryView(),
+            FavCaptionScreen(),
+            LoginScreen(),
+          ],
+        ),
+        bottomNavigationBar: SafeArea(child: Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.deepPurpleAccent,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, -2),
+                ),
+              ],
+            ),
+            child: TabBar(
+              controller: _tabController,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.black,
+              indicatorColor: Colors.transparent,
+              dividerColor: Colors.transparent,
+              tabs: [
+                Tab(icon: Icon(Icons.book), text: 'Diary '),
+                Tab(icon: Icon(Icons.category ), text: 'Captions'),
+                Tab(icon: Icon(Icons.favorite), text: 'Favorite'),
+                Tab(icon: Icon(Icons.person), text: 'Profile'),
+              ],
+            ),
+          )),
       ),
-      bottomNavigationBar: SafeArea(child: Container(
-          height: 60,
-          decoration: BoxDecoration(
-            color: Colors.deepPurpleAccent,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 10,
-                offset: Offset(0, -2),
-              ),
-            ],
-          ),
-          child: TabBar(
-            controller: _tabController,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.black,
-            indicatorColor: Colors.transparent,
-            dividerColor: Colors.transparent,
-            tabs: [
-              Tab(icon: Icon(Icons.book), text: 'Diary '),
-              Tab(icon: Icon(Icons.category ), text: 'Captions'),
-              Tab(icon: Icon(Icons.favorite), text: 'Favorite'),
-              Tab(icon: Icon(Icons.person), text: 'Profile'),
-            ],
-          ),
-        )),
     );
   }
 }

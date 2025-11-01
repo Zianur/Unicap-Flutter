@@ -37,101 +37,103 @@ class _CaptionScreenState extends State<CaptionScreen> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      backgroundColor: Colors.deepPurpleAccent,
-      body: CustomScrollView(slivers: [
-        Consumer<CaptionCategoryController>(
-            builder: (_, captionCategoryController, __) {
-              return SliverAppBar(
-                automaticallyImplyLeading: false, // Removes back button
-                backgroundColor: Colors.deepPurpleAccent,
-                floating: true,
-                pinned: true,
-                snap: true,
-                collapsedHeight: 80,
-                expandedHeight: 80,
-                flexibleSpace: FlexibleSpaceBar(
-                  centerTitle: true,
-                  title: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    width: double.infinity,
-                    height: 50,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      elevation: 20,
-                      color: Colors.white,
-                      child: Center(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              flex: 6,
-                              child: TextField(
-                                textInputAction: TextInputAction.go,
-                                onChanged: (String value)=> captionCategoryController.filterCaptions(queryText: value, category: widget.category),
-                                style: const TextStyle(fontSize: 12, color: Colors.black),
-                                decoration: InputDecoration(
-                                  hintText: "Search Captions with Keywords",
-                                  hintFadeDuration: Duration(milliseconds: 500),
-                                  hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
-                                  border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.only( left: 10, bottom: 5),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.deepPurpleAccent,
+        body: CustomScrollView(slivers: [
+          Consumer<CaptionCategoryController>(
+              builder: (_, captionCategoryController, __) {
+                return SliverAppBar(
+                  automaticallyImplyLeading: false, // Removes back button
+                  backgroundColor: Colors.deepPurpleAccent,
+                  floating: true,
+                  pinned: true,
+                  snap: true,
+                  collapsedHeight: 80,
+                  expandedHeight: 80,
+                  flexibleSpace: FlexibleSpaceBar(
+                    centerTitle: true,
+                    title: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      width: double.infinity,
+                      height: 50,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        elevation: 20,
+                        color: Colors.white,
+                        child: Center(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 6,
+                                child: TextField(
+                                  textInputAction: TextInputAction.go,
+                                  onChanged: (String value)=> captionCategoryController.filterCaptions(queryText: value, category: widget.category),
+                                  style: const TextStyle(fontSize: 12, color: Colors.black),
+                                  decoration: InputDecoration(
+                                    hintText: "Search Captions with Keywords",
+                                    hintFadeDuration: Duration(milliseconds: 500),
+                                    hintStyle: const TextStyle(color: Colors.black38, fontSize: 12),
+                                    border: InputBorder.none,
+                                    contentPadding: const EdgeInsets.only( left: 10, bottom: 5),
+                                  ),
                                 ),
                               ),
-                            ),
-                            const Expanded(
-                              flex: 1,
-                              child: Icon(
-                                Icons.search,
-                                color: Colors.black38,
+                              const Expanded(
+                                flex: 1,
+                                child: Icon(
+                                  Icons.search,
+                                  color: Colors.black38,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              );
-            }
-        ),
-
-        Consumer<CaptionCategoryController>(
-            builder: (_, captionCategoryController, __) {
-              return captionCategoryController.captions != null ? (captionCategoryController.captions?.isNotEmpty ?? false)
-                  ? SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  sliver: SliverList.separated(
-                    itemCount: captionCategoryController.captions?.length,
-                    itemBuilder: (context, index){
-                      return CaptionWidget(caption: captionCategoryController.captions![index], index: index, userId: userId);
-                    },
-                    separatorBuilder: (_, index)=> SizedBox(height: 10),
-                  )
-              ) : SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 400,
-                  child: Center(child: Text(
-                    'No Category Available',
-                    style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  )),
-                ),
-              ) :  SliverToBoxAdapter(
-                  child: ListView.builder(
-                    itemCount: 10,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return _CaptionCardShimmer();
-                    },
-                  ));
-            }
-        ),
-      ]),
+                );
+              }
+          ),
+      
+          Consumer<CaptionCategoryController>(
+              builder: (_, captionCategoryController, __) {
+                return captionCategoryController.captions != null ? (captionCategoryController.captions?.isNotEmpty ?? false)
+                    ? SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    sliver: SliverList.separated(
+                      itemCount: captionCategoryController.captions?.length,
+                      itemBuilder: (context, index){
+                        return CaptionWidget(caption: captionCategoryController.captions![index], index: index, userId: userId);
+                      },
+                      separatorBuilder: (_, index)=> SizedBox(height: 10),
+                    )
+                ) : SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 400,
+                    child: Center(child: Text(
+                      'No Category Available',
+                      style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    )),
+                  ),
+                ) :  SliverToBoxAdapter(
+                    child: ListView.builder(
+                      itemCount: 10,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return _CaptionCardShimmer();
+                      },
+                    ));
+              }
+          ),
+        ]),
+      ),
     );
   }
 }
