@@ -54,37 +54,53 @@ class CaptionWidget extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
 
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                    IconTextWidget(
+                  Row(mainAxisSize: MainAxisSize.min, children: [
+                    Expanded(
+                      child: IconTextWidget(
+                        onTap: (){
+                          CustomToast.showToast('Caption Copied', ToastType.success, null);
+                          Clipboard.setData(ClipboardData(text: caption.caption));
+                        }  ,
+                        icon: Icons.copy,
+                      ),
+                    ),
+
+                    Expanded(
+                      child: IconTextWidget(
+                        isLoading: isLoading(favCaptionController),
+                        onTap: () async{
+                          if(!isFav){
+                            debugPrint('============Inside ontap=========');
+                            await favCaptionController.addFavorite(userId, caption);
+                            CustomToast.showToast('Added to the Favorite', ToastType.fav, null);
+                          }
+                          else{
+                            debugPrint('==================inside else=============$isFav');
+                            await favCaptionController.removeFavorite(userId, caption.key);
+                            CustomToast.showToast('Removed from favorites successfully', ToastType.success, null);
+                          }
+                        },
+                        icon: Icons.favorite,
+                        iconColor: isFav ? Colors.pink : null,
+                        textStyle: isFav ? TextStyle(color: Colors.pink) : null,
+                      ),
+                    ),
+
+                    Expanded(child: IconTextWidget(
                       onTap: (){
-                        CustomToast.showToast('Caption Copied', ToastType.success, null);
-                        Clipboard.setData(ClipboardData(text: caption.caption));
-                      }  ,
-                      icon: Icons.copy,
-                      text: 'Copy',
-                    ),
 
-                    IconTextWidget(
-                      onTap: () async{
-
-                        if(!isFav){
-                          debugPrint('============Inside ontap=========');
-                          await Provider.of<FavoriteCaptionController>(context, listen: false).addFavorite(userId, caption);
-                          CustomToast.showToast('Added to the Favorite', ToastType.fav, null);
-                        }
-                        else{
-                          debugPrint('==================inside else=============$isFav');
-                          await Provider.of<FavoriteCaptionController>(context, listen: false).removeFavorite(userId, caption.key);
-                          CustomToast.showToast('Removed from favorites successfully', ToastType.success, null);
-                        }
                       },
-                      icon: Icons.favorite,
-                      text: 'Favorite',
-                      iconColor: isFav ? Colors.pink : null,
-                      textStyle: isFav ? TextStyle(color: Colors.pink) : null,
-                    ),
+                      icon: Icons.image,
+                    )),
 
-                    IconTextWidget(onTap: ()=> Share.share(caption.caption), icon: Icons.share, text: 'Share'),
+                    Expanded(child: IconTextWidget(
+                      onTap: (){
+
+                      },
+                      icon: Icons.translate,
+                    )),
+
+                    Expanded(child: IconTextWidget(onTap: ()=> Share.share(caption.caption), icon: Icons.share)),
                   ])
                 ],
               ),
@@ -93,4 +109,6 @@ class CaptionWidget extends StatelessWidget {
         }
     );
   }
+
+  bool isLoading(FavoriteCaptionController favCaptionController) => favCaptionController.isLoading && favCaptionController.captionKey == caption.key;
 }

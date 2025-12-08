@@ -51,30 +51,30 @@ class _DiaryScreenState extends State<DiaryScreen> {
   Widget build(BuildContext context) {
     // final double heightSize = MediaQuery.sizeOf(context).height;
 
-    return SafeArea(
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.deepPurpleAccent,
+      appBar: AppBar(
         backgroundColor: Colors.deepPurpleAccent,
-        appBar: AppBar(
-          backgroundColor: Colors.deepPurpleAccent,
-          title: Text(widget.diaryEntry == null ? 'Add note' : 'Update note', style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold
-          )),
-          centerTitle: true,
-          leading: InkWell(
-            onTap: ()=> Navigator.pop(context),
-            child: Icon(Icons.arrow_back_ios_new_outlined, color: Colors.white),
-          ),
+        title: Text(widget.diaryEntry == null ? 'Add note' : 'Update note', style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold
+        )),
+        centerTitle: true,
+        leading: InkWell(
+          onTap: ()=> Navigator.pop(context),
+          child: Icon(Icons.arrow_back_ios_new_outlined, color: Colors.white),
         ),
-        body: Column(children: [
-      
+      ),
+      body: SafeArea(
+        child: Column(children: [
+
           Expanded(child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: Form(
                 key: _formKey,
                 child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      
+
                   TextFormField(
                     controller: _titleController,
                     cursorColor: Colors.black,
@@ -100,7 +100,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                     },
                   ),
                   SizedBox(height: 16),
-      
+
                   TextFormField(
                     controller: _noteController,
                     cursorColor: Colors.black,
@@ -129,12 +129,12 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       return null;
                     },
                   ),
-      
+
                 ]),
               ),
             ),
           )),
-      
+
           Container(
             height: 65,
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -152,7 +152,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
             child: SafeArea(child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-      
+
                 Flexible(child: CustomButtonWidget(
                   borderRadius: 100,
                   backgroundColor: Colors.black,
@@ -164,7 +164,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                   },
                 )),
                 SizedBox(width: 10),
-      
+
                 Consumer<DiaryController>(
                     builder: (context, diaryController, _) {
                       return Flexible(child: CustomButtonWidget(
@@ -176,9 +176,9 @@ class _DiaryScreenState extends State<DiaryScreen> {
                         onPressed: () async {
                           final String newTitle = _titleController.text;
                           final String newNote = _noteController.text;
-      
+
                           if(_formKey.currentState!.validate()){
-      
+
                             if(newTitle == initialTitle && newNote == initialNote){
                               CustomToast.showToast("Nothing to update", ToastType.error, null);
                             } else{
@@ -193,12 +193,12 @@ class _DiaryScreenState extends State<DiaryScreen> {
                               else{
                                 await diaryController.saveNote(userId, newTitle, null, newNote);
                               }
-      
+
                               CustomToast.showToast("Note saved successfully", ToastType.success, null);
                               Navigator.pop(context);
                             }
                           }
-      
+
                         },
                       ));
                     }

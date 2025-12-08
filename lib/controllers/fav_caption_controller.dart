@@ -17,6 +17,12 @@ class FavoriteCaptionController with ChangeNotifier {
 
   List<FavoriteCaption>? _favorites;
   List<FavoriteCaption>? get favorites => _favorites;
+  bool _isLoading = false;
+  String _captionKey = '';
+
+
+  bool get isLoading => _isLoading;
+  String get captionKey => _captionKey;
 
   Future<void> syncUnsyncedFavCaptions(String userId) async {
     debugPrint('=============inside syncUnsyncedFavCaptions====================');
@@ -45,7 +51,6 @@ class FavoriteCaptionController with ChangeNotifier {
       }
 
       await getAllFavCaptionsFromLocal(userId);
-      notifyListeners();
       debugPrint('=====favorites=========${favorites?.length}==============');
 
     } catch (e) {
@@ -61,6 +66,10 @@ class FavoriteCaptionController with ChangeNotifier {
     debugPrint('============Inside addFavorite=========');
     try {
       debugPrint('============Inside try=========');
+      _captionKey = caption.key;
+      _isLoading = true;
+      notifyListeners();
+
       await dbHelper.insertFavoriteCaption(FavoriteCaption(
         userId: userId,
         captionId: caption.key,
@@ -81,7 +90,7 @@ class FavoriteCaptionController with ChangeNotifier {
       ));
     }
 
-
+    _isLoading = false;
     await getAllFavCaptionsFromLocal(userId);
   }
 
@@ -94,6 +103,11 @@ class FavoriteCaptionController with ChangeNotifier {
   Future<void> removeFavorite(String userId, String captionId) async {
     try {
       debugPrint('============inside remove try==============$userId and $captionId}');
+
+      _captionKey = captionId;
+      _isLoading = true;
+      notifyListeners();
+
       await dbHelper.deleteFavoriteCaption(userId, captionId);
     } catch (e) {
       debugPrint('=============controller============Error removing favorite from local: $e');
@@ -104,6 +118,8 @@ class FavoriteCaptionController with ChangeNotifier {
     }
 
     await loadAndSaveFavCaptions(userId);
+
+    _isLoading = false;
     notifyListeners();
   }
 

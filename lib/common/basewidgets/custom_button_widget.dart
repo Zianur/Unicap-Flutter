@@ -47,27 +47,29 @@ class CustomButtonWidget extends StatelessWidget {
           const SizedBox(
             height: 15, width: 15,
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurpleAccent),
               strokeWidth: 2,
             ),
           ),
           const SizedBox(width: Dimensions.paddingSizeSmall),
 
-          Text("Loading", style: TextStyle(color: Colors.white)),
+          Text("Loading", style: TextStyle(color: Colors.black)),
         ]),
-        ) : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-
-          icon != null ? Padding(
-            padding: const EdgeInsets.only(right: Dimensions.paddingSizeExtraSmall),
-            child: icon,
-          ) : const SizedBox(),
-
-          Text(buttonText ?? '', textAlign: TextAlign.center,  style: textStyle ?? TextStyle(
-            fontSize: Dimensions.fontSizeLarge,
-            color: textColor ?? Theme.of(context).cardColor,
-          )) ,
-
-        ]),
+        ) : FittedBox(
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          
+            icon != null ? Padding(
+              padding: const EdgeInsets.only(right: Dimensions.paddingSizeExtraSmall),
+              child: icon,
+            ) : const SizedBox(),
+          
+            Text(buttonText ?? '', textAlign: TextAlign.center,  style: textStyle ?? TextStyle(
+              fontSize: Dimensions.fontSizeLarge,
+              color: textColor ?? Theme.of(context).cardColor,
+            )),
+          
+          ]),
+        ),
       ),
     );
   }

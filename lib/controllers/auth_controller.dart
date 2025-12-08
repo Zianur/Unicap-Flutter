@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
+import 'package:unicap_cg/di_container.dart';
+import 'package:unicap_cg/helper/network_info.dart';
 import '../services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -11,12 +15,15 @@ class AuthController extends ChangeNotifier {
   bool _isLoggedIn = false;
   String? _errorMessage;
   bool _isFirsTimeConnectionCheck = true;
+  bool _isLoading = false;
+
 
   User? get user => _user;
   bool get isLoggedIn => _isLoggedIn;
   bool get isVerified => _user?.emailVerified ?? false;
   String? get errorMessage => _errorMessage;
   bool get isFirsTimeConnectionCheck => _isFirsTimeConnectionCheck;
+  bool get isLoading => _isLoading;
 
   /// user id from firebase
   void getCurrentUser(){
@@ -26,55 +33,39 @@ class AuthController extends ChangeNotifier {
 
 
   Future<void> signInWithGoogle() async {
+    if(!await sl<NetworkInfo>().isConnected){
+      CustomToast.showToast('No Internet Connection', ToastType.error, null);
+      return;
+    }
+
     try {
+      _isLoading = true;
+      notifyListeners();
+
       _user = await authService.signInWithGoogle();
       _isLoggedIn = _user != null;
       _errorMessage = null;
     } catch (e) {
       _errorMessage = e.toString();
     }
+    _isLoading = false;
     notifyListeners();
-  }
-
-  Future<String?> signInWithEmail(String email, String password) async {
-    try {
-      _user = await authService.signInWithEmail(email, password);
-      _isLoggedIn = _user != null;
-      if (!_user!.emailVerified) {
-        _errorMessage = "Email not verified. Please check your inbox.";
-        notifyListeners();
-        return _errorMessage;
-      }
-      _errorMessage = null;
-    } catch (e) {
-      _errorMessage = e.toString();
-    }
-    notifyListeners();
-    return _errorMessage;
-  }
-
-  Future<void> registerWithEmail(String email, String password) async {
-    try {
-      _user = await authService.registerWithEmail(email, password);
-      _errorMessage = null;
-    } catch (e) {
-      _errorMessage = e.toString();
-    }
-    notifyListeners();
-  }
-
-  Future<void> sendEmailVerification() async {
-    if (_user != null && !_user!.emailVerified) {
-      await authService.sendEmailVerification();
-      notifyListeners();
-    }
   }
 
   Future<void> signOut() async {
+    if(!await sl<NetworkInfo>().isConnected){
+      CustomToast.showToast('No Internet Connection', ToastType.error, null);
+      return;
+    }
+    _isLoading = true;
+    notifyListeners();
+
     await authService.signOut();
     _user = null;
     _isLoggedIn = false;
     _errorMessage = null;
+
+    _isLoading = false;
     notifyListeners();
   }
 

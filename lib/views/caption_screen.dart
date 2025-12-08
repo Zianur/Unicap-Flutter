@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:unicap_cg/common/basewidgets/caption_widget.dart';
+import 'package:unicap_cg/common/basewidgets/empty_widget.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
 import 'package:unicap_cg/models/caption_category.dart';
@@ -37,10 +38,10 @@ class CaptionScreenState extends State<CaptionScreen> {
   @override
   Widget build(BuildContext context) {
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.deepPurpleAccent,
-        body: CustomScrollView(slivers: [
+    return Scaffold(
+      backgroundColor: Colors.deepPurpleAccent,
+      body: SafeArea(
+        child: CustomScrollView(slivers: [
           Consumer<CaptionCategoryController>(
               builder: (_, captionCategoryController, __) {
                 return SliverAppBar(
@@ -98,7 +99,7 @@ class CaptionScreenState extends State<CaptionScreen> {
                 );
               }
           ),
-      
+            
           Consumer<CaptionCategoryController>(
               builder: (_, captionCategoryController, __) {
                 return captionCategoryController.captions != null ? (captionCategoryController.captions?.isNotEmpty ?? false)
@@ -112,16 +113,7 @@ class CaptionScreenState extends State<CaptionScreen> {
                       separatorBuilder: (_, index)=> SizedBox(height: 10),
                     )
                 ) : SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 400,
-                    child: Center(child: Text(
-                      'No Category Available',
-                      style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    )),
-                  ),
+                  child: EmptyWidget(),
                 ) :  SliverToBoxAdapter(
                     child: ListView.builder(
                       itemCount: 10,
