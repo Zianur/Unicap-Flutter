@@ -23,16 +23,22 @@ class _FavCaptionScreenState extends State<FavCaptionScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration.zero, () async {
-      final authController = Provider.of<AuthController>(context, listen: false);
-      authController.getCurrentUser();
-      userId = authController.user?.uid ?? 'guest';
+    loadData();
 
-      debugPrint('=========fav caption screen=========userid======================$userId');
+    // Future.delayed(Duration.zero, () async {
+    //   loadData();
+    // });
 
-      Provider.of<FavoriteCaptionController>(context, listen: false).syncUnsyncedFavCaptions(userId);
-    });
+  }
 
+  void loadData() async {
+    final authController = Provider.of<AuthController>(context, listen: false);
+    authController.getCurrentUser();
+    userId = authController.user?.uid ?? 'guest';
+
+    debugPrint('=========fav caption screen=========userid======================$userId');
+
+    await Provider.of<FavoriteCaptionController>(context, listen: false).syncUnsyncedFavCaptions(userId);
   }
 
   @override

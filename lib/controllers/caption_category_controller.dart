@@ -30,7 +30,7 @@ class CaptionCategoryController extends ChangeNotifier {
     }
   }
 
-  void getCaptions(CaptionCategory category){
+  Future<void> getCaptions(CaptionCategory category) async {
     _captions = category.captions ?? [];
     notifyListeners();
   }

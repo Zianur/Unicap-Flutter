@@ -96,8 +96,7 @@ class FavoriteCaptionController with ChangeNotifier {
 
   Future<bool> isUserOnline() async {
     final connectivityResult = await sl<NetworkInfo>().isConnected;
-    final bool isUserOnline = connectivityResult != ConnectivityResult.none;
-    return isUserOnline;
+    return connectivityResult;
   }
 
   Future<void> removeFavorite(String userId, String captionId) async {

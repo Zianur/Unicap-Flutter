@@ -22,18 +22,23 @@ class _DiaryListScreenState extends State<DiaryListScreen> {
 
   @override
   void initState() {
-
-    Future.delayed(Duration.zero, () async {
-      final authController = Provider.of<AuthController>(context, listen: false);
-      authController.getCurrentUser();
-      userId = authController.user?.uid ?? 'guest';
-      print('=========diarylist screen=========userid======================$userId');
-
-
-      Provider.of<DiaryController>(context, listen: false).syncUnsyncedNotes(userId);
-    });
-
     super.initState();
+
+    loadData();
+
+    // Future.delayed(Duration.zero, () async {
+    //   await loadData();
+    // });
+  }
+
+  Future<void> loadData() async {
+    final authController = Provider.of<AuthController>(context, listen: false);
+    authController.getCurrentUser();
+    userId = authController.user?.uid ?? 'guest';
+    print('=========diarylist screen=========userid======================$userId');
+
+
+    await Provider.of<DiaryController>(context, listen: false).syncUnsyncedNotes(userId);
   }
 
 
@@ -208,7 +213,7 @@ class _DiaryWidget extends StatelessWidget {
                     highlightColor: Colors.transparent,
                     splashColor: Colors.transparent,
                     onTap: () async{
-                     if(await diaryController.isUserOnline()){
+                     if(await diaryController.isUserOnline() || diary.userId == 'guest'){
                        await diaryController.removeNote(diary.userId, diary.noteId);
                        CustomToast.showToast('Removed Diary successfully', ToastType.success, null);
                      }else{

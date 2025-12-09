@@ -68,7 +68,7 @@ class FavCaptionWidget extends StatelessWidget {
                     child: IconTextWidget(
                       isLoading: isLoading(favoriteCaptionController),
                       onTap: () async{
-                        if(await favoriteCaptionController.isUserOnline()){
+                        if(await favoriteCaptionController.isUserOnline() || userId == 'guest'){
                           Future.delayed(Duration(milliseconds: 800), () {
                             return favoriteCaptionController
                                 .removeFavorite(userId, caption.captionId)

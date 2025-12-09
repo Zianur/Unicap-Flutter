@@ -27,12 +27,16 @@ class IconTextWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(5),
         child: isLoading ?
-        SizedBox(
-          height: 15,
-          width: 15,
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurpleAccent),
-            strokeWidth: 2,
+        Expanded(
+          child: Center(
+            child: SizedBox(
+              height: 15,
+              width: 15,
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurpleAccent),
+                strokeWidth: 2,
+              ),
+            ),
           ),
         ) :
         Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [

@@ -23,16 +23,22 @@ class CaptionScreenState extends State<CaptionScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration.zero, () async {
-      final authController = Provider.of<AuthController>(context, listen: false);
-      authController.getCurrentUser();
-      userId = authController.user?.uid ?? 'guest';
-      debugPrint('=========caption screen=========userid======================$userId');
+    loadData();
 
-      Provider.of<CaptionCategoryController>(context, listen: false).getCaptions(widget.category);
-      Provider.of<FavoriteCaptionController>(context, listen: false).getAllFavCaptionsFromLocal(userId);
-    });
+    // Future.delayed(Duration.zero, () async {
+    //   await loadData();
+    // });
 
+  }
+
+  Future<void> loadData() async {
+    final authController = Provider.of<AuthController>(context, listen: false);
+    authController.getCurrentUser();
+    userId = authController.user?.uid ?? 'guest';
+    debugPrint('=========caption screen=========userid======================$userId');
+
+    await Provider.of<CaptionCategoryController>(context, listen: false).getCaptions(widget.category);
+    await Provider.of<FavoriteCaptionController>(context, listen: false).getAllFavCaptionsFromLocal(userId);
   }
 
   @override
