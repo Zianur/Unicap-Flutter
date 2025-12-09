@@ -53,7 +53,7 @@ class CustomButtonWidget extends StatelessWidget {
           ),
           const SizedBox(width: Dimensions.paddingSizeSmall),
 
-          Text("Loading", style: TextStyle(color: Colors.black)),
+          Text("Loading", style: TextStyle(color: Colors.deepPurpleAccent)),
         ]),
         ) : FittedBox(
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [

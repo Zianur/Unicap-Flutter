@@ -88,9 +88,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.7), width: 2),
                       ),
-                      counterStyle: TextStyle(color: Colors.black),
                     ),
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
                     maxLength: 100,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -115,9 +114,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
                         borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.7), width: 2),
                       ),
                       alignLabelWithHint: true,
-                      counterStyle: TextStyle(color: Colors.black),
                     ),
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
                     keyboardType: TextInputType.multiline,
                     minLines: 5,
                     maxLines: null,
@@ -129,7 +127,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       return null;
                     },
                   ),
-
                 ]),
               ),
             ),

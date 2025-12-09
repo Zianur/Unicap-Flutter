@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unicap_cg/common/basewidgets/custom_button_widget.dart';
 import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
+import 'package:unicap_cg/di_container.dart';
+import 'package:unicap_cg/helper/network_info.dart';
 import '../controllers/auth_controller.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -63,8 +65,13 @@ class LoginScreen extends StatelessWidget {
             isLoading: authController.isLoading,
             buttonText: 'Logout',
             onPressed: () async {
-              await authController.signOut();
-              CustomToast.showToast('You are now Interacting as Guest', ToastType.warning, null);
+              if(await sl<NetworkInfo>().isConnected){
+                await authController.signOut();
+                CustomToast.showToast('You are now Interacting as Guest', ToastType.warning, null);
+              } else{
+                CustomToast.showToast('No Internet Connection', ToastType.error, null);
+              }
+
             },
             backgroundColor: Colors.red.withValues(alpha: 0.85),
           ),
@@ -79,8 +86,12 @@ class LoginScreen extends StatelessWidget {
         isLoading: authController.isLoading,
         margin: 20,
         onPressed: () async {
-          await authController.signInWithGoogle();
-          CustomToast.showToast('LoggedIn Successfully', ToastType.success, null);
+          if(await sl<NetworkInfo>().isConnected){
+            await authController.signInWithGoogle();
+            CustomToast.showToast('LoggedIn Successfully', ToastType.success, null);
+          } else {
+            CustomToast.showToast('No Internet Connection', ToastType.error, null);
+          }
         },
         buttonText: "Login with Google",
         backgroundColor: Colors.white,

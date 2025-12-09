@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
 import 'package:unicap_cg/common/basewidgets/diary_shimmer.dart';
 import 'package:unicap_cg/common/basewidgets/empty_widget.dart';
+import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/diary_controller.dart';
 import 'package:unicap_cg/models/diary_entry.dart';
@@ -198,41 +199,30 @@ class _DiaryWidget extends StatelessWidget {
               child: Divider(height: 5,thickness: 1, color: Theme.of(context).disabledColor),
             ),
 
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-
-                Text(diary.isSynced ? 'Synced' : 'Unsynced', style: TextStyle(
-                  fontSize: 12,
-                  color: diary.isSynced ? Colors.green : Colors.red
-                )),
+            Row(children: [
 
                 Expanded(
-                  child: InkWell(
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    onTap: () async{
-                     if(await diaryController.isUserOnline() || diary.userId == 'guest'){
-                       await diaryController.removeNote(diary.userId, diary.noteId);
-                       CustomToast.showToast('Removed Diary successfully', ToastType.success, null);
-                     }else{
-                       CustomToast.showToast('You are currently offline, can not delete diary', ToastType.warning, null);
-                     }
-                    },
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.red.withValues(alpha: 0.8),
-                          size: 25,
-                        ),
-                      ),
-                    ),
-                  ),
+                  child: Text(diary.isSynced ? 'Synced' : 'Unsynced', style: TextStyle(
+                    fontSize: 12,
+                    color: diary.isSynced ? Colors.green : Colors.red,
+                    overflow: TextOverflow.ellipsis,
+                  )),
                 ),
+                SizedBox(width: 5),
+
+                IconTextWidget(
+                  isLoading: isLoading(diaryController),
+                  onTap: () async{
+                    if(await diaryController.isUserOnline() || diary.userId == 'guest'){
+                      await diaryController.removeNote(diary.userId, diary.noteId);
+                      CustomToast.showToast('Removed Diary successfully', ToastType.success, null);
+                    }else{
+                      CustomToast.showToast('You are currently offline, can not delete diary', ToastType.warning, null);
+                    }
+                  },
+                  icon: Icons.delete,
+                  iconColor: Colors.red,
+                )
               ],
             ),
           ],
@@ -240,5 +230,7 @@ class _DiaryWidget extends StatelessWidget {
       ),
     );
   }
+
+  bool isLoading(DiaryController diaryController) => diaryController.isLoading && diary.noteId == diaryController.selectedNoteId;
 }
 

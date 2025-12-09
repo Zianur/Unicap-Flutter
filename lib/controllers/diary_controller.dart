@@ -15,9 +15,15 @@ class DiaryController with ChangeNotifier {
 
   // List of notes
   List<DiaryEntry>? _notes;
-  List<DiaryEntry>? get notes => _notes;
   bool _isLoading = false;
+  String _selectedNoteId = '';
+
+
+  List<DiaryEntry>? get notes => _notes;
   bool get isLoading => _isLoading;
+  String get selectedNoteId => _selectedNoteId;
+
+
 
 
   // Sync unsynced notes with Firebase
@@ -152,6 +158,10 @@ class DiaryController with ChangeNotifier {
   Future<void> removeNote(String userId, String noteId) async {
     try {
       debugPrint('===========================inside removeNote==================${_notes?.length}');
+      _selectedNoteId = noteId;
+      _isLoading = true;
+      notifyListeners();
+
       await dbHelper.deleteNote(userId, noteId);
 
       if(await isUserOnline()){
@@ -159,6 +169,7 @@ class DiaryController with ChangeNotifier {
       }
 
       await fetchAndSaveNotes(userId);
+      _isLoading = false;
       notifyListeners();
     } catch (e) {
       debugPrint('==================Error Removing notes: $e===================');

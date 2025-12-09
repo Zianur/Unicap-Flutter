@@ -33,11 +33,6 @@ class AuthController extends ChangeNotifier {
 
 
   Future<void> signInWithGoogle() async {
-    if(!await sl<NetworkInfo>().isConnected){
-      CustomToast.showToast('No Internet Connection', ToastType.error, null);
-      return;
-    }
-
     try {
       _isLoading = true;
       notifyListeners();
@@ -53,10 +48,6 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<void> signOut() async {
-    if(!await sl<NetworkInfo>().isConnected){
-      CustomToast.showToast('No Internet Connection', ToastType.error, null);
-      return;
-    }
     _isLoading = true;
     notifyListeners();
 

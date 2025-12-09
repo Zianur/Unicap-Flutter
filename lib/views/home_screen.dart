@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:new_version_plus/new_version_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
@@ -20,6 +21,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String userId = 'guest';
+  DateTime? _currentBackPressTime;
 
   @override
   void initState() {
@@ -29,18 +31,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
     _tabController = TabController(length: 4, vsync: this);
 
-    // Get userId first, then fetch notes
-    Future.delayed(Duration.zero, () async {
-      final authController = Provider.of<AuthController>(context, listen: false);
-      /// Getting user object from firebase
-      authController.getCurrentUser();
-      userId = authController.user?.uid ?? 'guest';
+    loadData();
 
-      Provider.of<DiaryController>(context, listen: false).fetchAndSaveNotes(userId);
-      Provider.of<CaptionCategoryController>(context, listen: false).loadCategories();
-    });
+    // Get userId first, then fetch notes
+    // Future.delayed(Duration.zero, () async {
+    //   await loadData();
+    // });
 
     _checkVersion();
+  }
+
+  Future<void> loadData() async {
+    final authController = Provider.of<AuthController>(context, listen: false);
+    /// Getting user object from firebase
+    authController.getCurrentUser();
+    userId = authController.user?.uid ?? 'guest';
+
+    await Provider.of<DiaryController>(context, listen: false).fetchAndSaveNotes(userId);
+    await Provider.of<CaptionCategoryController>(context, listen: false).loadCategories();
   }
 
   Future<void> _checkVersion() async {
@@ -67,54 +75,96 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
 
-
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
 
+
+
+  Future<bool> _handleBackPress() async {
+    // If not on the first tab, go to previous tab
+    if (_tabController.index > 0) {
+      _tabController.animateTo(0);
+      return false; // Don't exit app
+    }
+
+    // If on first tab, check for double tap to exit
+    DateTime now = DateTime.now();
+    if (_currentBackPressTime == null ||
+        now.difference(_currentBackPressTime!) > Duration(seconds: 2)) {
+      _currentBackPressTime = now;
+
+      // Show snackbar message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Press back again to exit', textAlign: TextAlign.center),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return false; // Don't exit on first press
+    }
+
+    return true; // Exit app on second press
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.deepPurpleAccent,
-      body: SafeArea(
-        child: TabBarView(
-          controller: _tabController,
-          children: [
-            DiaryListScreen(),
-            CaptionCategoryView(),
-            FavCaptionScreen(),
-            LoginScreen(),
-          ],
-        ),
-      ),
-      bottomNavigationBar: SafeArea(child: Container(
-          height: 60,
-          decoration: BoxDecoration(
-            color: Colors.deepPurpleAccent,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 10,
-                offset: Offset(0, -2),
-              ),
-            ],
-          ),
-          child: TabBar(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) {
+          final shouldPop = await _handleBackPress();
+          if (shouldPop) {
+            SystemNavigator.pop();
+          } else {
+            return;
+          }
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.deepPurpleAccent,
+        body: SafeArea(
+          child: TabBarView(
             controller: _tabController,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.black,
-            indicatorColor: Colors.transparent,
-            dividerColor: Colors.transparent,
-            tabs: [
-              Tab(icon: Icon(Icons.book), text: 'Diary '),
-              Tab(icon: Icon(Icons.category ), text: 'Captions'),
-              Tab(icon: Icon(Icons.favorite), text: 'Favorite'),
-              Tab(icon: Icon(Icons.person), text: 'Profile'),
+            children: [
+              DiaryListScreen(),
+              CaptionCategoryView(),
+              FavCaptionScreen(),
+              LoginScreen(),
             ],
           ),
-        )),
+        ),
+        bottomNavigationBar: SafeArea(child: Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.deepPurpleAccent,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, -2),
+                ),
+              ],
+            ),
+            child: TabBar(
+              controller: _tabController,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.black,
+              indicatorColor: Colors.transparent,
+              dividerColor: Colors.transparent,
+              tabs: [
+                Tab(icon: Icon(Icons.book), text: 'Diary '),
+                Tab(icon: Icon(Icons.category ), text: 'Captions'),
+                Tab(icon: Icon(Icons.favorite), text: 'Favorite'),
+                Tab(icon: Icon(Icons.person), text: 'Profile'),
+              ],
+            ),
+          )),
+      ),
     );
   }
 }
