@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
 import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
+import 'package:unicap_cg/helper/pic_editor_helper.dart';
 import 'package:unicap_cg/models/caption_category.dart';
 
 class CaptionWidget extends StatelessWidget {
@@ -70,12 +71,10 @@ class CaptionWidget extends StatelessWidget {
                         isLoading: isLoading(favCaptionController),
                         onTap: () async{
                           if(!isFav){
-                            debugPrint('============Inside ontap=========');
                             await favCaptionController.addFavorite(userId, caption);
                             CustomToast.showToast('Added to the Favorite', ToastType.fav, null);
                           }
                           else{
-                            debugPrint('==================inside else=============$isFav');
                             await favCaptionController.removeFavorite(userId, caption.key);
                             CustomToast.showToast('Removed from favorites successfully', ToastType.success, null);
                           }
@@ -88,7 +87,7 @@ class CaptionWidget extends StatelessWidget {
 
                     Expanded(child: IconTextWidget(
                       onTap: (){
-
+                        final img = PicEditorHelper.startPhotoEditor(context);
                       },
                       icon: Icons.image,
                     )),
