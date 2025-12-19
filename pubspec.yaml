@@ -54,6 +54,8 @@ dependencies:
   flutter_animate: ^4.5.2
   fluttertoast: ^8.2.12
   new_version_plus: ^0.1.1
+  pro_image_editor: ^11.15.0
+  image_picker: ^1.1.2
 
   path: any
 dev_dependencies:
