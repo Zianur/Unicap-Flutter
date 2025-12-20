@@ -247,30 +247,6 @@ class PicEditorHelper {
       ) async {
     // Create callbacks
     final callbacks = ProImageEditorCallbacks(
-      // onImageEditingComplete: (Uint8List editedImage) async {
-      //   // Android: Downloads directory, iOS: app's documents (but accessible via Files app)
-      //   final directory = await getExternalStorageDirectory();
-      //
-      //   // For Android, you might want Pictures or DCIM folder
-      //   // iOS: Use app's documents directory
-      //   final picturesDir = Directory('${directory!.path}/Pictures/Unicap');
-      //
-      //   if (!await picturesDir.exists()) {
-      //     print('------------------creating directory--------------');
-      //     await picturesDir.create(recursive: true);
-      //   }
-      //
-      //   print('------------------Did not create directory--------------');
-      //
-      //   final timestamp = DateTime.now().millisecondsSinceEpoch;
-      //   final file = File('${picturesDir.path}/image_$timestamp.png');
-      //
-      //   await file.writeAsBytes(editedImage);
-      //
-      //   Navigator.pop(context, file);
-      //   return;
-      // },
-
       onImageEditingComplete: (Uint8List editedImage) async {
         try {
           Directory downloadsDir;

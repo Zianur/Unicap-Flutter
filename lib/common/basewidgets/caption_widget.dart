@@ -87,7 +87,7 @@ class CaptionWidget extends StatelessWidget {
 
                     Expanded(child: IconTextWidget(
                       onTap: (){
-                        final img = PicEditorHelper.startPhotoEditor(context);
+                        PicEditorHelper.startPhotoEditor(context);
                       },
                       icon: Icons.image,
                     )),
