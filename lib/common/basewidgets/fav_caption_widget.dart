@@ -4,7 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
 import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
+import 'package:unicap_cg/common/basewidgets/translation_widget.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
+import 'package:unicap_cg/controllers/translator_controller.dart';
+import 'package:unicap_cg/helper/pic_editor_helper.dart';
 import 'package:unicap_cg/models/fav_caption_model.dart';
 
 class FavCaptionWidget extends StatelessWidget {
@@ -60,7 +63,6 @@ class FavCaptionWidget extends StatelessWidget {
                           CustomToast.showToast('Caption Copied', ToastType.success, null);
                         },
                         icon: Icons.copy,
-                        text: 'Copy',
                     ),
                   ),
 
@@ -81,13 +83,45 @@ class FavCaptionWidget extends StatelessWidget {
                         }
                       },
                       icon: Icons.favorite,
-                      text: 'Favorite',
                       iconColor: isFav ? Colors.pink : null,
                       textStyle: isFav ? TextStyle(color: Colors.pink) : null,
                     ),
                   ),
 
-                  Expanded(child: IconTextWidget(onTap: ()=> Share.share(caption.caption), icon: Icons.share, text: 'Share')),
+                  Expanded(child: IconTextWidget(
+                    onTap: (){
+                      PicEditorHelper.startPhotoEditor(context);
+                    },
+                    icon: Icons.image,
+                  )),
+
+                  Expanded(child: IconTextWidget(
+                    onTap: (){
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.blueGrey.shade900,
+                        builder: (context) {
+                          return SafeArea(
+                            child: Container(
+                              constraints: BoxConstraints(
+                                maxHeight: MediaQuery.of(context).size.height * 0.9,
+                              ),
+                              child: Consumer<TranslatorController>(
+                                  builder: (context, translatorProvider, __) {
+                                    translatorProvider.setInputText(caption.caption);
+                                    return TranslationWidget();
+                                  }
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    icon: Icons.translate,
+                  )),
+
+                  Expanded(child: IconTextWidget(onTap: ()=> Share.share(caption.caption), icon: Icons.share)),
                 ]),
               ],
             ),

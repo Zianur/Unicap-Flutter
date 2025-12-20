@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
 import 'package:unicap_cg/common/basewidgets/icon_text_widget.dart';
+import 'package:unicap_cg/common/basewidgets/translation_widget.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
+import 'package:unicap_cg/controllers/translator_controller.dart';
 import 'package:unicap_cg/helper/pic_editor_helper.dart';
 import 'package:unicap_cg/models/caption_category.dart';
 
@@ -59,7 +61,6 @@ class CaptionWidget extends StatelessWidget {
                     Expanded(
                       child: IconTextWidget(
                         onTap: (){
-                          CustomToast.showToast('Caption Copied', ToastType.success, null);
                           Clipboard.setData(ClipboardData(text: caption.caption));
                         }  ,
                         icon: Icons.copy,
@@ -94,7 +95,26 @@ class CaptionWidget extends StatelessWidget {
 
                     Expanded(child: IconTextWidget(
                       onTap: (){
-
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.blueGrey.shade900,
+                          builder: (context) {
+                            return SafeArea(
+                              child: Container(
+                                constraints: BoxConstraints(
+                                  maxHeight: MediaQuery.of(context).size.height * 0.9,
+                                ),
+                                child: Consumer<TranslatorController>(
+                                  builder: (context, translatorProvider, __) {
+                                    translatorProvider.setInputText(caption.caption);
+                                    return TranslationWidget();
+                                  }
+                                ),
+                              ),
+                            );
+                          },
+                        );
                       },
                       icon: Icons.translate,
                     )),

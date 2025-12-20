@@ -13,6 +13,7 @@ class TranslationWidget extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Header with Language Selection
               _buildLanguageSelector(translatorProvider),
@@ -183,12 +184,12 @@ class TranslationWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16),
               child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: 120),
+                constraints: BoxConstraints(minHeight: 80),
                 child: TextField(
                   controller: provider.inputController,
                   onChanged: provider.setInputText,
                   maxLines: null,
-                  minLines: 5,
+                  minLines: 3,
                   textAlignVertical: TextAlignVertical.top,
                   decoration: InputDecoration(
                     hintText: 'Enter text in any language...',
@@ -332,7 +333,7 @@ class TranslationWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16),
               child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: 120),
+                constraints: BoxConstraints(minHeight: 80),
                 child: SingleChildScrollView(
                   child: provider.translatedText.isNotEmpty
                       ? Text(
@@ -343,7 +344,7 @@ class TranslationWidget extends StatelessWidget {
                     ),
                   )
                       : Container(
-                    height: 120,
+                    height: 80,
                     alignment: Alignment.center,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

@@ -52,9 +52,9 @@ class _DiaryScreenState extends State<DiaryScreen> {
     // final double heightSize = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
-      backgroundColor: Colors.deepPurpleAccent,
+      backgroundColor: Colors.blueGrey.shade900,
       appBar: AppBar(
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor: Colors.blueGrey.shade900,
         title: Text(widget.diaryEntry == null ? 'Add note' : 'Update note', style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold
@@ -68,75 +68,160 @@ class _DiaryScreenState extends State<DiaryScreen> {
       body: SafeArea(
         child: Column(children: [
 
-          Expanded(child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Form(
-                key: _formKey,
-                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.blueGrey.shade900,
+                    Colors.grey.shade900,
+                  ],
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Title Field
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.2),
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: TextFormField(
+                            controller: _titleController,
+                            cursorColor: Colors.blueAccent.shade200,
+                            decoration: InputDecoration(
+                              labelText: 'Title',
+                              labelStyle: TextStyle(
+                                color: Colors.white.withValues(alpha:0.8),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                  width: 1.5,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: Colors.blueAccent.shade200,
+                                  width: 2,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white.withValues(alpha:0.07),
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 18,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.title,
+                                color: Colors.white.withValues(alpha:0.7),
+                                size: 22,
+                              ),
+                              counterStyle: TextStyle(
+                                color: Colors.white.withValues(alpha:0.5),
+                              ),
+                            ),
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha:0.95),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLength: 100,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Title is required';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 24),
 
-                  TextFormField(
-                    controller: _titleController,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                      labelText: 'Title',
-                      labelStyle: TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.7), width: 2),
-                      ),
+                        // Note Field
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha:0.2),
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: TextFormField(
+                            controller: _noteController,
+                            cursorColor: Colors.tealAccent.shade200,
+                            decoration: InputDecoration(
+                              hintText: 'Start writing...',
+                              hintStyle: TextStyle(
+                                color: Colors.tealAccent.shade200,
+                                fontSize: 18,
+                              ),
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              filled: true,
+                              fillColor: Colors.transparent,
+                              contentPadding: EdgeInsets.all(16),
+                              alignLabelWithHint: true,
+                              counterStyle: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.4),
+                              ),
+                            ),
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              fontSize: 17,
+                              height: 1.6,
+                              letterSpacing: 0.5,
+                            ),
+                            keyboardType: TextInputType.multiline,
+                            minLines: 10,
+                            maxLines: null,
+                            maxLength: 30000,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Note is required';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
-                    maxLength: 100,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Title is required';
-                      }
-                      return null;
-                    },
                   ),
-                  SizedBox(height: 16),
-
-                  TextFormField(
-                    controller: _noteController,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                      labelText: 'Note',
-                      labelStyle: TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.7), width: 2),
-                      ),
-                      alignLabelWithHint: true,
-                    ),
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
-                    keyboardType: TextInputType.multiline,
-                    minLines: 5,
-                    maxLines: null,
-                    maxLength: 30000,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Note is required';
-                      }
-                      return null;
-                    },
-                  ),
-                ]),
+                ),
               ),
             ),
-          )),
+          ),
 
           Container(
             height: 65,
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
             decoration: BoxDecoration(
-              color: Colors.deepPurpleAccent,
+              color: Colors.blueGrey.shade900,
               borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
               boxShadow: [
                 BoxShadow(
