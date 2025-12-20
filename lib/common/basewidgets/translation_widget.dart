@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_searchable_dropdown/flutter_searchable_dropdown.dart';
 import 'package:provider/provider.dart';
 import 'package:unicap_cg/controllers/translator_controller.dart';
 
@@ -72,6 +73,7 @@ class TranslationWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   Text(
                     'Translate to',
                     style: TextStyle(
@@ -80,31 +82,30 @@ class TranslationWidget extends StatelessWidget {
                     ),
                   ),
 
-                  DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: provider.selectedLanguage,
-                      isExpanded: true,
-                      icon: Icon(Icons.arrow_drop_down, color: Colors.blue),
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      items: provider.supportedLanguages.entries.map((entry) {
-                        return DropdownMenuItem(
-                          value: entry.key,
-                          child: Text(
-                            entry.value,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          provider.setSelectedLanguage(value);
-                        }
-                      },
+                  SearchableDropdown<String>(
+                    value: provider.selectedLanguage,
+                    items: provider.supportedLanguages.entries.map((entry) {
+                      return DropdownMenuItem(
+                        value: entry.key,
+                        child: Text(entry.value),
+                      );
+                    }).toList(),
+                    hint: Text('Select language'),
+                    searchHint: "Search language",
+                    isExpanded: true,
+                    icon: Icon(Icons.arrow_drop_down, color: Colors.blue),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w500,
                     ),
+                    underline: SizedBox(), // Hides underline
+                    onChanged: (value) {
+                      if (value != null) {
+                        provider.setSelectedLanguage(value);
+                      }
+                    },
+                    dialogBox: true,
                   ),
                 ],
               ),
