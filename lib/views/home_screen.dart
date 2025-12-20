@@ -7,6 +7,7 @@ import 'package:unicap_cg/controllers/diary_controller.dart';
 import 'package:unicap_cg/helper/network_info.dart';
 import 'package:unicap_cg/views/caption_category_screen.dart';
 import 'package:unicap_cg/views/fav_caption_screen.dart';
+import 'package:unicap_cg/views/translation_screen.dart';
 import '../controllers/caption_category_controller.dart';
 import 'diary_list_screen.dart';
 import 'login_screen.dart';
@@ -29,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
     NetworkInfo.checkConnectivity(context);
 
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
 
     loadData();
 
@@ -134,6 +135,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               DiaryListScreen(),
               CaptionCategoryView(),
               FavCaptionScreen(),
+              TranslationScreen(),
               LoginScreen(),
             ],
           ),
@@ -157,11 +159,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               indicatorColor: Colors.transparent,
               dividerColor: Colors.transparent,
               tabs: [
-                Tab(icon: Icon(Icons.book), text: 'Diary '),
+                Tab(icon: Icon(Icons.book), text: 'Diary'),
                 Tab(icon: Icon(Icons.category ), text: 'Captions'),
-                Tab(icon: Icon(Icons.favorite), text: 'Favorite'),
+                Tab(icon: Icon(Icons.favorite), text: 'Fav'),
+                Tab(icon: Icon(Icons.translate), text: 'Translate'),
                 Tab(icon: Icon(Icons.person), text: 'Profile'),
               ],
+              labelStyle: TextStyle(
+                fontSize: 8,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           )),
       ),

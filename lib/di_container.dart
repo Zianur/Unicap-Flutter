@@ -6,6 +6,7 @@ import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/caption_category_controller.dart';
 import 'package:unicap_cg/controllers/diary_controller.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
+import 'package:unicap_cg/controllers/translator_controller.dart';
 import 'package:unicap_cg/services/auth_service.dart';
 import 'package:unicap_cg/services/fav_caption_service.dart';
 import 'package:unicap_cg/services/firebase_service.dart';
@@ -40,4 +41,5 @@ void init() {
   sl.registerLazySingleton(() => FavoriteCaptionController(favoriteCaptionService: sl(), dbHelper: sl()));
   sl.registerLazySingleton(() => AuthController(authService: sl()));
   sl.registerLazySingleton(() => CaptionCategoryController(firebaseService: sl()));
+  sl.registerLazySingleton(() => TranslatorController());
 }
