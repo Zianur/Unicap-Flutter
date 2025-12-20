@@ -27,8 +27,7 @@ class _TranslationScreenState extends State<TranslationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.deepPurpleAccent,
-        body: Padding(
-          padding: EdgeInsets.only(top: widget.fromCaption ? 30 : 0),
+        body: SafeArea(
           child: TranslationWidget(),
         ),
     );
