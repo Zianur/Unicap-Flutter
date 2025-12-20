@@ -9,6 +9,7 @@ import 'package:unicap_cg/controllers/fav_caption_controller.dart';
 import 'package:unicap_cg/controllers/translator_controller.dart';
 import 'package:unicap_cg/helper/pic_editor_helper.dart';
 import 'package:unicap_cg/models/caption_category.dart';
+import 'package:unicap_cg/views/translation_screen.dart';
 
 class CaptionWidget extends StatelessWidget {
   const CaptionWidget({super.key,
@@ -95,26 +96,13 @@ class CaptionWidget extends StatelessWidget {
 
                     Expanded(child: IconTextWidget(
                       onTap: (){
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.blueGrey.shade900,
-                          builder: (context) {
-                            return SafeArea(
-                              child: Container(
-                                constraints: BoxConstraints(
-                                  maxHeight: MediaQuery.of(context).size.height * 0.9,
-                                ),
-                                child: Consumer<TranslatorController>(
-                                  builder: (context, translatorProvider, __) {
-                                    translatorProvider.setInputText(caption.caption);
-                                    return TranslationWidget();
-                                  }
-                                ),
-                              ),
-                            );
-                          },
-                        );
+                        final translatorProvider = Provider.of<TranslatorController>(context, listen: false);
+                        translatorProvider.clearText(isNotify: false);
+                        translatorProvider.inputController.text = caption.caption;
+                        translatorProvider.setInputText(caption.caption);
+
+                        Navigator.push(context, MaterialPageRoute(builder: (_)=> TranslationScreen(fromCaption: true)));
+
                       },
                       icon: Icons.translate,
                     )),

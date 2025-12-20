@@ -36,7 +36,6 @@ class _DiaryListScreenState extends State<DiaryListScreen> {
     final authController = Provider.of<AuthController>(context, listen: false);
     authController.getCurrentUser();
     userId = authController.user?.uid ?? 'guest';
-    print('=========diarylist screen=========userid======================$userId');
 
 
     await Provider.of<DiaryController>(context, listen: false).syncUnsyncedNotes(userId);

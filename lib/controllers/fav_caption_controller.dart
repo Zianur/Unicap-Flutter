@@ -1,4 +1,4 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
+
 import 'package:flutter/material.dart';
 import 'package:unicap_cg/data/local/databse_helper.dart';
 import 'package:unicap_cg/di_container.dart';

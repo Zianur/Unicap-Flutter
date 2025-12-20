@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
-import 'package:unicap_cg/di_container.dart';
-import 'package:unicap_cg/helper/network_info.dart';
 import '../services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

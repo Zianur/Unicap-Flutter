@@ -132,9 +132,12 @@ class TranslatorController with ChangeNotifier {
     super.dispose();
   }
 
-  void setInputText(String text) {
+
+  void setInputText(String text, {bool isNotify = true}) {
     _inputText = text;
-    notifyListeners();
+    if(isNotify){
+      notifyListeners();
+    }
   }
 
   void setSelectedLanguage(String languageCode) {
@@ -176,10 +179,12 @@ class TranslatorController with ChangeNotifier {
     }
   }
 
-  void clearText() {
+  void clearText({bool isNotify = true}) {
     inputController.clear();
     _inputText = '';
     _translatedText = '';
-    notifyListeners();
+    if(isNotify){
+      notifyListeners();
+    }
   }
 }

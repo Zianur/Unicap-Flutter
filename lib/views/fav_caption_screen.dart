@@ -5,16 +5,15 @@ import 'package:unicap_cg/common/basewidgets/empty_widget.dart';
 import 'package:unicap_cg/common/basewidgets/fav_caption_widget.dart';
 import 'package:unicap_cg/controllers/auth_controller.dart';
 import 'package:unicap_cg/controllers/fav_caption_controller.dart';
-import 'package:unicap_cg/views/diary_list_screen.dart';
 
 class FavCaptionScreen extends StatefulWidget {
   const FavCaptionScreen({super.key});
 
   @override
-  _FavCaptionScreenState createState() => _FavCaptionScreenState();
+  FavCaptionScreenState createState() => FavCaptionScreenState();
 }
 
-class _FavCaptionScreenState extends State<FavCaptionScreen> {
+class FavCaptionScreenState extends State<FavCaptionScreen> {
   String userId = 'guest';
 
 

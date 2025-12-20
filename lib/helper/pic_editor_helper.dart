@@ -118,7 +118,7 @@ class PicEditorHelper {
     return ElevatedButton(
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
-        backgroundColor: color.withOpacity(0.1),
+        backgroundColor: color.withValues(alpha: 0.1),
         foregroundColor: color,
         padding: const EdgeInsets.symmetric(vertical: 18),
         shape: RoundedRectangleBorder(
@@ -274,7 +274,6 @@ class PicEditorHelper {
 
           Navigator.pop(context, file);
         } catch (e) {
-          print('Error: $e');
           // Fallback
           final appDir = await getApplicationDocumentsDirectory();
           final file = File('${appDir.path}/unicap_${DateTime.now().millisecondsSinceEpoch}.png');
