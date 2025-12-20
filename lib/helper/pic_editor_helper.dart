@@ -1,6 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:pro_image_editor/core/models/editor_callbacks/pro_image_editor_callbacks.dart';
 import 'package:pro_image_editor/core/models/editor_configs/pro_image_editor_configs.dart';
 import 'package:pro_image_editor/features/main_editor/main_editor.dart';
@@ -63,55 +66,45 @@ class PicEditorHelper {
   }
 
   static Widget _buildBottomSheet(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Title
-          Center(
-            child: Text(
-              'Choose Photo Source',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Title
+            Center(
+              child: Text(
+                'Choose Photo Source',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          // Camera Button
-          _buildOptionButton(
-            icon: Icons.camera_alt,
-            label: 'Camera',
-            color: Colors.blue,
-            onTap: () => Navigator.pop(context, ImageSource.camera),
-          ),
-          const SizedBox(height: 12),
-
-          // Gallery Button
-          _buildOptionButton(
-            icon: Icons.photo_library,
-            label: 'Gallery',
-            color: Colors.green,
-            onTap: () => Navigator.pop(context, ImageSource.gallery),
-          ),
-          const SizedBox(height: 20),
-
-          // Cancel Button
-          OutlinedButton(
-            onPressed: () => Navigator.pop(context),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+            // Camera Button
+            _buildOptionButton(
+              icon: Icons.camera_alt,
+              label: 'Camera',
+              color: Colors.blue,
+              onTap: () => Navigator.pop(context, ImageSource.camera),
             ),
-            child: const Text('Cancel', style: TextStyle(fontSize: 16)),
-          ),
-        ],
+            const SizedBox(height: 12),
+
+            // Gallery Button
+            _buildOptionButton(
+              icon: Icons.photo_library,
+              label: 'Gallery',
+              color: Colors.green,
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }
@@ -254,8 +247,64 @@ class PicEditorHelper {
       ) async {
     // Create callbacks
     final callbacks = ProImageEditorCallbacks(
-      onImageEditingComplete: (editedImage) async {
-        Navigator.pop(context, editedImage);
+      // onImageEditingComplete: (Uint8List editedImage) async {
+      //   // Android: Downloads directory, iOS: app's documents (but accessible via Files app)
+      //   final directory = await getExternalStorageDirectory();
+      //
+      //   // For Android, you might want Pictures or DCIM folder
+      //   // iOS: Use app's documents directory
+      //   final picturesDir = Directory('${directory!.path}/Pictures/Unicap');
+      //
+      //   if (!await picturesDir.exists()) {
+      //     print('------------------creating directory--------------');
+      //     await picturesDir.create(recursive: true);
+      //   }
+      //
+      //   print('------------------Did not create directory--------------');
+      //
+      //   final timestamp = DateTime.now().millisecondsSinceEpoch;
+      //   final file = File('${picturesDir.path}/image_$timestamp.png');
+      //
+      //   await file.writeAsBytes(editedImage);
+      //
+      //   Navigator.pop(context, file);
+      //   return;
+      // },
+
+      onImageEditingComplete: (Uint8List editedImage) async {
+        try {
+          Directory downloadsDir;
+
+          if (Platform.isAndroid) {
+            downloadsDir = Directory('/storage/emulated/0/DCIM/Unicap');
+          } else {
+            // iOS - save to documents (appears in Files app)
+            final appDir = await getApplicationDocumentsDirectory();
+            downloadsDir = Directory('${appDir.path}/Unicap');
+          }
+
+          // Create directory
+          if (!await downloadsDir.exists()) {
+            await downloadsDir.create(recursive: true);
+          }
+
+          // Create file
+          final timestamp = DateTime.now().millisecondsSinceEpoch;
+          final fileName = 'Unicap_Image_$timestamp.png';
+          final file = File(path.join(downloadsDir.path, fileName));
+
+          // Save
+          await file.writeAsBytes(editedImage);
+
+          Navigator.pop(context, file);
+        } catch (e) {
+          print('Error: $e');
+          // Fallback
+          final appDir = await getApplicationDocumentsDirectory();
+          final file = File('${appDir.path}/unicap_${DateTime.now().millisecondsSinceEpoch}.png');
+          await file.writeAsBytes(editedImage);
+          Navigator.pop(context, file);
+        }
         return;
       },
       onCloseEditor: (EditorMode mode) async {
@@ -288,11 +337,15 @@ class PicEditorHelper {
   static void _showSuccessMessage(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(
+        content: Column(
           children: [
-            const Icon(Icons.check_circle, color: Colors.white),
-            const SizedBox(width: 12),
-            const Text('Photo edited successfully!'),
+            Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 12),
+                const Text('Photo Saved to DCIM/Unicap successfully!'),
+              ],
+            ),
           ],
         ),
         backgroundColor: Colors.green,
