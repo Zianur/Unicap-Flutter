@@ -19,7 +19,7 @@ class DiaryController with ChangeNotifier {
   String _selectedNoteId = '';
 
 
-  List<DiaryEntry>? get notes => _notes;
+  List<DiaryEntry>? get notes => _notes?.reversed.toList();
   bool get isLoading => _isLoading;
   String get selectedNoteId => _selectedNoteId;
 

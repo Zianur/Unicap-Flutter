@@ -102,6 +102,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                           ),
                           child: TextFormField(
                             controller: _titleController,
+                            textCapitalization: TextCapitalization.sentences,
                             cursorColor: Colors.blueAccent.shade200,
                             decoration: InputDecoration(
                               labelText: 'Title',
@@ -173,6 +174,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                           ),
                           child: TextFormField(
                             controller: _noteController,
+                            textCapitalization: TextCapitalization.sentences,
                             cursorColor: Colors.tealAccent.shade200,
                             decoration: InputDecoration(
                               hintText: 'Start writing...',
@@ -259,7 +261,10 @@ class _DiaryScreenState extends State<DiaryScreen> {
                           final String newTitle = _titleController.text;
                           final String newNote = _noteController.text;
 
-                          if(_formKey.currentState!.validate()){
+
+                          if (newTitle.trim().isEmpty || newNote.trim().isEmpty) {
+                            CustomToast.showToast("Please fill in all fields", ToastType.error, null);
+                          } else if(_formKey.currentState!.validate()){
 
                             if(newTitle == initialTitle && newNote == initialNote){
                               CustomToast.showToast("Nothing to update", ToastType.error, null);
