@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pro_image_editor/core/models/editor_callbacks/pro_image_editor_callbacks.dart';
 import 'package:pro_image_editor/core/models/editor_configs/pro_image_editor_configs.dart';
 import 'package:pro_image_editor/features/main_editor/main_editor.dart';
+import 'package:unicap_cg/common/basewidgets/custom_toast_message.dart';
 
 class PicEditorHelper {
   static final ImagePicker _picker = ImagePicker();
@@ -272,18 +273,25 @@ class PicEditorHelper {
           // Save
           await file.writeAsBytes(editedImage);
 
-          Navigator.pop(context, file);
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context, file);
+          }
         } catch (e) {
           // Fallback
           final appDir = await getApplicationDocumentsDirectory();
           final file = File('${appDir.path}/unicap_${DateTime.now().millisecondsSinceEpoch}.png');
           await file.writeAsBytes(editedImage);
-          Navigator.pop(context, file);
+
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context, file);
+          }
         }
         return;
       },
       onCloseEditor: (EditorMode mode) async {
-        Navigator.pop(context);
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
         return;
       },
     );
@@ -310,25 +318,6 @@ class PicEditorHelper {
   }
 
   static void _showSuccessMessage(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Column(
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.check_circle, color: Colors.white),
-                const SizedBox(width: 12),
-                const Text('Photo Saved to DCIM/Unicap successfully!'),
-              ],
-            ),
-          ],
-        ),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-    );
+    CustomToast.showToast("Photo Saved to DCIM/Unicap successfully!", ToastType.success, null);
   }
 }
